@@ -29,6 +29,7 @@
     --fs-head: clamp(2.5rem, 6.5vw, 6rem);
     --fs-body: clamp(1.125rem, 1vw, 1.375rem);
     --fs-nav: 16px;
+    --fs-hello: clamp(2.75rem, 5.5vw, 6rem);
   }
 
   /* ============================= */
@@ -158,18 +159,33 @@
   .script-hello-mask{
     display: inline-block;
     overflow: hidden;
-    font-size: clamp(2.75rem, 5.5vw, 6rem);
+    white-space: nowrap;
+    font-size: var(--fs-hello);
     padding: 0.65em 0.45em;
     margin: -0.65em -0.45em;
     vertical-align: top;
   }
+  @keyframes paradisePulse{
+    0%    { color: #FF4FA3; }
+    12.5% { color: #FF7A3D; }
+    25%   { color: #A8E000; }
+    37.5% { color: #2DD9C5; }
+    50%   { color: #FF6F5E; }
+    62.5% { color: #FFD23F; }
+    75%   { color: #B36BFF; }
+    87.5% { color: #38BDF8; }
+    100%  { color: #FF4FA3; }
+  }
   .script-hello{
     display:inline-block;
+    white-space: nowrap;
     font-family: 'Caveat', cursive;
-    font-size: clamp(2.75rem, 5.5vw, 6rem);
+    font-size: var(--fs-hello);
     font-weight: 600;
     line-height: 1;
     color: var(--hello-color);
+    animation: paradisePulse 16s linear infinite;
+    animation-delay: var(--hello-pulse-delay, 0s);
     transform: rotate(-3deg);
     transform-origin: left bottom;
     opacity: 1;
@@ -430,7 +446,7 @@
       transition:none !important;
       color: var(--fg) !important;
     }
-    .script-hello{ transition:none !important; opacity:1 !important; }
+    .script-hello{ transition:none !important; opacity:1 !important; animation:none !important; }
     .script-hello .char{ opacity:1 !important; transform:none !important; transition:none !important; }
     .role-text{ transition:none !important; opacity:1 !important; }
     .role-char{ transform:none !important; transition:none !important; }
@@ -445,6 +461,7 @@
     .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
     .preview{ display:none !important; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
+    :root{ --fs-hello: clamp(2rem, 9vw, 3rem); }
   }
 
 </style>
@@ -574,9 +591,14 @@
     '#B36BFF', /* violet */
     '#38BDF8'  /* ocean blue */
   ];
+  var PULSE_DURATION_S = 16; /* must match the paradisePulse animation duration in CSS */
   document.documentElement.style.setProperty(
     '--hello-color',
     PARADISE_COLORS[Math.floor(Math.random() * PARADISE_COLORS.length)]
+  );
+  document.documentElement.style.setProperty(
+    '--hello-pulse-delay',
+    '-' + (Math.random() * PULSE_DURATION_S).toFixed(2) + 's'
   );
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
