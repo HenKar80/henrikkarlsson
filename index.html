@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Henrik Karlsson — Creative Designer</title>
+<meta name="description" content="Henrik Karlsson — Creative Designer in Sarasota, Florida. Brand identity, motion design, photography and digital experiences.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================= */
+  /* TOKENS                        */
+  /* ============================= */
+  :root{
+    --bg:#000000;
+    --fg:#ffffff;
+    --gray:#999999;
+    --gray-soft: rgba(255,255,255,0.45);
+    --gray-dim: rgba(255,255,255,0.22);
+    --ease: cubic-bezier(.16,.84,.44,1);
+    --maxw: 1680px;
+    --pad: clamp(24px, 6vw, 64px);
+
+    --fs-hero: clamp(2.75rem, 9vw, 11rem);
+    --fs-head: clamp(2.5rem, 6.5vw, 6rem);
+    --fs-body: clamp(1.125rem, 1vw, 1.375rem);
+    --fs-nav: 16px;
+  }
+
+  /* ============================= */
+  /* RESET                         */
+  /* ============================= */
+  *,*::before,*::after{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  h1,h2,h3,p,ul{ margin:0; padding:0; }
+  ul{ list-style:none; }
+  a{ color: inherit; text-decoration: none; }
+  img{ display:block; max-width:100%; }
+  ::selection{ background: #ffffff; color:#000000; }
+
+  a:focus-visible,
+  button:focus-visible{
+    outline: 2px solid #ffffff;
+    outline-offset: 6px;
+  }
+
+  .skip-link{
+    position:absolute; left:-9999px; top:0;
+    background:#fff; color:#000; padding:12px 20px; z-index:1000;
+    font-size:14px; letter-spacing:.04em;
+  }
+  .skip-link:focus{ left:16px; top:16px; }
+
+  section{ scroll-margin-top: 110px; }
+
+  .eyebrow{
+    display:block;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-weight: 500;
+    margin-bottom: clamp(40px, 6vw, 88px);
+  }
+
+  /* ============================= */
+  /* REVEAL UTILITY                */
+  /* ============================= */
+  .reveal{
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .reveal.visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ============================= */
+  /* NAV                           */
+  /* ============================= */
+  header.site-nav{
+    position: fixed;
+    top:0; left:0; right:0;
+    z-index: 200;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 28px var(--pad);
+  }
+  .logo{
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .nav-links{
+    display:flex;
+    gap: clamp(24px, 4vw, 48px);
+  }
+  .nav-links a{
+    position:relative;
+    font-size: var(--fs-nav);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--fg);
+    opacity: .82;
+    transition: opacity .35s var(--ease);
+    padding-bottom: 4px;
+  }
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0%; height:1px;
+    background: var(--fg);
+    transition: width .4s var(--ease);
+  }
+  .nav-links a:hover,
+  .nav-links a:focus-visible{ opacity: 1; }
+  .nav-links a:hover::after,
+  .nav-links a:focus-visible::after{ width:100%; }
+  .nav-links li{ display:none; }
+  @media (min-width: 640px){
+    .nav-links li{ display:block; }
+  }
+
+  /* ============================= */
+  /* HERO                          */
+  /* ============================= */
+  #hero{
+    min-height: 100vh;
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    padding: 150px var(--pad) 90px;
+  }
+  .hero-heading{ max-width: 1500px; }
+
+  .script-hello-wrap{
+    margin: 0 0 clamp(4px, 1.4vw, 16px) clamp(2px, 1vw, 6px);
+    overflow: visible;
+    min-height: clamp(2.75rem, 5.5vw, 6rem);
+  }
+
+  .script-hello-mask{
+    display: inline-block;
+    overflow: hidden;
+    padding: 0.4em 0.3em;
+    margin: -0.4em -0.3em;
+    vertical-align: top;
+  }
+  .script-hello{
+    display:inline-block;
+    font-family: 'Caveat', cursive;
+    font-size: clamp(2.75rem, 5.5vw, 6rem);
+    font-weight: 600;
+    line-height: 1;
+    color: #ff4f8b;
+    transform: rotate(-3deg);
+    transform-origin: left bottom;
+    opacity: 1;
+    transition: opacity .55s var(--ease);
+  }
+  .script-hello.fade-out{ opacity: 0; }
+  .script-hello .char{
+    display:inline-block;
+    transform: translateY(120%);
+    transition: transform .75s var(--ease);
+  }
+  .script-hello .char.in{
+    transform: translateY(0);
+  }
+
+  .hero-heading .line{
+    display:block;
+    font-size: var(--fs-hero);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    opacity:0;
+    transform: translateY(36px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  .hero-heading .line.lead{ font-weight: 700; }
+  .hero-heading .line.in{
+    opacity:1;
+    transform: translateY(0);
+  }
+
+  .sr-only{
+    position:absolute;
+    width:1px; height:1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+  }
+
+  .role-wrap{ display:inline-block; }
+  .role-mask{
+    display:inline-block;
+    overflow:hidden;
+    padding: 0.12em 0.05em;
+    margin: -0.12em -0.05em;
+  }
+  .role-text{
+    display:inline-block;
+    opacity:1;
+    transition: opacity .55s var(--ease);
+  }
+  .role-text.fade-out{ opacity:0; }
+  .role-char{
+    display:inline-block;
+    transform: translateY(120%);
+    transition: transform .75s var(--ease);
+  }
+  .role-char.in{
+    transform: translateY(0);
+  }
+
+  .hero-meta{
+    margin-top: clamp(48px, 7vw, 96px);
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    color: var(--gray);
+    font-size: var(--fs-body);
+  }
+  .hero-meta .dot{
+    display:inline-block;
+    width:8px; height:8px;
+    border-radius:50%;
+    background:#ffffff;
+    margin-right: 12px;
+    vertical-align: middle;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:1; transform: scale(1); }
+    50%{ opacity:.4; transform: scale(1.5); }
+  }
+
+  /* ============================= */
+  /* WORK                          */
+  /* ============================= */
+  #work{
+    padding: clamp(120px, 14vw, 200px) var(--pad);
+    position: relative;
+  }
+  .work-list{ max-width: var(--maxw); margin: 0 auto; }
+  .work-row{
+    display:block;
+    border:0;
+    background:none;
+    width:100%;
+    text-align:left;
+  }
+  .work-row a{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap: 24px;
+    padding: clamp(20px, 3vw, 36px) 0;
+    font-size: var(--fs-head);
+    font-weight: 500;
+    color: var(--fg);
+    transition: color .5s var(--ease), opacity .5s var(--ease);
+  }
+  .work-list.has-active .work-row a:not(.active){
+    color: var(--gray-dim);
+  }
+  .work-row a.active{ color: var(--fg); }
+
+  .work-row .arrow{
+    font-size: clamp(1.25rem, 2vw, 2rem);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity .45s var(--ease), transform .45s var(--ease);
+    flex-shrink:0;
+  }
+  .work-row a.active .arrow{
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .preview{
+    position: fixed;
+    top:0; left:0;
+    width: clamp(420px, 38vw, 600px);
+    aspect-ratio: 4 / 5;
+    pointer-events:none;
+    opacity:0;
+    z-index: 60;
+    overflow:hidden;
+    transition: opacity .5s var(--ease);
+    will-change: transform;
+    display:none;
+  }
+  .preview.enabled{ display:block; }
+  .preview.visible{ opacity:1; }
+  .preview img{
+    width:100%; height:100%;
+    object-fit:cover;
+    filter: grayscale(100%) contrast(1.05);
+  }
+
+  /* ============================= */
+  /* ABOUT                         */
+  /* ============================= */
+  #about{
+    padding: clamp(120px, 14vw, 200px) var(--pad);
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+  .about-copy{
+    max-width: 1280px;
+    font-size: clamp(2rem, 4.6vw, 4.5rem);
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .about-copy .word{
+    display: inline-block;
+    color: rgba(255,255,255,0.22);
+    transition: color .7s var(--ease);
+  }
+  .about-copy .word.visible{ color: var(--fg); }
+
+  /* ============================= */
+  /* SERVICES                      */
+  /* ============================= */
+  #services{
+    padding: clamp(120px, 14vw, 200px) var(--pad);
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+  .services-list{ max-width: 1100px; }
+  .service-row{
+    padding: clamp(18px, 2.4vw, 28px) 0;
+    font-size: clamp(1.75rem, 4.4vw, 3.25rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    transition: transform .5s var(--ease), color .5s var(--ease);
+  }
+  .service-row:hover{
+    transform: translateX(16px);
+    color: var(--gray-soft);
+  }
+
+  /* ============================= */
+  /* CONTACT                       */
+  /* ============================= */
+  #contact{
+    padding: clamp(120px, 14vw, 220px) var(--pad) clamp(80px, 10vw, 140px);
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+  .contact-headline{
+    font-size: var(--fs-head);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    max-width: 1280px;
+  }
+  .contact-links{
+    margin-top: clamp(56px, 8vw, 100px);
+    display:flex;
+    flex-wrap: wrap;
+    gap: clamp(28px, 5vw, 56px);
+  }
+  .contact-links a{
+    position:relative;
+    font-size: var(--fs-body);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+  }
+  .contact-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:100%; height:1px;
+    background: var(--gray-dim);
+    transition: background .35s var(--ease);
+  }
+  .contact-links a:hover::after,
+  .contact-links a:focus-visible::after{
+    background: var(--fg);
+  }
+
+  /* ============================= */
+  /* FOOTER                        */
+  /* ============================= */
+  footer.site-footer{
+    padding: 40px var(--pad) 56px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--gray);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ============================= */
+  /* REDUCED MOTION                */
+  /* ============================= */
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    .reveal, .hero-heading .line, .about-copy .word{
+      opacity:1 !important;
+      transform:none !important;
+      transition:none !important;
+      color: var(--fg) !important;
+    }
+    .script-hello{ transition:none !important; opacity:1 !important; }
+    .script-hello .char{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .role-text{ transition:none !important; opacity:1 !important; }
+    .role-char{ transform:none !important; transition:none !important; }
+    .dot{ animation:none; }
+    .preview{ display:none !important; }
+  }
+
+  /* ============================= */
+  /* RESPONSIVE                    */
+  /* ============================= */
+  @media (max-width: 640px){
+    .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
+    .preview{ display:none !important; }
+  }
+
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-nav">
+  <a class="logo" href="#hero" aria-label="Henrik Karlsson — home">HK</a>
+  <nav aria-label="Primary">
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero" aria-label="Introduction">
+    <p class="script-hello-wrap" id="scriptHelloWrap" aria-hidden="true"></p>
+    <h1 class="hero-heading">
+      <span class="line lead">I'm Henrik Karlsson</span>
+      <span class="line">— A <span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
+    </h1>
+    <div class="hero-meta">
+      <p>Creative Designer — Sarasota, FL</p>
+      <p><span class="dot" aria-hidden="true"></span>Available Worldwide.</p>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work" aria-label="Selected work">
+    <span class="eyebrow reveal">Selected Work</span>
+    <ul class="work-list" id="workList">
+      <li class="work-row">
+        <a href="#" data-img="https://picsum.photos/seed/hknike/700/900?grayscale">
+          Nike <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a href="#" data-img="https://picsum.photos/seed/hkapple/700/900?grayscale">
+          Apple <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a href="#" data-img="https://picsum.photos/seed/hkmercedes/700/900?grayscale">
+          Mercedes <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a href="#" data-img="https://picsum.photos/seed/hkairbnb/700/900?grayscale">
+          Airbnb <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a href="#" data-img="https://picsum.photos/seed/hkhej/700/900?grayscale">
+          Hej Studio <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a href="#" data-img="https://picsum.photos/seed/hkporsche/700/900?grayscale">
+          Porsche <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" aria-label="About">
+    <span class="eyebrow reveal">About</span>
+    <p class="about-copy" id="aboutCopy">For over 20 years I've helped brands tell stories through motion design, photography, branding and digital experiences.</p>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" aria-label="Services">
+    <span class="eyebrow reveal">Services</span>
+    <ul class="services-list">
+      <li class="service-row reveal">Creative Direction</li>
+      <li class="service-row reveal">Motion Design</li>
+      <li class="service-row reveal">Photography</li>
+      <li class="service-row reveal">Brand Identity</li>
+      <li class="service-row reveal">Visual Design</li>
+      <li class="service-row reveal">Digital Experiences</li>
+    </ul>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" aria-label="Contact">
+    <span class="eyebrow reveal">Contact</span>
+    <h2 class="contact-headline reveal">Let's build something exceptional.</h2>
+    <div class="contact-links reveal">
+      <a href="mailto:hello@henrikkarlsson.com">Email</a>
+      <a href="https://linkedin.com/in/henrikkarlsson" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://instagram.com/henrikkarlsson" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 Henrik Karlsson</span>
+  <span>Sarasota, Florida</span>
+</footer>
+
+<!-- Floating cursor-follow preview (Work section) -->
+<div class="preview" id="preview" aria-hidden="true">
+  <img id="previewImg" src="" alt="">
+</div>
+
+<script>
+(function(){
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var enablePreview = hasHover && !reduceMotion;
+
+  /* ---------- Hero load reveal (heading stays put, no text-swapping) ---------- */
+  var heroLines = document.querySelectorAll('.hero-heading .line');
+  var heroMeta = document.querySelector('.hero-meta');
+  heroLines.forEach(function(line, i){
+    setTimeout(function(){ line.classList.add('in'); }, 120 + i * 90);
+  });
+  setTimeout(function(){
+    heroMeta.classList.add('reveal', 'visible');
+  }, 120 + heroLines.length * 90 + 120);
+
+  /* ---------- Handwritten "Hello" cycling above the name ---------- */
+  /* Each letter rises up out of a masked (overflow-hidden) line, as if
+     emerging from the black, using the same easing as every other reveal
+     on the page. A double rAF before the stagger starts ensures the browser
+     has actually painted the hidden state first -- otherwise the very first
+     letter (zero delay) can jump straight to its end state with no visible
+     motion, since the "before" and "after" styles would land in the same frame. */
+  var scriptWrap = document.getElementById('scriptHelloWrap');
+  var scriptWords = ['Hej', 'Olá', '你好', 'Hola', 'Hello'];
+  var CHAR_STEP = 90;
+  var CHAR_TRANSITION_MS = 750;
+
+  function drawWord(word){
+    scriptWrap.innerHTML = '<span class="script-hello-mask"><span class="script-hello" aria-hidden="true"></span></span>';
+    var el = scriptWrap.querySelector('.script-hello');
+    word.split('').forEach(function(ch){
+      var span = document.createElement('span');
+      span.className = 'char';
+      span.textContent = ch;
+      el.appendChild(span);
+    });
+    var chars = el.querySelectorAll('.char');
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        chars.forEach(function(c, idx){
+          setTimeout(function(){ c.classList.add('in'); }, idx * CHAR_STEP);
+        });
+      });
+    });
+
+    return { el: el, time: (chars.length - 1) * CHAR_STEP + CHAR_TRANSITION_MS };
+  }
+
+  function runHelloCycle(i){
+    i = i || 0;
+    var result = drawWord(scriptWords[i]);
+    setTimeout(function(){
+      result.el.classList.add('fade-out');
+      setTimeout(function(){ runHelloCycle((i + 1) % scriptWords.length); }, 650);
+    }, result.time + 1350);
+  }
+
+  if (reduceMotion){
+    scriptWrap.innerHTML = '<span class="script-hello" aria-hidden="true">Hello</span>';
+  } else {
+    setTimeout(function(){ runHelloCycle(0); }, 1100);
+  }
+
+  /* ---------- Role cycling in the hero line (same masked-rise technique) ---------- */
+  var roleWrap = document.getElementById('roleWrap');
+  var roleWords = ['Motion Designer', 'Photographer', 'Web Designer'];
+
+  function drawRole(text){
+    roleWrap.innerHTML = '<span class="role-mask"><span class="role-text"></span></span>';
+    var el = roleWrap.querySelector('.role-text');
+    text.split('').forEach(function(ch){
+      var span = document.createElement('span');
+      span.className = 'role-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      el.appendChild(span);
+    });
+    var chars = el.querySelectorAll('.role-char');
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        chars.forEach(function(c, idx){
+          setTimeout(function(){ c.classList.add('in'); }, idx * CHAR_STEP);
+        });
+      });
+    });
+
+    return { el: el, time: (chars.length - 1) * CHAR_STEP + CHAR_TRANSITION_MS };
+  }
+
+  function runRoleCycle(i){
+    i = i || 0;
+    var result = drawRole(roleWords[i]);
+    setTimeout(function(){
+      result.el.classList.add('fade-out');
+      setTimeout(function(){ runRoleCycle((i + 1) % roleWords.length); }, 650);
+    }, result.time + 1350);
+  }
+
+  if (reduceMotion){
+    roleWrap.textContent = roleWords[0];
+  } else {
+    setTimeout(function(){ runRoleCycle(0); }, 1300);
+  }
+
+  /* ---------- Generic scroll reveal ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('visible'); });
+  }
+
+  /* stagger service rows */
+  document.querySelectorAll('.service-row').forEach(function(row, i){
+    row.style.transitionDelay = (i * 0.06) + 's';
+  });
+
+  /* ---------- About: word-by-word reveal ---------- */
+  var aboutCopy = document.getElementById('aboutCopy');
+  if (aboutCopy){
+    var words = aboutCopy.textContent.trim().split(/\s+/);
+    aboutCopy.innerHTML = words.map(function(w){
+      return '<span class="word">' + w + '</span>';
+    }).join(' ');
+
+    var wordEls = aboutCopy.querySelectorAll('.word');
+    if ('IntersectionObserver' in window){
+      var wordIO = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){
+            wordEls.forEach(function(word, i){
+              setTimeout(function(){ word.classList.add('visible'); }, i * 35);
+            });
+            wordIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      wordIO.observe(aboutCopy);
+    } else {
+      wordEls.forEach(function(w){ w.classList.add('visible'); });
+    }
+  }
+
+  /* ---------- Work list: dim siblings on hover/focus ---------- */
+  var workList = document.getElementById('workList');
+  var workLinks = workList.querySelectorAll('.work-row a');
+
+  function setActive(link){
+    workList.classList.add('has-active');
+    workLinks.forEach(function(a){ a.classList.toggle('active', a === link); });
+  }
+  function clearActive(){
+    workList.classList.remove('has-active');
+    workLinks.forEach(function(a){ a.classList.remove('active'); });
+  }
+
+  workLinks.forEach(function(link){
+    link.addEventListener('mouseenter', function(){ setActive(link); });
+    link.addEventListener('focus', function(){ setActive(link); });
+    link.addEventListener('mouseleave', function(){ clearActive(); });
+    link.addEventListener('blur', function(){ clearActive(); });
+  });
+
+  /* ---------- Cursor-follow preview image ---------- */
+  if (enablePreview){
+    var preview = document.getElementById('preview');
+    var previewImg = document.getElementById('previewImg');
+    preview.classList.add('enabled');
+
+    /* preload images */
+    workLinks.forEach(function(link){
+      var src = link.getAttribute('data-img');
+      if (src){ var im = new Image(); im.src = src; }
+    });
+
+    var mouseX = 0, mouseY = 0;
+    var curX = 0, curY = 0;
+    var rot = 0, curRot = 0;
+    var rafId = null;
+
+    document.addEventListener('mousemove', function(e){
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function loop(){
+      curX += (mouseX - curX) * 0.12;
+      curY += (mouseY - curY) * 0.12;
+      curRot += (rot - curRot) * 0.12;
+      preview.style.transform =
+        'translate3d(' + curX + 'px,' + curY + 'px,0) translate(-50%,-50%) rotate(' + curRot + 'deg)';
+      rafId = requestAnimationFrame(loop);
+    }
+    loop();
+
+    workLinks.forEach(function(link){
+      link.addEventListener('mouseenter', function(){
+        var src = link.getAttribute('data-img');
+        if (src) previewImg.src = src;
+        rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2; /* ~ -3.2..3.2deg */
+        preview.classList.add('visible');
+      });
+      link.addEventListener('mouseleave', function(){
+        preview.classList.remove('visible');
+      });
+    });
+
+    /* hide preview if cursor leaves the work list entirely */
+    workList.addEventListener('mouseleave', function(){
+      preview.classList.remove('visible');
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>
