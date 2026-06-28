@@ -186,20 +186,15 @@
     color: var(--hello-color);
     animation: paradisePulse 16s linear infinite;
     animation-delay: var(--hello-pulse-delay, 0s);
-    transform: rotate(-3deg);
     transform-origin: left bottom;
     opacity: 1;
-    transition: opacity .55s var(--ease);
+    transform: rotate(-3deg) translateY(120%);
+    transition: transform .75s var(--ease), opacity .55s var(--ease);
+  }
+  .script-hello.in{
+    transform: rotate(-3deg) translateY(0);
   }
   .script-hello.fade-out{ opacity: 0; }
-  .script-hello .char{
-    display:inline-block;
-    transform: translateY(120%);
-    transition: transform .75s var(--ease);
-  }
-  .script-hello .char.in{
-    transform: translateY(0);
-  }
 
   .hero-heading .line{
     display:block;
@@ -446,8 +441,7 @@
       transition:none !important;
       color: var(--fg) !important;
     }
-    .script-hello{ transition:none !important; opacity:1 !important; animation:none !important; }
-    .script-hello .char{ opacity:1 !important; transform:none !important; transition:none !important; }
+    .script-hello{ transition:none !important; opacity:1 !important; animation:none !important; transform: rotate(-3deg) !important; }
     .role-text{ transition:none !important; opacity:1 !important; }
     .role-char{ transform:none !important; transition:none !important; }
     .dot{ animation:none; }
@@ -630,23 +624,15 @@
   function drawWord(word){
     scriptWrap.innerHTML = '<span class="script-hello-mask"><span class="script-hello" aria-hidden="true"></span></span>';
     var el = scriptWrap.querySelector('.script-hello');
-    word.split('').forEach(function(ch){
-      var span = document.createElement('span');
-      span.className = 'char';
-      span.textContent = ch;
-      el.appendChild(span);
-    });
-    var chars = el.querySelectorAll('.char');
+    el.textContent = word;
 
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
-        chars.forEach(function(c, idx){
-          setTimeout(function(){ c.classList.add('in'); }, idx * CHAR_STEP);
-        });
+        el.classList.add('in');
       });
     });
 
-    return { el: el, time: (chars.length - 1) * CHAR_STEP + CHAR_TRANSITION_MS };
+    return { el: el, time: CHAR_TRANSITION_MS };
   }
 
   /* ---------- Role: the cycling word on its own hero line (same masked-rise technique) ---------- */
