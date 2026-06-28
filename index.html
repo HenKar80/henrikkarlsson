@@ -466,8 +466,8 @@
   <section id="hero" aria-label="Introduction">
     <p class="script-hello-wrap" id="scriptHelloWrap" aria-hidden="true"></p>
     <h1 class="hero-heading">
-      <span class="line lead">I'm Henrik Karlsson</span>
-      <span class="line">— A <span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
+      <span class="line lead">I'm Henrik Karlsson — A</span>
+      <span class="line"><span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
     </h1>
     <div class="hero-meta">
       <p>Creative Designer — Sarasota, FL</p>
@@ -605,22 +605,7 @@
     return { el: el, time: (chars.length - 1) * CHAR_STEP + CHAR_TRANSITION_MS };
   }
 
-  function runHelloCycle(i){
-    i = i || 0;
-    var result = drawWord(scriptWords[i]);
-    setTimeout(function(){
-      result.el.classList.add('fade-out');
-      setTimeout(function(){ runHelloCycle((i + 1) % scriptWords.length); }, 650);
-    }, result.time + 1350);
-  }
-
-  if (reduceMotion){
-    scriptWrap.innerHTML = '<span class="script-hello" aria-hidden="true">Hello</span>';
-  } else {
-    setTimeout(function(){ runHelloCycle(0); }, 1100);
-  }
-
-  /* ---------- Role cycling in the hero line (same masked-rise technique) ---------- */
+  /* ---------- Role: the cycling word on its own hero line (same masked-rise technique) ---------- */
   var roleWrap = document.getElementById('roleWrap');
   var roleWords = ['Motion Designer', 'Photographer', 'Web Designer'];
 
@@ -646,19 +631,24 @@
     return { el: el, time: (chars.length - 1) * CHAR_STEP + CHAR_TRANSITION_MS };
   }
 
-  function runRoleCycle(i){
+  /* ---------- Driver: hello + role rise together, on the same shared beat ---------- */
+  function runCombinedCycle(i){
     i = i || 0;
-    var result = drawRole(roleWords[i]);
+    var helloResult = drawWord(scriptWords[i % scriptWords.length]);
+    var roleResult = drawRole(roleWords[i % roleWords.length]);
+    var maxTime = Math.max(helloResult.time, roleResult.time);
     setTimeout(function(){
-      result.el.classList.add('fade-out');
-      setTimeout(function(){ runRoleCycle((i + 1) % roleWords.length); }, 650);
-    }, result.time + 1350);
+      helloResult.el.classList.add('fade-out');
+      roleResult.el.classList.add('fade-out');
+      setTimeout(function(){ runCombinedCycle(i + 1); }, 650);
+    }, maxTime + 1350);
   }
 
   if (reduceMotion){
+    scriptWrap.innerHTML = '<span class="script-hello" aria-hidden="true">Hello</span>';
     roleWrap.textContent = roleWords[0];
   } else {
-    setTimeout(function(){ runRoleCycle(0); }, 1300);
+    setTimeout(function(){ runCombinedCycle(0); }, 1100);
   }
 
   /* ---------- Generic scroll reveal ---------- */
