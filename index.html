@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 
   /* ============================= */
@@ -20,6 +20,7 @@
     --gray:#999999;
     --gray-soft: rgba(255,255,255,0.45);
     --gray-dim: rgba(255,255,255,0.22);
+    --hello-color: #ff4f8b;
     --ease: cubic-bezier(.16,.84,.44,1);
     --maxw: 1680px;
     --pad: clamp(24px, 6vw, 64px);
@@ -39,7 +40,7 @@
     margin:0;
     background: var(--bg);
     color: var(--fg);
-    font-family: 'Inter', -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Google Sans', -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
@@ -167,7 +168,7 @@
     font-size: clamp(2.75rem, 5.5vw, 6rem);
     font-weight: 600;
     line-height: 1;
-    color: #ff4f8b;
+    color: var(--hello-color);
     transform: rotate(-3deg);
     transform-origin: left bottom;
     opacity: 1;
@@ -466,11 +467,11 @@
   <section id="hero" aria-label="Introduction">
     <p class="script-hello-wrap" id="scriptHelloWrap" aria-hidden="true"></p>
     <h1 class="hero-heading">
-      <span class="line lead">I'm Henrik Karlsson — A</span>
+      <span class="line lead">I'm Henrik Karlsson —</span>
       <span class="line"><span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
     </h1>
     <div class="hero-meta">
-      <p>Creative Designer — Sarasota, FL</p>
+      <p>Based in Sarasota, Florida.</p>
       <p><span class="dot" aria-hidden="true"></span>Available Worldwide.</p>
     </div>
   </section>
@@ -556,6 +557,23 @@
 
 <script>
 (function(){
+
+  /* A fresh, random color each visit for the handwritten "Hello" -- pure
+     decorative variety, doesn't touch the rest of the black/white palette. */
+  var PARADISE_COLORS = [
+    '#FF4FA3', /* hot pink */
+    '#FF7A3D', /* orange */
+    '#A8E000', /* lime green */
+    '#2DD9C5', /* turquoise */
+    '#FF6F5E', /* coral */
+    '#FFD23F', /* sunshine yellow */
+    '#B36BFF', /* violet */
+    '#38BDF8'  /* ocean blue */
+  ];
+  document.documentElement.style.setProperty(
+    '--hello-color',
+    PARADISE_COLORS[Math.floor(Math.random() * PARADISE_COLORS.length)]
+  );
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
