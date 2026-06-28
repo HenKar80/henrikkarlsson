@@ -29,7 +29,7 @@
     --fs-head: clamp(2.5rem, 6.5vw, 6rem);
     --fs-body: clamp(1.125rem, 1vw, 1.375rem);
     --fs-nav: 16px;
-    --fs-hello: clamp(2.75rem, 5.5vw, 6rem);
+    --fs-hello: clamp(3.25rem, 6.2vw, 7rem);
   }
 
   /* ============================= */
@@ -156,15 +156,6 @@
     min-height: clamp(2.75rem, 5.5vw, 6rem);
   }
 
-  .script-hello-mask{
-    display: inline-block;
-    overflow: hidden;
-    white-space: nowrap;
-    font-size: var(--fs-hello);
-    padding: 0.65em 0.45em;
-    margin: -0.65em -0.45em;
-    vertical-align: top;
-  }
   @keyframes paradisePulse{
     0%    { color: #FF4FA3; }
     12.5% { color: #FF7A3D; }
@@ -186,15 +177,10 @@
     color: var(--hello-color);
     animation: paradisePulse 16s linear infinite;
     animation-delay: var(--hello-pulse-delay, 0s);
+    transform: rotate(-3deg);
     transform-origin: left bottom;
-    opacity: 1;
-    transform: rotate(-3deg) translateY(120%);
-    transition: transform .75s var(--ease), opacity .55s var(--ease);
   }
-  .script-hello.in{
-    transform: rotate(-3deg) translateY(0);
-  }
-  .script-hello.fade-out{ opacity: 0; }
+  .script-hello .hello-text{ display:inline-block; }
 
   .hero-heading .line{
     display:block;
@@ -259,11 +245,23 @@
     background:#ffffff;
     margin-right: 12px;
     vertical-align: middle;
-    animation: pulse 2.4s ease-in-out infinite;
+    animation: pulse 2.4s ease-in-out infinite, paradisePulseBg 16s linear infinite;
+    animation-delay: 0s, var(--hello-pulse-delay, 0s);
   }
   @keyframes pulse{
     0%,100%{ opacity:1; transform: scale(1); }
     50%{ opacity:.4; transform: scale(1.5); }
+  }
+  @keyframes paradisePulseBg{
+    0%    { background-color: #FF4FA3; }
+    12.5% { background-color: #FF7A3D; }
+    25%   { background-color: #A8E000; }
+    37.5% { background-color: #2DD9C5; }
+    50%   { background-color: #FF6F5E; }
+    62.5% { background-color: #FFD23F; }
+    75%   { background-color: #B36BFF; }
+    87.5% { background-color: #38BDF8; }
+    100%  { background-color: #FF4FA3; }
   }
 
   /* ============================= */
@@ -441,7 +439,7 @@
       transition:none !important;
       color: var(--fg) !important;
     }
-    .script-hello{ transition:none !important; opacity:1 !important; animation:none !important; transform: rotate(-3deg) !important; }
+    .script-hello{ animation:none !important; transform: rotate(-3deg) !important; }
     .role-text{ transition:none !important; opacity:1 !important; }
     .role-char{ transform:none !important; transition:none !important; }
     .dot{ animation:none; }
@@ -455,7 +453,7 @@
     .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
     .preview{ display:none !important; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
-    :root{ --fs-hello: clamp(2rem, 9vw, 3rem); }
+    :root{ --fs-hello: clamp(2.3rem, 10vw, 3.5rem); }
   }
 
 </style>
@@ -609,35 +607,64 @@
     heroMeta.classList.add('reveal', 'visible');
   }, 120 + heroLines.length * 90 + 120);
 
-  /* ---------- Handwritten "Hello" cycling above the name ---------- */
-  /* Each letter rises up out of a masked (overflow-hidden) line, as if
-     emerging from the black, using the same easing as every other reveal
-     on the page. A double rAF before the stagger starts ensures the browser
-     has actually painted the hidden state first -- otherwise the very first
-     letter (zero delay) can jump straight to its end state with no visible
-     motion, since the "before" and "after" styles would land in the same frame. */
+  /* ---------- Handwritten "Hello" -- typewriter effect ---------- */
+  /* Types each word out character by character, holds, deletes it back
+     out, then types the next one. No masking or transforms involved at
+     all -- there's nothing to clip, ever. */
   var scriptWrap = document.getElementById('scriptHelloWrap');
   var scriptWords = ['Hej', 'Olá', '你好', 'Hola', 'Hello'];
-  var CHAR_STEP = 90;
-  var CHAR_TRANSITION_MS = 750;
+  var TYPE_SPEED_MS = 85;
+  var DELETE_SPEED_MS = 45;
+  var HOLD_MS = 2000;
+  var GAP_MS = 700;
 
-  function drawWord(word){
-    scriptWrap.innerHTML = '<span class="script-hello-mask"><span class="script-hello" aria-hidden="true"></span></span>';
-    var el = scriptWrap.querySelector('.script-hello');
-    el.textContent = word;
+  function runHelloTypewriter(){
+    scriptWrap.innerHTML =
+      '<span class="script-hello" aria-hidden="true">' +
+        '<span class="hello-text"></span>' +
+      '</span>';
+    var textEl = scriptWrap.querySelector('.hello-text');
+    var wordIndex = 0;
 
-    requestAnimationFrame(function(){
-      requestAnimationFrame(function(){
-        el.classList.add('in');
-      });
-    });
+    function typeWord(){
+      var word = scriptWords[wordIndex % scriptWords.length];
+      var i = 0;
+      function typeStep(){
+        textEl.textContent = word.slice(0, i);
+        if (i < word.length){
+          i++;
+          setTimeout(typeStep, TYPE_SPEED_MS);
+        } else {
+          setTimeout(deleteWord, HOLD_MS);
+        }
+      }
+      typeStep();
+    }
 
-    return { el: el, time: CHAR_TRANSITION_MS };
+    function deleteWord(){
+      var word = scriptWords[wordIndex % scriptWords.length];
+      var j = word.length;
+      function deleteStep(){
+        textEl.textContent = word.slice(0, j);
+        if (j > 0){
+          j--;
+          setTimeout(deleteStep, DELETE_SPEED_MS);
+        } else {
+          wordIndex++;
+          setTimeout(typeWord, GAP_MS);
+        }
+      }
+      deleteStep();
+    }
+
+    typeWord();
   }
 
-  /* ---------- Role: the cycling word on its own hero line (same masked-rise technique) ---------- */
+  /* ---------- Role: the cycling word on its own hero line (masked-rise technique) ---------- */
   var roleWrap = document.getElementById('roleWrap');
   var roleWords = ['Motion Designer', 'Photographer', 'Web Designer'];
+  var CHAR_STEP = 90;
+  var CHAR_TRANSITION_MS = 750;
 
   function drawRole(text){
     roleWrap.innerHTML = '<span class="role-mask"><span class="role-text"></span></span>';
@@ -661,24 +688,21 @@
     return { el: el, time: (chars.length - 1) * CHAR_STEP + CHAR_TRANSITION_MS };
   }
 
-  /* ---------- Driver: hello + role rise together, on the same shared beat ---------- */
-  function runCombinedCycle(i){
+  function runRoleCycle(i){
     i = i || 0;
-    var helloResult = drawWord(scriptWords[i % scriptWords.length]);
-    var roleResult = drawRole(roleWords[i % roleWords.length]);
-    var maxTime = Math.max(helloResult.time, roleResult.time);
+    var result = drawRole(roleWords[i % roleWords.length]);
     setTimeout(function(){
-      helloResult.el.classList.add('fade-out');
-      roleResult.el.classList.add('fade-out');
-      setTimeout(function(){ runCombinedCycle(i + 1); }, 650);
-    }, maxTime + 1350);
+      result.el.classList.add('fade-out');
+      setTimeout(function(){ runRoleCycle(i + 1); }, 650);
+    }, result.time + 1350);
   }
 
   if (reduceMotion){
     scriptWrap.innerHTML = '<span class="script-hello" aria-hidden="true">Hello</span>';
     roleWrap.textContent = roleWords[0];
   } else {
-    setTimeout(function(){ runCombinedCycle(0); }, 1100);
+    setTimeout(function(){ runHelloTypewriter(); }, 1100);
+    setTimeout(function(){ runRoleCycle(0); }, 1100);
   }
 
   /* ---------- Generic scroll reveal ---------- */
