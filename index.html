@@ -213,11 +213,13 @@
   .role-mask{
     display:inline-block;
     overflow:hidden;
+    white-space: nowrap;
     padding: 0.12em 0.05em;
     margin: -0.12em -0.05em;
   }
   .role-text{
     display:inline-block;
+    white-space: nowrap;
     opacity:1;
     transition: opacity .55s var(--ease);
   }
@@ -442,6 +444,7 @@
   @media (max-width: 640px){
     .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
     .preview{ display:none !important; }
+    .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
   }
 
 </style>
