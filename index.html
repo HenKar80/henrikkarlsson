@@ -591,8 +591,10 @@
   /* RESPONSIVE                    */
   /* ============================= */
   @media (max-width: 640px){
-    .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
-    .work-row-top{ white-space: nowrap; }
+    .work-row a{
+      font-size: clamp(2.2rem, 9.6vw, 3.2rem);
+      max-width: calc(100% - clamp(96px, 30vw, 150px) - 16px);
+    }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
     :root{
       --fs-hello: clamp(2.3rem, 10vw, 3.5rem);
@@ -607,8 +609,9 @@
     /* Scroll-driven photo, pinned to the right edge of the screen.
        JS swaps it as each project crosses the vertical center while
        scrolling -- see "Mobile: scroll-driven active project" below.
-       The title above is kept on one line and allowed to run over this
-       photo, so a soft dark tint keeps the white text readable on top. */
+       Titles are width-constrained to this photo's left edge (above),
+       so a long name wraps to two lines instead of overlapping it; the
+       tint stays as a safety net for the rare line that still grazes it. */
     .preview{
       top: 50%;
       left: auto;
@@ -1097,7 +1100,7 @@
      helpers above, so the dimmed-siblings treatment matches the desktop
      hover state exactly. The photo is pinned to the right edge (see CSS)
      and crossfades to the new project's image as the active row changes. */
-  if (isMobileStage && !reduceMotion && 'IntersectionObserver' in window){
+  if (isMobileStage && !reduceMotion){
     var mPreview = document.getElementById('preview');
     var mPreviewImg = document.getElementById('previewImg');
     mPreview.classList.add('enabled');
@@ -1139,44 +1142,45 @@
       currentMobileSrc = '';
     }
 
-    /* a 20%-tall band across the vertical center of the screen --
-       not "anywhere visible", just roughly dead center */
-    var centerIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (entry.isIntersecting) showMobilePreview(entry.target);
-      });
-    }, { threshold: 0, rootMargin: '-40% 0px -40% 0px' });
-    workLinks.forEach(function(link){ centerIO.observe(link); });
-
-    /* hide the photo once the section has scrolled fully out of view */
-    var workSection = document.getElementById('work');
-    var sectionIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (!entry.isIntersecting) hideMobilePreview();
-      });
-    }, { threshold: 0 });
-    sectionIO.observe(workSection);
-
-    /* ---------- Headline grows as it nears the center of the screen ---------- */
+    /* ---------- One continuous scroll-synced pass: nearest-to-center row
+       wins (drives the photo + active state), and every headline scales
+       toward the center as it passes through. Recomputed fresh on every
+       scroll frame -- nothing here can get "stuck", since there's no
+       separate async observer state that can fall out of sync. ---------- */
     var workHeads = document.querySelectorAll('.work-row-top');
-    var headTicking = false;
-    function updateHeadScale(){
+    var workTicking = false;
+
+    function updateWorkScroll(){
       var vh = window.innerHeight;
-      workHeads.forEach(function(h){
-        var rect = h.getBoundingClientRect();
+      var nearestLink = null;
+      var nearestDist = Infinity;
+
+      workLinks.forEach(function(link, i){
+        var rect = link.getBoundingClientRect();
         var dist = Math.abs((rect.top + rect.height / 2) - vh / 2);
+        if (dist < nearestDist){ nearestDist = dist; nearestLink = link; }
+
         var progress = Math.max(0, 1 - dist / (vh * 0.5)); /* 0 at edges, 1 dead center */
-        h.style.transform = 'scale(' + (1 + progress * 0.06).toFixed(3) + ')';
+        workHeads[i].style.transform = 'scale(' + (1 + progress * 0.06).toFixed(3) + ')';
       });
-      headTicking = false;
+
+      /* only "in play" while some row is within roughly half a screen
+         of dead center -- once you're up in the hero or down in About,
+         every row is much farther than that, so it hides. */
+      if (nearestLink && nearestDist < vh * 0.5){
+        showMobilePreview(nearestLink);
+      } else {
+        hideMobilePreview();
+      }
+      workTicking = false;
     }
     window.addEventListener('scroll', function(){
-      if (!headTicking){
-        headTicking = true;
-        requestAnimationFrame(updateHeadScale);
+      if (!workTicking){
+        workTicking = true;
+        requestAnimationFrame(updateWorkScroll);
       }
     }, { passive: true });
-    updateHeadScale();
+    updateWorkScroll();
   }
 
   /* ---------- Subtle scroll parallax ---------- */
