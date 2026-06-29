@@ -311,6 +311,12 @@
   }
   .work-row a.active{ color: var(--fg); }
 
+  @keyframes arrowBounce{
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(5px); }
+    50%      { transform: translateX(0); }
+    75%      { transform: translateX(-5px); }
+  }
   .work-row .arrow{
     font-size: clamp(1.25rem, 2vw, 2rem);
     opacity: 0;
@@ -320,7 +326,7 @@
   }
   .work-row a.active .arrow{
     opacity: 1;
-    transform: translateX(0);
+    animation: arrowBounce 1.2s ease-in-out infinite;
   }
 
   .preview{
@@ -536,37 +542,37 @@
     <span class="eyebrow reveal">Selected Work</span>
     <ul class="work-list" id="workList">
       <li class="work-row">
-        <a href="#" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
+        <a href="#" target="_blank" rel="noopener noreferrer" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
           <span class="work-row-top">Premier Studio <span class="arrow" aria-hidden="true">→</span></span>
-          <span class="work-tag">Web Design</span>
+          <span class="work-tag">Web Design and Development</span>
         </a>
       </li>
       <li class="work-row">
-        <a href="#" data-img="https://picsum.photos/seed/hkapple/700/900?grayscale" data-name="Apple">
-          <span class="work-row-top">Apple <span class="arrow" aria-hidden="true">→</span></span>
-          <span class="work-tag">Digital Experience</span>
+        <a href="https://rhdesignergraphics.com/" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkapple/700/900?grayscale" data-name="Apple">
+          <span class="work-row-top">RH Designer Graphics <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Web Design and Development</span>
         </a>
       </li>
       <li class="work-row">
-        <a href="#" data-img="https://picsum.photos/seed/hkmercedes/700/900?grayscale" data-name="Mercedes">
+        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkmercedes/700/900?grayscale" data-name="Mercedes">
           <span class="work-row-top">Mercedes <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Motion Design</span>
         </a>
       </li>
       <li class="work-row">
-        <a href="#" data-img="https://picsum.photos/seed/hkairbnb/700/900?grayscale" data-name="Airbnb">
+        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkairbnb/700/900?grayscale" data-name="Airbnb">
           <span class="work-row-top">Airbnb <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Web Design</span>
         </a>
       </li>
       <li class="work-row">
-        <a href="#" data-img="https://picsum.photos/seed/hkhej/700/900?grayscale" data-name="Hej Studio">
+        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkhej/700/900?grayscale" data-name="Hej Studio">
           <span class="work-row-top">Hej Studio <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Brand Identity</span>
         </a>
       </li>
       <li class="work-row">
-        <a href="#" data-img="https://picsum.photos/seed/hkporsche/700/900?grayscale" data-name="Porsche">
+        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkporsche/700/900?grayscale" data-name="Porsche">
           <span class="work-row-top">Porsche <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Photography</span>
         </a>
@@ -586,12 +592,9 @@
   <section id="services" aria-label="Services">
     <span class="eyebrow reveal">Services</span>
     <ul class="services-list">
-      <li class="service-row reveal">Creative Direction</li>
       <li class="service-row reveal">Motion Design</li>
       <li class="service-row reveal">Photography</li>
-      <li class="service-row reveal">Brand Identity</li>
-      <li class="service-row reveal">Visual Design</li>
-      <li class="service-row reveal">Digital Experiences</li>
+      <li class="service-row reveal">Web Design</li>
     </ul>
   </section>
 
@@ -601,8 +604,8 @@
     <h2 class="contact-headline reveal">Let's build something <span class="paradise-text">exceptional.</span></h2>
     <div class="contact-links reveal">
       <a href="mailto:hello@henrikkarlsson.com">Email</a>
-      <a href="https://linkedin.com/in/henrikkarlsson" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="https://instagram.com/henrikkarlsson" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://linkedin.com/in/henrik-karlsson/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://instagram.com/henrikkarlsson_" target="_blank" rel="noopener">Instagram</a>
     </div>
   </section>
 
