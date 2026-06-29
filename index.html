@@ -281,16 +281,28 @@
   }
   .work-row a{
     display:flex;
+    flex-direction: column;
     position: relative;
     z-index: 70;
+    padding: clamp(20px, 3vw, 36px) 0;
+    color: var(--fg);
+    transition: color .5s var(--ease), opacity .5s var(--ease);
+  }
+  .work-row-top{
+    display:flex;
     align-items:baseline;
     justify-content:space-between;
     gap: 24px;
-    padding: clamp(20px, 3vw, 36px) 0;
     font-size: var(--fs-head);
     font-weight: 500;
-    color: var(--fg);
-    transition: color .5s var(--ease), opacity .5s var(--ease);
+  }
+  .work-tag{
+    display:block;
+    margin-top: clamp(6px, 1vw, 10px);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--gray);
+    font-weight: 500;
   }
   .work-list.has-active .work-row a:not(.active){
     color: var(--gray-dim);
@@ -327,7 +339,6 @@
   .preview img{
     width:100%; height:100%;
     object-fit:cover;
-    filter: grayscale(100%) contrast(1.05);
   }
   .preview-scrim{
     position:absolute;
@@ -534,33 +545,39 @@
     <span class="eyebrow reveal">Selected Work</span>
     <ul class="work-list" id="workList">
       <li class="work-row">
-        <a href="#" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
-          Premier Studio <span class="arrow" aria-hidden="true">→</span>
+        <a href="#" data-img="images/work/premierstudiofl/premierstudiofl.jpg" data-name="Premier Studio">
+          <span class="work-row-top">Premier Studio <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Web Design</span>
         </a>
       </li>
       <li class="work-row">
         <a href="#" data-img="https://picsum.photos/seed/hkapple/700/900?grayscale" data-name="Apple">
-          Apple <span class="arrow" aria-hidden="true">→</span>
+          <span class="work-row-top">Apple <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Digital Experience</span>
         </a>
       </li>
       <li class="work-row">
         <a href="#" data-img="https://picsum.photos/seed/hkmercedes/700/900?grayscale" data-name="Mercedes">
-          Mercedes <span class="arrow" aria-hidden="true">→</span>
+          <span class="work-row-top">Mercedes <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Motion Design</span>
         </a>
       </li>
       <li class="work-row">
         <a href="#" data-img="https://picsum.photos/seed/hkairbnb/700/900?grayscale" data-name="Airbnb">
-          Airbnb <span class="arrow" aria-hidden="true">→</span>
+          <span class="work-row-top">Airbnb <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Web Design</span>
         </a>
       </li>
       <li class="work-row">
         <a href="#" data-img="https://picsum.photos/seed/hkhej/700/900?grayscale" data-name="Hej Studio">
-          Hej Studio <span class="arrow" aria-hidden="true">→</span>
+          <span class="work-row-top">Hej Studio <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Brand Identity</span>
         </a>
       </li>
       <li class="work-row">
         <a href="#" data-img="https://picsum.photos/seed/hkporsche/700/900?grayscale" data-name="Porsche">
-          Porsche <span class="arrow" aria-hidden="true">→</span>
+          <span class="work-row-top">Porsche <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Photography</span>
         </a>
       </li>
     </ul>
