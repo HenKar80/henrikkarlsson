@@ -338,12 +338,16 @@
     opacity:0;
     z-index: 60;
     overflow:hidden;
-    transition: opacity .5s var(--ease);
+    border-radius: 6px;
+    transition: opacity .5s var(--ease), width .4s var(--ease);
     will-change: transform;
     display:none;
   }
   .preview.enabled{ display:block; }
   .preview.visible{ opacity:1; }
+  .preview.small{
+    width: clamp(170px, 15vw, 240px);
+  }
   .preview img{
     width:100%; height:100%;
     object-fit:cover;
@@ -382,7 +386,7 @@
   .about-copy .word.hoverphoto{ cursor: pointer; }
   .about-copy .word.visible{ color: var(--fg); }
   .about-body{
-    max-width: 720px;
+    max-width: clamp(720px, 56vw, 980px);
     margin-top: clamp(28px, 4vw, 40px);
     font-size: var(--fs-body);
     line-height: 1.7;
@@ -433,20 +437,23 @@
     animation: paradisePulse 16s linear infinite;
     animation-delay: var(--hello-pulse-delay, 0s);
   }
-  .contact-links{
+  .contact-links,
+  .about-links{
     margin-top: clamp(56px, 8vw, 100px);
     display:flex;
     flex-wrap: wrap;
     gap: clamp(28px, 5vw, 56px);
   }
-  .contact-links a{
+  .contact-links a,
+  .about-links a{
     position:relative;
     font-size: var(--fs-body);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     padding-bottom: 6px;
   }
-  .contact-links a::after{
+  .contact-links a::after,
+  .about-links a::after{
     content:'';
     position:absolute;
     left:0; bottom:0;
@@ -455,7 +462,9 @@
     transition: background .35s var(--ease);
   }
   .contact-links a:hover::after,
-  .contact-links a:focus-visible::after{
+  .contact-links a:focus-visible::after,
+  .about-links a:hover::after,
+  .about-links a:focus-visible::after{
     background: var(--fg);
   }
 
@@ -587,6 +596,9 @@
     <p class="about-copy" id="aboutCopy">Hi, I'm Henrik Karlsson — A Creative Designer based in Sarasota, Florida. Specializing in Motion Design, Photography, and Web Design.</p>
     <p class="about-body reveal">My passion for design began at a young age and has grown into a professional career spanning over 20 years. Throughout this journey, I've honed a wide range of creative and technical skills. Clean, functional, and minimal design is at the core of who I am and is reflected in everything I produce. I genuinely appreciate and enjoy the art of visual communication.</p>
     <p class="about-body reveal">In my spare time, I enjoy an active, outdoor lifestyle. Soccer has been a major part of my life since childhood, and today I support my two boys in their own soccer journeys. I also have a strong passion for photography, often capturing the moments that inspire me.</p>
+    <div class="about-links reveal">
+      <a href="resume.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
   </section>
 
   <!-- SERVICES -->
@@ -880,6 +892,7 @@
         var src = link.getAttribute('data-img');
         if (src) previewImg.src = src;
         rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2; /* ~ -3.2..3.2deg */
+        preview.classList.remove('small');
         preview.classList.add('visible');
       });
       link.addEventListener('mouseleave', function(){
@@ -892,8 +905,9 @@
       preview.classList.remove('visible');
     });
 
-    /* same floating preview, triggered by hovering "Henrik Karlsson" in the About copy */
-    var ABOUT_PHOTO_SRC = 'images/about/henrik-karlsson.jpg';
+    /* same floating preview, triggered by hovering "Henrik Karlsson" in the About copy --
+       shown smaller than the Work section previews */
+    var ABOUT_PHOTO_SRC = 'images/about/henrikkarlsson.png';
     var aboutHoverEls = document.querySelectorAll('.about-copy .word.hoverphoto');
     if (aboutHoverEls.length){
       var aboutPreloadImg = new Image();
@@ -902,6 +916,7 @@
         el.addEventListener('mouseenter', function(){
           previewImg.src = ABOUT_PHOTO_SRC;
           rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2;
+          preview.classList.add('small');
           preview.classList.add('visible');
         });
         el.addEventListener('mouseleave', function(){
