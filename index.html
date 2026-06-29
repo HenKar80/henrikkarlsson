@@ -594,8 +594,10 @@
     .work-row a{
       font-size: clamp(2.1rem, 9.3vw, 3.1rem);
       max-width: calc(100% - (clamp(96px, 30vw, 150px) / 2) - 16px);
+      padding: clamp(38px, 7vw, 58px) 0;
     }
     .work-row-top{ line-height: 0.9; }
+    .work-tag{ margin-top: clamp(10px, 2.6vw, 16px); }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
     :root{
       --fs-hello: clamp(2.3rem, 10vw, 3.5rem);
@@ -1114,6 +1116,7 @@
 
     var currentMobileSrc = '';
     var mobileSwapTimer = null;
+    var tiltSign = 1;
 
     function showMobilePreview(link){
       var src = link.getAttribute('data-img');
@@ -1128,7 +1131,8 @@
       clearTimeout(mobileSwapTimer);
       mobileSwapTimer = setTimeout(function(){
         mPreviewImg.src = src; /* swap once fully invisible, then fade in */
-        var tilt = (Math.random() * 8 - 4); /* ~ -4..4deg */
+        tiltSign *= -1; /* alternate left/right each swap */
+        var tilt = tiltSign * (Math.random() * 3 + 1); /* ~1..4deg, alternating side */
         var shiftX = (Math.random() * 16 - 8); /* ~ -8..8px */
         var shiftY = (Math.random() * 20 - 10); /* ~ -10..10px */
         mPreview.style.transform =
