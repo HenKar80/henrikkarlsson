@@ -1053,6 +1053,35 @@
     }
   }
 
+  /* ---------- Subtle scroll parallax ---------- */
+  /* Each major section drifts a few pixels as it passes through the
+     viewport -- separate from the one-time fade-up reveals (which live on
+     child elements), so there's no transform conflict between the two. */
+  if (!reduceMotion){
+    var parallaxSections = document.querySelectorAll('#about, #services, #contact');
+    if (parallaxSections.length){
+      var parallaxTicking = false;
+      function updateParallax(){
+        var vh = window.innerHeight;
+        parallaxSections.forEach(function(sec){
+          var rect = sec.getBoundingClientRect();
+          var center = rect.top + rect.height / 2;
+          var progress = (center - vh / 2) / vh; /* ~ -1..1 as it passes through */
+          var clamped = Math.max(-1, Math.min(1, progress));
+          sec.style.transform = 'translateY(' + (clamped * -16).toFixed(2) + 'px)';
+        });
+        parallaxTicking = false;
+      }
+      window.addEventListener('scroll', function(){
+        if (!parallaxTicking){
+          parallaxTicking = true;
+          requestAnimationFrame(updateParallax);
+        }
+      }, { passive: true });
+      updateParallax();
+    }
+  }
+
 })();
 </script>
 
