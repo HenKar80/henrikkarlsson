@@ -575,7 +575,16 @@
     .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
     .preview{ display:none !important; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
-    :root{ --fs-hello: clamp(2.3rem, 10vw, 3.5rem); }
+    :root{
+      --fs-hello: clamp(2.3rem, 10vw, 3.5rem);
+      --fs-hero: clamp(3.5rem, 12vw, 5rem);
+    }
+    .hero-main{
+      flex: 1;
+      display:flex;
+      flex-direction: column;
+      justify-content: center;
+    }
   }
 
 </style>
