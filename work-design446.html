@@ -499,7 +499,7 @@
           </span>
         </div>
         <div class="reel-tile reveal" data-yid="BJQZNzKGacw">
-          <img class="reel-poster" src="https://img.youtube.com/BJQZNzKGacw/hqdefault.jpg" alt="" loading="lazy">
+          <img class="reel-poster" src="https://img.youtube.com/vi/BJQZNzKGacw/hqdefault.jpg" alt="" loading="lazy">
           <iframe class="reel-frame" title="Design 446 — reel 2" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="reel-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -652,9 +652,14 @@
     var id = tile.getAttribute('data-yid');
     var frame = tile.querySelector('.reel-frame');
     if (!frame.getAttribute('src')){ frame.src = ytEmbedSrc(id); }
-    tile.classList.add('playing');
+    clearTimeout(tile._reelRevealTimer);
+    tile._reelRevealTimer = setTimeout(function(){
+      tile.classList.add('playing');
+    }, 700); /* head start so the player is past its own black loading
+                frame by the time we actually reveal it */
   }
   function stopReel(tile){
+    clearTimeout(tile._reelRevealTimer);
     var frame = tile.querySelector('.reel-frame');
     frame.removeAttribute('src');
     tile.classList.remove('playing');
