@@ -670,20 +670,47 @@
         tile.classList.add('playing');
       });
     });
-  } else if (hasHover){
+  } else {
+    /* a real click/tap always works, on every device, regardless of
+       whether hover or scroll-into-view also fires */
     reelTiles.forEach(function(tile){
-      tile.addEventListener('mouseenter', function(){ playReel(tile); });
-      tile.addEventListener('mouseleave', function(){ stopReel(tile); });
-    });
-  } else if ('IntersectionObserver' in window){
-    var reelIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (entry.isIntersecting){ playReel(entry.target); }
-        else { stopReel(entry.target); }
+      tile.addEventListener('click', function(){
+        if (tile.classList.contains('playing')){ stopReel(tile); }
+        else { playReel(tile); }
       });
-    }, { threshold: 0.5 });
-    reelTiles.forEach(function(tile){ reelIO.observe(tile); });
+    });
+
+    if (hasHover){
+      reelTiles.forEach(function(tile){
+        tile.addEventListener('mouseenter', function(){ playReel(tile); });
+        tile.addEventListener('mouseleave', function(){ stopReel(tile); });
+      });
+    } else if ('IntersectionObserver' in window){
+      var reelIO = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){ playReel(entry.target); }
+          else { stopReel(entry.target); }
+        });
+      }, { threshold: 0.5 });
+      reelTiles.forEach(function(tile){ reelIO.observe(tile); });
+    }
   }
+
+  /* ---------- Upgrade poster thumbnails to high-res when available ----------
+     YouTube's hqdefault.jpg is only 480x360 -- stretched across a large tile
+     it looks soft. The sharper maxresdefault.jpg (1280x720) doesn't exist for
+     every video though, and YouTube silently serves a tiny 120x90 placeholder
+     instead of an error when it's missing -- so we test real dimensions
+     before trusting it, and just keep the smaller one if it's not there. */
+  reelTiles.forEach(function(tile){
+    var id = tile.getAttribute('data-yid');
+    var poster = tile.querySelector('.reel-poster');
+    var hiRes = new Image();
+    hiRes.onload = function(){
+      if (hiRes.naturalWidth > 120){ poster.src = hiRes.src; }
+    };
+    hiRes.src = 'https://img.youtube.com/vi/' + id + '/maxresdefault.jpg';
+  });
 
 })();
 </script>
