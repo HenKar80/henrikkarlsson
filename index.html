@@ -593,8 +593,9 @@
   @media (max-width: 640px){
     .work-row a{
       font-size: clamp(2.2rem, 9.6vw, 3.2rem);
-      max-width: calc(100% - clamp(96px, 30vw, 150px) - 16px);
+      max-width: calc(100% - (clamp(96px, 30vw, 150px) / 2) - 16px);
     }
+    .work-row-top{ line-height: 0.92; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
     :root{
       --fs-hello: clamp(2.3rem, 10vw, 3.5rem);
@@ -609,9 +610,10 @@
     /* Scroll-driven photo, pinned to the right edge of the screen.
        JS swaps it as each project crosses the vertical center while
        scrolling -- see "Mobile: scroll-driven active project" below.
-       Titles are width-constrained to this photo's left edge (above),
-       so a long name wraps to two lines instead of overlapping it; the
-       tint stays as a safety net for the rare line that still grazes it. */
+       Titles are width-constrained to roughly this photo's midpoint
+       (above), so a long name wraps to two lines once it reaches there
+       instead of overlapping it further; the tint keeps things readable
+       on the half it does cross. */
     .preview{
       top: 50%;
       left: auto;
@@ -1164,10 +1166,10 @@
         workHeads[i].style.transform = 'scale(' + (1 + progress * 0.06).toFixed(3) + ')';
       });
 
-      /* only "in play" while some row is within roughly half a screen
-         of dead center -- once you're up in the hero or down in About,
-         every row is much farther than that, so it hides. */
-      if (nearestLink && nearestDist < vh * 0.5){
+      /* tighter than the scale falloff above -- only show/hide the photo
+         once a row is genuinely near center, not as soon as it merely
+         touches the bottom or top edge of the screen */
+      if (nearestLink && nearestDist < vh * 0.3){
         showMobilePreview(nearestLink);
       } else {
         hideMobilePreview();
