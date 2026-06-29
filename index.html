@@ -379,6 +379,7 @@
   .about-copy .word.paradise.visible{
     opacity: 1;
   }
+  .about-copy .word.hoverphoto{ cursor: pointer; }
   .about-copy .word.visible{ color: var(--fg); }
   .about-body{
     max-width: 720px;
@@ -542,13 +543,13 @@
     <span class="eyebrow reveal">Selected Work</span>
     <ul class="work-list" id="workList">
       <li class="work-row">
-        <a href="#" target="_blank" rel="noopener noreferrer" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
+        <a href="https://premierstudiofl.com/" target="_blank" rel="noopener noreferrer" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
           <span class="work-row-top">Premier Studio <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Web Design and Development</span>
         </a>
       </li>
       <li class="work-row">
-        <a href="https://rhdesignergraphics.com/" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkapple/700/900?grayscale" data-name="Apple">
+        <a href="https://rhdesignergraphics.com" target="_blank" rel="noopener noreferrer" data-img="images/work/rhdesignergraphics/rhdesignergraphics-1.jpg" data-name="Apple">
           <span class="work-row-top">RH Designer Graphics <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Web Design and Development</span>
         </a>
@@ -787,17 +788,21 @@
     function stripPunct(w){ return w.replace(/^[.,;:!?—-]+/, '').replace(/[.,;:!?—-]+$/, ''); }
 
     var paradise = words.map(function(){ return false; });
-    var PARADISE_PAIRS = ['Motion Design', 'Web Design'];
+    var hoverPhoto = words.map(function(){ return false; });
+    var PARADISE_PAIRS = ['Motion Design', 'Web Design', 'Henrik Karlsson'];
+    var HOVERPHOTO_PAIRS = ['Henrik Karlsson'];
     for (var wi = 0; wi < words.length; wi++){
       if (stripPunct(words[wi]) === 'Photography'){ paradise[wi] = true; }
       if (wi + 1 < words.length){
         var pair = stripPunct(words[wi]) + ' ' + stripPunct(words[wi + 1]);
         if (PARADISE_PAIRS.indexOf(pair) !== -1){ paradise[wi] = true; paradise[wi + 1] = true; }
+        if (HOVERPHOTO_PAIRS.indexOf(pair) !== -1){ hoverPhoto[wi] = true; hoverPhoto[wi + 1] = true; }
       }
     }
 
     aboutCopy.innerHTML = words.map(function(w, i){
-      return '<span class="word' + (paradise[i] ? ' paradise' : '') + '">' + w + '</span>';
+      var cls = 'word' + (paradise[i] ? ' paradise' : '') + (hoverPhoto[i] ? ' hoverphoto' : '');
+      return '<span class="' + cls + '">' + w + '</span>';
     }).join(' ');
 
     var wordEls = aboutCopy.querySelectorAll('.word');
@@ -886,6 +891,24 @@
     workList.addEventListener('mouseleave', function(){
       preview.classList.remove('visible');
     });
+
+    /* same floating preview, triggered by hovering "Henrik Karlsson" in the About copy */
+    var ABOUT_PHOTO_SRC = 'images/about/henrik-karlsson.jpg';
+    var aboutHoverEls = document.querySelectorAll('.about-copy .word.hoverphoto');
+    if (aboutHoverEls.length){
+      var aboutPreloadImg = new Image();
+      aboutPreloadImg.src = ABOUT_PHOTO_SRC;
+      aboutHoverEls.forEach(function(el){
+        el.addEventListener('mouseenter', function(){
+          previewImg.src = ABOUT_PHOTO_SRC;
+          rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2;
+          preview.classList.add('visible');
+        });
+        el.addEventListener('mouseleave', function(){
+          preview.classList.remove('visible');
+        });
+      });
+    }
   }
 
 })();
