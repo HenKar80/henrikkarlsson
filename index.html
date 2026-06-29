@@ -376,6 +376,8 @@
     gap: 24px;
     font-size: var(--fs-head);
     font-weight: 500;
+    transform-origin: left center;
+    will-change: transform;
   }
   .work-tag{
     display:block;
@@ -589,8 +591,7 @@
   /* RESPONSIVE                    */
   /* ============================= */
   @media (max-width: 640px){
-    .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
-    .preview{ display:none !important; }
+    .work-row a{ font-size: clamp(1.7rem, 7.6vw, 2.5rem); max-width: 66%; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
     :root{
       --fs-hello: clamp(2.3rem, 10vw, 3.5rem);
@@ -600,6 +601,17 @@
       min-height: 100vh;
       min-height: 100dvh;
       padding: 110px var(--pad) 40px;
+    }
+
+    /* Scroll-driven photo, pinned to the right edge of the screen.
+       JS swaps it as each project crosses the vertical center while
+       scrolling -- see "Mobile: scroll-driven active project" below. */
+    .preview{
+      top: 50%;
+      left: auto;
+      right: var(--pad);
+      width: clamp(96px, 30vw, 150px);
+      transform: translateY(-50%);
     }
   }
 
@@ -766,7 +778,8 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var enablePreview = hasHover && !reduceMotion;
+  var isMobileStage = window.matchMedia('(max-width: 640px)').matches;
+  var enablePreview = hasHover && !reduceMotion && !isMobileStage;
 
   /* ---------- Hero load reveal (heading stays put, no text-swapping) ---------- */
   var heroLines = document.querySelectorAll('.hero-heading .line');
@@ -1065,6 +1078,92 @@
         });
       });
     }
+  }
+
+  /* ---------- Mobile: scroll-driven active project + photo swap ---------- */
+  /* There's no cursor on a touch screen, so instead of mouseenter/mouseleave
+     deciding which project is "active", whatever project is crossing the
+     dead center of the screen wins -- reusing the same setActive/clearActive
+     helpers above, so the dimmed-siblings treatment matches the desktop
+     hover state exactly. The photo is pinned to the right edge (see CSS)
+     and crossfades to the new project's image as the active row changes. */
+  if (isMobileStage && !reduceMotion && 'IntersectionObserver' in window){
+    var mPreview = document.getElementById('preview');
+    var mPreviewImg = document.getElementById('previewImg');
+    mPreview.classList.add('enabled');
+
+    workLinks.forEach(function(link){
+      var src = link.getAttribute('data-img');
+      if (src){ var im = new Image(); im.src = src; }
+    });
+
+    var currentMobileSrc = '';
+    var mobileSwapTimer = null;
+
+    function showMobilePreview(link){
+      var src = link.getAttribute('data-img');
+      if (!src) return;
+      setActive(link);
+      if (src === currentMobileSrc){
+        mPreview.classList.add('visible');
+        return;
+      }
+      currentMobileSrc = src;
+      mPreview.classList.remove('visible'); /* fade out the old photo */
+      clearTimeout(mobileSwapTimer);
+      mobileSwapTimer = setTimeout(function(){
+        mPreviewImg.src = src; /* swap while invisible, then fade in */
+        var tilt = (Math.random() * 3 - 1.5);
+        mPreview.style.transform = 'translateY(-50%) rotate(' + tilt.toFixed(2) + 'deg)';
+        mPreview.classList.add('visible');
+      }, 260);
+    }
+
+    function hideMobilePreview(){
+      clearTimeout(mobileSwapTimer);
+      mPreview.classList.remove('visible');
+      clearActive();
+      currentMobileSrc = '';
+    }
+
+    /* a thin 10%-tall band across the vertical center of the screen --
+       not "anywhere visible", just dead center */
+    var centerIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting) showMobilePreview(entry.target);
+      });
+    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+    workLinks.forEach(function(link){ centerIO.observe(link); });
+
+    /* hide the photo once the section has scrolled fully out of view */
+    var workSection = document.getElementById('work');
+    var sectionIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) hideMobilePreview();
+      });
+    }, { threshold: 0 });
+    sectionIO.observe(workSection);
+
+    /* ---------- Headline grows as it nears the center of the screen ---------- */
+    var workHeads = document.querySelectorAll('.work-row-top');
+    var headTicking = false;
+    function updateHeadScale(){
+      var vh = window.innerHeight;
+      workHeads.forEach(function(h){
+        var rect = h.getBoundingClientRect();
+        var dist = Math.abs((rect.top + rect.height / 2) - vh / 2);
+        var progress = Math.max(0, 1 - dist / (vh * 0.5)); /* 0 at edges, 1 dead center */
+        h.style.transform = 'scale(' + (1 + progress * 0.06).toFixed(3) + ')';
+      });
+      headTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if (!headTicking){
+        headTicking = true;
+        requestAnimationFrame(updateHeadScale);
+      }
+    }, { passive: true });
+    updateHeadScale();
   }
 
   /* ---------- Subtle scroll parallax ---------- */
