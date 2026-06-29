@@ -1054,21 +1054,32 @@
   }
 
   /* ---------- Subtle scroll parallax ---------- */
-  /* Each major section drifts a few pixels as it passes through the
-     viewport -- separate from the one-time fade-up reveals (which live on
-     child elements), so there's no transform conflict between the two. */
+  /* Major sections drift a few pixels as they pass through the viewport,
+     and each Selected Work project link drifts individually too --
+     applied directly to the link itself (which already carries its own
+     z-index:70) rather than to #work as a whole, since transforming the
+     whole section would create a new stacking context and break the
+     project names rendering above the floating preview photo. Separate
+     from the one-time fade-up reveals (which live on child elements), so
+     there's no transform conflict between the two. */
   if (!reduceMotion){
     var parallaxSections = document.querySelectorAll('#about, #services, #contact');
-    if (parallaxSections.length){
+    var parallaxRows = document.querySelectorAll('.work-row a');
+    if (parallaxSections.length || parallaxRows.length){
       var parallaxTicking = false;
+      function driftFor(rect, vh, amount){
+        var center = rect.top + rect.height / 2;
+        var progress = (center - vh / 2) / vh; /* ~ -1..1 as it passes through */
+        var clamped = Math.max(-1, Math.min(1, progress));
+        return (clamped * -amount).toFixed(2);
+      }
       function updateParallax(){
         var vh = window.innerHeight;
         parallaxSections.forEach(function(sec){
-          var rect = sec.getBoundingClientRect();
-          var center = rect.top + rect.height / 2;
-          var progress = (center - vh / 2) / vh; /* ~ -1..1 as it passes through */
-          var clamped = Math.max(-1, Math.min(1, progress));
-          sec.style.transform = 'translateY(' + (clamped * -16).toFixed(2) + 'px)';
+          sec.style.transform = 'translateY(' + driftFor(sec.getBoundingClientRect(), vh, 16) + 'px)';
+        });
+        parallaxRows.forEach(function(row){
+          row.style.transform = 'translateY(' + driftFor(row.getBoundingClientRect(), vh, 10) + 'px)';
         });
         parallaxTicking = false;
       }
