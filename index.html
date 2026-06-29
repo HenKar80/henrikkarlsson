@@ -138,6 +138,70 @@
     .nav-links li{ display:block; }
   }
 
+  .menu-toggle{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    width: 28px;
+    height: 22px;
+    background:none;
+    border:0;
+    padding:0;
+    cursor:pointer;
+  }
+  .menu-toggle-bar{
+    display:block;
+    width:100%;
+    height:1.5px;
+    background: var(--fg);
+    transition: transform .35s var(--ease), opacity .35s var(--ease);
+  }
+  .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(1){
+    transform: translateY(7.5px) rotate(45deg);
+  }
+  .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(2){
+    opacity:0;
+  }
+  .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(3){
+    transform: translateY(-7.5px) rotate(-45deg);
+  }
+  @media (min-width: 640px){
+    .menu-toggle{ display:none; }
+  }
+
+  .mobile-menu{
+    position:fixed;
+    inset:0;
+    background: var(--bg);
+    z-index:190;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .4s var(--ease);
+  }
+  .mobile-menu.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .mobile-menu-links{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: clamp(24px, 6vw, 40px);
+  }
+  .mobile-menu-links a{
+    font-size: clamp(2rem, 9vw, 3rem);
+    font-weight: 500;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 640px){
+    .mobile-menu{ display:none; }
+  }
+
   /* ============================= */
   /* HERO                          */
   /* ============================= */
@@ -145,7 +209,7 @@
     min-height: 100vh;
     display:flex;
     flex-direction: column;
-    justify-content:center;
+    justify-content:space-between;
     padding: 150px var(--pad) 90px;
   }
   .hero-heading{ max-width: 1500px; }
@@ -530,17 +594,33 @@
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span class="menu-toggle-bar"></span>
+    <span class="menu-toggle-bar"></span>
+    <span class="menu-toggle-bar"></span>
+  </button>
 </header>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <ul class="mobile-menu-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</div>
 
 <main id="main">
 
   <!-- HERO -->
   <section id="hero" aria-label="Introduction">
-    <p class="script-hello-wrap" id="scriptHelloWrap" aria-hidden="true"></p>
-    <h1 class="hero-heading">
-      <span class="line lead">I'm Henrik Karlsson —</span>
-      <span class="line"><span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
-    </h1>
+    <div class="hero-main">
+      <p class="script-hello-wrap" id="scriptHelloWrap" aria-hidden="true"></p>
+      <h1 class="hero-heading">
+        <span class="line lead">I'm Henrik Karlsson —</span>
+        <span class="line"><span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
+      </h1>
+    </div>
     <div class="hero-meta">
       <p>Based in Sarasota, Florida.</p>
       <p><span class="dot" aria-hidden="true"></span>Available Worldwide.</p>
@@ -769,6 +849,36 @@
   } else {
     setTimeout(function(){ runHelloTypewriter(); }, 1100);
     setTimeout(function(){ runRoleCycle(0); }, 1100);
+  }
+
+  /* ---------- Mobile menu toggle ---------- */
+  var menuToggle = document.getElementById('menuToggle');
+  var mobileMenu = document.getElementById('mobileMenu');
+  if (menuToggle && mobileMenu){
+    function closeMobileMenu(){
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open menu');
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    function openMobileMenu(){
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Close menu');
+      mobileMenu.classList.add('open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    menuToggle.addEventListener('click', function(){
+      var isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+      if (isOpen){ closeMobileMenu(); } else { openMobileMenu(); }
+    });
+    mobileMenu.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', closeMobileMenu);
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeMobileMenu();
+    });
   }
 
   /* ---------- Generic scroll reveal ---------- */
