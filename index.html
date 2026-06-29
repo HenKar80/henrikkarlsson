@@ -591,7 +591,8 @@
   /* RESPONSIVE                    */
   /* ============================= */
   @media (max-width: 640px){
-    .work-row a{ font-size: clamp(1.7rem, 7.6vw, 2.5rem); max-width: 66%; }
+    .work-row a{ font-size: clamp(1.7rem, 7.6vw, 2.5rem); }
+    .work-row-top{ white-space: nowrap; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
     :root{
       --fs-hello: clamp(2.3rem, 10vw, 3.5rem);
@@ -605,13 +606,21 @@
 
     /* Scroll-driven photo, pinned to the right edge of the screen.
        JS swaps it as each project crosses the vertical center while
-       scrolling -- see "Mobile: scroll-driven active project" below. */
+       scrolling -- see "Mobile: scroll-driven active project" below.
+       The title above is kept on one line and allowed to run over this
+       photo, so a soft dark tint keeps the white text readable on top. */
     .preview{
       top: 50%;
       left: auto;
       right: var(--pad);
       width: clamp(96px, 30vw, 150px);
       transform: translateY(-50%);
+    }
+    .preview::after{
+      content:'';
+      position:absolute;
+      inset:0;
+      background: rgba(0,0,0,0.38);
     }
   }
 
@@ -1113,8 +1122,11 @@
       clearTimeout(mobileSwapTimer);
       mobileSwapTimer = setTimeout(function(){
         mPreviewImg.src = src; /* swap while invisible, then fade in */
-        var tilt = (Math.random() * 3 - 1.5);
-        mPreview.style.transform = 'translateY(-50%) rotate(' + tilt.toFixed(2) + 'deg)';
+        var tilt = (Math.random() * 8 - 4); /* ~ -4..4deg */
+        var shiftX = (Math.random() * 16 - 8); /* ~ -8..8px */
+        var shiftY = (Math.random() * 20 - 10); /* ~ -10..10px */
+        mPreview.style.transform =
+          'translate(' + shiftX.toFixed(1) + 'px, calc(-50% + ' + shiftY.toFixed(1) + 'px)) rotate(' + tilt.toFixed(2) + 'deg)';
         mPreview.classList.add('visible');
       }, 260);
     }
