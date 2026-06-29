@@ -359,7 +359,15 @@
     z-index: 70;
     padding: clamp(20px, 3vw, 36px) 0;
     color: var(--fg);
-    transition: color .5s var(--ease), opacity .5s var(--ease);
+    transition: color .5s var(--ease), opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .work-row a.reveal{
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .work-row a.reveal.visible{
+    opacity: 1;
+    transform: translateY(0);
   }
   .work-row-top{
     display:flex;
@@ -648,38 +656,38 @@
   <section id="work" aria-label="Selected work">
     <span class="eyebrow reveal">Selected Work</span>
     <ul class="work-list" id="workList">
-      <li class="work-row reveal">
-        <a href="https://premierstudiofl.com/" target="_blank" rel="noopener noreferrer" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
+      <li class="work-row">
+        <a class="reveal" href="https://premierstudiofl.com/" target="_blank" rel="noopener noreferrer" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
           <span class="work-row-top">Premier Studio <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Web Design and Development</span>
         </a>
       </li>
-      <li class="work-row reveal">
-        <a href="https://rhdesignergraphics.com" target="_blank" rel="noopener noreferrer" data-img="images/work/rhdesignergraphics/rhdesignergraphics-1.jpg" data-name="Apple">
+      <li class="work-row">
+        <a class="reveal" href="https://rhdesignergraphics.com" target="_blank" rel="noopener noreferrer" data-img="images/work/rhdesignergraphics/rhdesignergraphics-1.jpg" data-name="Apple">
           <span class="work-row-top">RH Designer Graphics <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Web Design and Development</span>
         </a>
       </li>
-      <li class="work-row reveal">
-        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkmercedes/700/900?grayscale" data-name="Mercedes">
+      <li class="work-row">
+        <a class="reveal" href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkmercedes/700/900?grayscale" data-name="Mercedes">
           <span class="work-row-top">Mercedes <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Motion Design</span>
         </a>
       </li>
-      <li class="work-row reveal">
-        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkairbnb/700/900?grayscale" data-name="Airbnb">
+      <li class="work-row">
+        <a class="reveal" href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkairbnb/700/900?grayscale" data-name="Airbnb">
           <span class="work-row-top">Airbnb <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Web Design</span>
         </a>
       </li>
-      <li class="work-row reveal">
-        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkhej/700/900?grayscale" data-name="Hej Studio">
+      <li class="work-row">
+        <a class="reveal" href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkhej/700/900?grayscale" data-name="Hej Studio">
           <span class="work-row-top">Hej Studio <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Brand Identity</span>
         </a>
       </li>
-      <li class="work-row reveal">
-        <a href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkporsche/700/900?grayscale" data-name="Porsche">
+      <li class="work-row">
+        <a class="reveal" href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkporsche/700/900?grayscale" data-name="Porsche">
           <span class="work-row-top">Porsche <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Photography</span>
         </a>
@@ -921,7 +929,7 @@
 
   /* stagger work rows -- Premier Studio slides up first, then RH Designer
      Graphics shortly after, and so on down the list */
-  document.querySelectorAll('.work-row').forEach(function(row, i){
+  document.querySelectorAll('.work-row a').forEach(function(row, i){
     row.style.transitionDelay = (i * 0.12) + 's';
   });
 
