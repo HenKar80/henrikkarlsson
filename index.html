@@ -591,7 +591,7 @@
   /* RESPONSIVE                    */
   /* ============================= */
   @media (max-width: 640px){
-    .work-row a{ font-size: clamp(1.7rem, 7.6vw, 2.5rem); }
+    .work-row a{ font-size: clamp(2rem, 9vw, 3rem); }
     .work-row-top{ white-space: nowrap; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
     :root{
@@ -615,6 +615,7 @@
       right: var(--pad);
       width: clamp(96px, 30vw, 150px);
       transform: translateY(-50%);
+      transition: opacity .3s var(--ease);
     }
     .preview::after{
       content:'';
@@ -1121,14 +1122,14 @@
       mPreview.classList.remove('visible'); /* fade out the old photo */
       clearTimeout(mobileSwapTimer);
       mobileSwapTimer = setTimeout(function(){
-        mPreviewImg.src = src; /* swap while invisible, then fade in */
+        mPreviewImg.src = src; /* swap once fully invisible, then fade in */
         var tilt = (Math.random() * 8 - 4); /* ~ -4..4deg */
         var shiftX = (Math.random() * 16 - 8); /* ~ -8..8px */
         var shiftY = (Math.random() * 20 - 10); /* ~ -10..10px */
         mPreview.style.transform =
           'translate(' + shiftX.toFixed(1) + 'px, calc(-50% + ' + shiftY.toFixed(1) + 'px)) rotate(' + tilt.toFixed(2) + 'deg)';
         mPreview.classList.add('visible');
-      }, 260);
+      }, 300);
     }
 
     function hideMobilePreview(){
@@ -1138,13 +1139,13 @@
       currentMobileSrc = '';
     }
 
-    /* a thin 10%-tall band across the vertical center of the screen --
-       not "anywhere visible", just dead center */
+    /* a 20%-tall band across the vertical center of the screen --
+       not "anywhere visible", just roughly dead center */
     var centerIO = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if (entry.isIntersecting) showMobilePreview(entry.target);
       });
-    }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+    }, { threshold: 0, rootMargin: '-40% 0px -40% 0px' });
     workLinks.forEach(function(link){ centerIO.observe(link); });
 
     /* hide the photo once the section has scrolled fully out of view */
