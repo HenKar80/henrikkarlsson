@@ -651,12 +651,12 @@
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
     var id = tile.getAttribute('data-yid');
     var frame = tile.querySelector('.reel-frame');
-    if (!frame.src){ frame.src = ytEmbedSrc(id); }
+    if (!frame.getAttribute('src')){ frame.src = ytEmbedSrc(id); }
     tile.classList.add('playing');
   }
   function stopReel(tile){
     var frame = tile.querySelector('.reel-frame');
-    frame.src = '';
+    frame.removeAttribute('src');
     tile.classList.remove('playing');
   }
 
