@@ -303,7 +303,9 @@
     letter-spacing: 0.02em;
     color: var(--gray);
     font-weight: 500;
+    transition: color .5s var(--ease);
   }
+  .work-row a.active .work-tag{ color: var(--fg); }
   .work-list.has-active .work-row a:not(.active){
     color: var(--gray-dim);
   }
@@ -339,23 +341,6 @@
   .preview img{
     width:100%; height:100%;
     object-fit:cover;
-  }
-  .preview-scrim{
-    position:absolute;
-    left:0; right:0; bottom:0;
-    height: 48%;
-    background: linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0));
-    pointer-events:none;
-  }
-  .preview-name{
-    position:absolute;
-    left: 20px; right: 20px; bottom: 18px;
-    font-weight: 700;
-    font-size: clamp(1.15rem, 1.9vw, 1.6rem);
-    letter-spacing: -0.01em;
-    line-height: 1.1;
-    color: #ffffff;
-    pointer-events:none;
   }
 
   /* ============================= */
@@ -436,6 +421,11 @@
     line-height: 1.05;
     max-width: 1280px;
   }
+  .paradise-text{
+    display:inline-block;
+    animation: paradisePulse 16s linear infinite;
+    animation-delay: var(--hello-pulse-delay, 0s);
+  }
   .contact-links{
     margin-top: clamp(56px, 8vw, 100px);
     display:flex;
@@ -490,6 +480,7 @@
       color: var(--fg) !important;
     }
     .about-copy .word.paradise{ animation:none !important; }
+    .paradise-text{ animation:none !important; }
     .script-hello{ animation:none !important; transform: rotate(-3deg) !important; }
     .role-text{ transition:none !important; opacity:1 !important; }
     .role-char{ transform:none !important; transition:none !important; }
@@ -545,7 +536,7 @@
     <span class="eyebrow reveal">Selected Work</span>
     <ul class="work-list" id="workList">
       <li class="work-row">
-        <a href="#" data-img="images/work/premierstudiofl/premierstudiofl.jpg" data-name="Premier Studio">
+        <a href="#" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
           <span class="work-row-top">Premier Studio <span class="arrow" aria-hidden="true">→</span></span>
           <span class="work-tag">Web Design</span>
         </a>
@@ -607,7 +598,7 @@
   <!-- CONTACT -->
   <section id="contact" aria-label="Contact">
     <span class="eyebrow reveal">Contact</span>
-    <h2 class="contact-headline reveal">Let's build something exceptional.</h2>
+    <h2 class="contact-headline reveal">Let's build something <span class="paradise-text">exceptional.</span></h2>
     <div class="contact-links reveal">
       <a href="mailto:hello@henrikkarlsson.com">Email</a>
       <a href="https://linkedin.com/in/henrikkarlsson" target="_blank" rel="noopener">LinkedIn</a>
@@ -625,8 +616,6 @@
 <!-- Floating cursor-follow preview (Work section) -->
 <div class="preview" id="preview" aria-hidden="true">
   <img id="previewImg" src="" alt="">
-  <div class="preview-scrim"></div>
-  <div class="preview-name" id="previewName"></div>
 </div>
 
 <script>
@@ -850,7 +839,6 @@
   if (enablePreview){
     var preview = document.getElementById('preview');
     var previewImg = document.getElementById('previewImg');
-    var previewName = document.getElementById('previewName');
     preview.classList.add('enabled');
 
     /* preload images */
@@ -883,7 +871,6 @@
       link.addEventListener('mouseenter', function(){
         var src = link.getAttribute('data-img');
         if (src) previewImg.src = src;
-        previewName.textContent = link.getAttribute('data-name') || '';
         rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2; /* ~ -3.2..3.2deg */
         preview.classList.add('visible');
       });
