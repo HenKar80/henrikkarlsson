@@ -592,10 +592,10 @@
   /* ============================= */
   @media (max-width: 640px){
     .work-row a{
-      font-size: clamp(2.2rem, 9.6vw, 3.2rem);
+      font-size: clamp(2.1rem, 9.3vw, 3.1rem);
       max-width: calc(100% - (clamp(96px, 30vw, 150px) / 2) - 16px);
     }
-    .work-row-top{ line-height: 0.92; }
+    .work-row-top{ line-height: 0.9; }
     .role-wrap{ font-size: clamp(1.4rem, 7vw, 3rem); }
     :root{
       --fs-hello: clamp(2.3rem, 10vw, 3.5rem);
@@ -1166,10 +1166,10 @@
         workHeads[i].style.transform = 'scale(' + (1 + progress * 0.06).toFixed(3) + ')';
       });
 
-      /* tighter than the scale falloff above -- only show/hide the photo
-         once a row is genuinely near center, not as soon as it merely
-         touches the bottom or top edge of the screen */
-      if (nearestLink && nearestDist < vh * 0.3){
+      /* tighter than the scale falloff above -- only show the photo and
+         turn the headline white once a row is genuinely near center,
+         not as soon as it's merely somewhere in the lower/upper half */
+      if (nearestLink && nearestDist < vh * 0.16){
         showMobilePreview(nearestLink);
       } else {
         hideMobilePreview();
