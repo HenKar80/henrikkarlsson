@@ -341,14 +341,6 @@
     pointer-events:none;
   }
   .reel-tile.playing .reel-frame{ opacity:1; }
-  @media (max-width: 640px){
-    /* on mobile the overflow crop is disabled -- the full iframe fills the
-       tile so YouTube's native play button is reachable and functional */
-    .reel-frame{
-      top:0; left:0;
-      width:100%; height:100%;
-    }
-  }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -361,6 +353,62 @@
   }
   .reel-tile.playing .reel-play-icon{ opacity:0; }
   .reel-play-icon svg{ width: clamp(40px, 5vw, 56px); height: clamp(40px, 5vw, 56px); }
+
+  /* ============================= */
+  /* MOBILE VIDEO LIGHTBOX         */
+  /* ============================= */
+  .reel-lightbox{
+    display: none;
+  }
+  @media (max-width: 640px){
+    .reel-lightbox{
+      display: flex;
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: rgba(0,0,0,0.96);
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .35s var(--ease);
+    }
+    .reel-lightbox.open{
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .reel-lightbox-inner{
+      position: relative;
+      width: 100%;
+      max-width: 100vw;
+      aspect-ratio: 16 / 9;
+    }
+    .reel-lightbox-inner iframe{
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .reel-lightbox-close{
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      background: none;
+      border: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: opacity .25s var(--ease);
+      z-index: 10;
+    }
+    .reel-lightbox-close:hover{ opacity: 1; }
+    .reel-lightbox-close svg{ width: 20px; height: 20px; }
+  }
 
   .shot-tile{
     position:relative;
@@ -672,18 +720,15 @@
   var isMobile = window.matchMedia('(max-width: 640px)').matches;
 
   function ytEmbedSrc(id){
-    if (isMobile){
-      /* on mobile, controls=1 gives YouTube's own play button as the
-         guaranteed in-iframe trigger -- autoplay in a cross-origin
-         iframe is unreliable on touch even after a tap on the host page,
-         so the native play button is the only truly reliable path */
-      return 'https://www.youtube.com/embed/' + id +
-        '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
-    }
-    /* desktop: controls=0 works reliably after a real click, and the
-       CSS overflow crop hides all YouTube chrome cleanly */
+    /* desktop only: controls=0 + overflow crop hides all YouTube chrome */
     return 'https://www.youtube.com/embed/' + id +
       '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
+  }
+  function ytLightboxSrc(id){
+    /* mobile lightbox: autoplay=1 inside the lightbox iframe (fresh load,
+       full-size -- iOS allows this path reliably), controls=1 as fallback */
+    return 'https://www.youtube.com/embed/' + id +
+      '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
   }
   function playReel(tile){
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
@@ -704,6 +749,30 @@
     tile.classList.remove('playing');
   }
 
+  /* ---------- Mobile lightbox ---------- */
+  var lightbox = document.getElementById('reelLightbox');
+  var lightboxFrame = document.getElementById('reelLightboxFrame');
+  var lightboxClose = document.getElementById('reelLightboxClose');
+  function openLightbox(id){
+    lightboxFrame.src = ytLightboxSrc(id);
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightboxFrame.src = '';
+    document.body.style.overflow = '';
+  }
+  if (lightboxClose){ lightboxClose.addEventListener('click', closeLightbox); }
+  if (lightbox){
+    lightbox.addEventListener('click', function(e){
+      if (e.target === lightbox){ closeLightbox(); }
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && lightbox && lightbox.classList.contains('open')){ closeLightbox(); }
+  });
+
   if (reduceMotion){
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
@@ -716,8 +785,13 @@
   } else {
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
-        if (tile.classList.contains('playing')){ stopReel(tile); }
-        else { playReel(tile); }
+        if (isMobile){
+          openLightbox(tile.getAttribute('data-yid'));
+        } else if (tile.classList.contains('playing')){
+          stopReel(tile);
+        } else {
+          playReel(tile);
+        }
       });
     });
   }
@@ -740,6 +814,18 @@
 
 })();
 </script>
+
+<!-- Mobile video lightbox -->
+<div class="reel-lightbox" id="reelLightbox" aria-modal="true" role="dialog" aria-label="Video player">
+  <button class="reel-lightbox-close" id="reelLightboxClose" aria-label="Close video">
+    <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 2L18 18M18 2L2 18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div class="reel-lightbox-inner">
+    <iframe id="reelLightboxFrame" allow="autoplay; encrypted-media" allowfullscreen title="Video"></iframe>
+  </div>
+</div>
 
 </body>
 </html>
