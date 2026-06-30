@@ -568,6 +568,20 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* ---------- Shuffle video order on every visit ---------- */
+  (function shuffleReels(){
+    var grid = document.querySelector('.view-panel[data-view="video"] .tile-grid');
+    if (!grid) return;
+    var tiles = Array.prototype.slice.call(grid.children);
+    for (var i = tiles.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = tiles[i]; tiles[i] = tiles[j]; tiles[j] = t;
+    }
+    var frag = document.createDocumentFragment();
+    tiles.forEach(function(tile){ frag.appendChild(tile); });
+    grid.appendChild(frag);
+  })();
+
   /* ---------- Mobile menu toggle (same as homepage) ---------- */
   var menuToggle = document.getElementById('menuToggle');
   var mobileMenu = document.getElementById('mobileMenu');
