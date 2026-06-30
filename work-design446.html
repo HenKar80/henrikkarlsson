@@ -331,15 +331,16 @@
   }
   .reel-frame{
     position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
+    top: -54px;       /* clip YouTube title bar at top */
+    left: -2%;
+    width: 104%;
+    height: calc(100% + 108px); /* clip title bar top + logo area bottom */
     border:0;
     opacity:0;
     transition: opacity .35s var(--ease);
     pointer-events:none;
   }
-  .reel-tile.playing .reel-frame{ opacity:1; pointer-events: auto; }
+  .reel-tile.playing .reel-frame{ opacity:1; }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -665,7 +666,7 @@
        still blocks the autoplay attempt despite the click, the user has
        YouTube's own visible play button to fall back on */
     return 'https://www.youtube.com/embed/' + id +
-      '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+      '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
   }
   function playReel(tile){
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
