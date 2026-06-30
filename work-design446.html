@@ -340,6 +340,7 @@
     pointer-events:none;
   }
   .reel-tile.playing .reel-frame{ opacity:1; }
+  .reel-tile.playing[data-muted="0"] .reel-frame{ pointer-events: auto; }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -644,9 +645,18 @@
   var reelTiles = document.querySelectorAll('.reel-tile');
 
   function ytEmbedSrc(id, muted){
+    if (muted){
+      /* silent ambient preview -- no controls, no fallback needed since
+         muted autoplay is reliably allowed everywhere */
+      return 'https://www.youtube.com/embed/' + id +
+        '?autoplay=1&mute=1&loop=1&playlist=' + id +
+        '&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
+    }
+    /* real watch-with-sound -- mobile browsers block unmuted autoplay
+       inside an iframe even right after a tap on the host page, so we
+       keep YouTube's own play button visible as a guaranteed fallback */
     return 'https://www.youtube.com/embed/' + id +
-      '?autoplay=1&mute=' + (muted ? '1' : '0') + '&loop=1&playlist=' + id +
-      '&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
+      '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
   }
   function playReel(tile, opts){
     var muted = !opts || opts.muted !== false; /* default true -- silent preview */
