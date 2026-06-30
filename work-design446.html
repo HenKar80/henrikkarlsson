@@ -331,16 +331,18 @@
   }
   .reel-frame{
     position:absolute;
-    top: -54px;
-    left: -2%;
-    width: 104%;
-    height: calc(100% + 124px);
+    inset:0;
+    width:100%;
+    height:100%;
     border:0;
     opacity:0;
     transition: opacity .35s var(--ease);
     pointer-events:none;
   }
-  .reel-tile.playing .reel-frame{ opacity:1; }
+  .reel-tile.playing .reel-frame{
+    opacity:1;
+    pointer-events:auto; /* let clicks reach YouTube's own controls */
+  }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -353,6 +355,25 @@
   }
   .reel-tile.playing .reel-play-icon{ opacity:0; }
   .reel-play-icon svg{ width: clamp(40px, 5vw, 56px); height: clamp(40px, 5vw, 56px); }
+  /* close button that appears on the tile once the player is loaded */
+  .reel-close{
+    position:absolute;
+    top: 12px; right: 12px;
+    width: 32px; height: 32px;
+    background: rgba(0,0,0,0.55);
+    border: 0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s var(--ease);
+  }
+  .reel-close svg{ width: 10px; height: 10px; }
+  .reel-tile.playing .reel-close{ opacity: 1; pointer-events: auto; }
 
   /* ============================= */
   /* MOBILE VIDEO LIGHTBOX         */
@@ -554,6 +575,11 @@
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
+          <button class="reel-close" aria-label="Close video">
+            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
         <div class="reel-tile reveal" data-yid="BJQZNzKGacw">
           <img class="reel-poster" src="https://img.youtube.com/vi/BJQZNzKGacw/hqdefault.jpg" alt="" loading="lazy">
@@ -564,6 +590,11 @@
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
+          <button class="reel-close" aria-label="Close video">
+            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
         <div class="reel-tile reveal" data-yid="K9F87-qXDcg">
           <img class="reel-poster" src="https://img.youtube.com/vi/K9F87-qXDcg/hqdefault.jpg" alt="" loading="lazy">
@@ -574,6 +605,11 @@
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
+          <button class="reel-close" aria-label="Close video">
+            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
         <div class="reel-tile reveal" data-yid="M7lc1UVf-VE">
           <img class="reel-poster" src="https://img.youtube.com/vi/M7lc1UVf-VE/hqdefault.jpg" alt="" loading="lazy">
@@ -584,6 +620,11 @@
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
+          <button class="reel-close" aria-label="Close video">
+            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -720,15 +761,8 @@
   var isMobile = window.matchMedia('(max-width: 640px)').matches;
 
   function ytEmbedSrc(id){
-    /* desktop only: controls=0 + overflow crop hides all YouTube chrome */
     return 'https://www.youtube.com/embed/' + id +
-      '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
-  }
-  function ytLightboxSrc(id){
-    /* mobile lightbox: autoplay=1 inside the lightbox iframe (fresh load,
-       full-size -- iOS allows this path reliably), controls=1 as fallback */
-    return 'https://www.youtube.com/embed/' + id +
-      '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+      '?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
   }
   function playReel(tile){
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
@@ -736,14 +770,9 @@
     var frame = tile.querySelector('.reel-frame');
     var wantSrc = ytEmbedSrc(id);
     if (frame.getAttribute('src') !== wantSrc){ frame.src = wantSrc; }
-    clearTimeout(tile._reelRevealTimer);
-    tile._reelRevealTimer = setTimeout(function(){
-      tile.classList.add('playing');
-    }, 700); /* head start so the player is past its own black loading
-                frame by the time we actually reveal it */
+    tile.classList.add('playing');
   }
   function stopReel(tile){
-    clearTimeout(tile._reelRevealTimer);
     var frame = tile.querySelector('.reel-frame');
     frame.removeAttribute('src');
     tile.classList.remove('playing');
@@ -754,13 +783,13 @@
   var lightboxFrame = document.getElementById('reelLightboxFrame');
   var lightboxClose = document.getElementById('reelLightboxClose');
   function openLightbox(id){
-    lightboxFrame.src = ytLightboxSrc(id);
+    lightboxFrame.src = ytEmbedSrc(id);
     lightbox.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
   function closeLightbox(){
     lightbox.classList.remove('open');
-    lightboxFrame.src = '';
+    lightboxFrame.removeAttribute('src');
     document.body.style.overflow = '';
   }
   if (lightboxClose){ lightboxClose.addEventListener('click', closeLightbox); }
@@ -772,14 +801,21 @@
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape' && lightbox && lightbox.classList.contains('open')){ closeLightbox(); }
   });
+  reelTiles.forEach(function(tile){
+    var closeBtn = tile.querySelector('.reel-close');
+    if (closeBtn){
+      closeBtn.addEventListener('click', function(e){
+        e.stopPropagation(); /* don't re-open the tile */
+        stopReel(tile);
+      });
+    }
+  });
 
   if (reduceMotion){
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
-        var id = tile.getAttribute('data-yid');
-        var frame = tile.querySelector('.reel-frame');
-        frame.src = 'https://www.youtube.com/embed/' + id + '?playsinline=1';
-        tile.classList.add('playing');
+        if (tile.classList.contains('playing')){ stopReel(tile); }
+        else { playReel(tile); }
       });
     });
   } else {
