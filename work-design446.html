@@ -339,8 +339,7 @@
     transition: opacity .35s var(--ease);
     pointer-events:none;
   }
-  .reel-tile.playing .reel-frame{ opacity:1; }
-  .reel-tile.playing[data-muted="0"] .reel-frame{ pointer-events: auto; }
+  .reel-tile.playing .reel-frame{ opacity:1; pointer-events: auto; }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -568,8 +567,6 @@
 (function(){
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  var isMobileStage = window.matchMedia('(max-width: 640px)').matches;
 
   /* ---------- Mobile menu toggle (same as homepage) ---------- */
   var menuToggle = document.getElementById('menuToggle');
@@ -638,34 +635,30 @@
     });
   });
 
-  /* ---------- YouTube preview tiles: hover-to-play (desktop) / autoplay-in-view (touch) ----------
-     Embeds are only loaded (iframe src set) once a tile is actually triggered, and cleared again
-     on leave -- nothing sits there silently loaded/playing in the background. Only one tile plays
-     at a time, in line with YouTube's own autoplay policy. */
+  /* ---------- YouTube preview tiles: click/tap to play, with sound ----------
+     No autoplay on hover or scroll -- browsers (Chrome's 2026 policy
+     especially) block unmuted audio unless it's a genuine click/tap
+     anyway, so a silent auto-preview was just adding complexity without
+     actually getting you sound any sooner. One clear behavior everywhere:
+     click to play, click again to stop. Embeds are only loaded once a
+     tile is actually clicked, and cleared again on stop -- nothing sits
+     there loaded/playing in the background. Only one tile plays at a
+     time, in line with YouTube's own autoplay policy. */
   var reelTiles = document.querySelectorAll('.reel-tile');
 
-  function ytEmbedSrc(id, muted){
-    if (muted){
-      /* silent ambient preview -- no controls, no fallback needed since
-         muted autoplay is reliably allowed everywhere */
-      return 'https://www.youtube.com/embed/' + id +
-        '?autoplay=1&mute=1&loop=1&playlist=' + id +
-        '&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
-    }
-    /* real watch-with-sound -- mobile browsers block unmuted autoplay
-       inside an iframe even right after a tap on the host page, so we
-       keep YouTube's own play button visible as a guaranteed fallback */
+  function ytEmbedSrc(id){
+    /* controls=1 stays as a guaranteed fallback -- if a given browser
+       still blocks the autoplay attempt despite the click, the user has
+       YouTube's own visible play button to fall back on */
     return 'https://www.youtube.com/embed/' + id +
       '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
   }
-  function playReel(tile, opts){
-    var muted = !opts || opts.muted !== false; /* default true -- silent preview */
+  function playReel(tile){
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
     var id = tile.getAttribute('data-yid');
     var frame = tile.querySelector('.reel-frame');
-    var wantSrc = ytEmbedSrc(id, muted);
+    var wantSrc = ytEmbedSrc(id);
     if (frame.getAttribute('src') !== wantSrc){ frame.src = wantSrc; }
-    tile.dataset.muted = muted ? '1' : '0';
     clearTimeout(tile._reelRevealTimer);
     tile._reelRevealTimer = setTimeout(function(){
       tile.classList.add('playing');
@@ -680,7 +673,7 @@
   }
 
   if (reduceMotion){
-    /* manual tap-to-play only, with native controls -- nothing here autoplays */
+    /* manual tap-to-play only, no autoplay attempt at all */
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
         var id = tile.getAttribute('data-yid');
@@ -690,35 +683,12 @@
       });
     });
   } else {
-    /* a real click/tap always works, on every device, regardless of
-       whether hover or scroll-into-view also fires -- and unlike the
-       silent hover preview, an explicit click plays with sound on */
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
-        if (tile.classList.contains('playing') && tile.dataset.muted === '0'){
-          stopReel(tile);
-        } else {
-          playReel(tile, { muted: false });
-        }
+        if (tile.classList.contains('playing')){ stopReel(tile); }
+        else { playReel(tile); }
       });
     });
-
-    if (hasHover){
-      reelTiles.forEach(function(tile){
-        tile.addEventListener('mouseenter', function(){ playReel(tile); });
-        tile.addEventListener('mouseleave', function(){ stopReel(tile); });
-      });
-    } else if (!isMobileStage && 'IntersectionObserver' in window){
-      var reelIO = new IntersectionObserver(function(entries){
-        entries.forEach(function(entry){
-          if (entry.isIntersecting){ playReel(entry.target); }
-          else { stopReel(entry.target); }
-        });
-      }, { threshold: 0.5 });
-      reelTiles.forEach(function(tile){ reelIO.observe(tile); });
-    }
-    /* on mobile stage, neither hover nor scroll-into-view auto-plays --
-       only the explicit click/tap handler above triggers playback */
   }
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
