@@ -328,30 +328,23 @@
     height:100%;
     object-fit:cover;
     display:block;
+    z-index:2;
+    transition: opacity .4s var(--ease);
   }
+  .reel-tile.playing .reel-poster{ opacity:0; }
   .reel-frame{
     position:absolute;
     top: -54px;
     left: -2%;
     width: 104%;
-    height: calc(100% + 124px); /* overflow crop hides YouTube title bar + watermark */
+    height: calc(100% + 124px);
     border:0;
+    z-index:1;
     opacity:0;
     transition: opacity .35s var(--ease);
     pointer-events:none;
   }
   .reel-tile.playing .reel-frame{ opacity:1; }
-  @media (max-width: 640px){
-    /* iframe sits directly in the tile, fully visible and tappable --
-       user's first tap goes straight to YouTube's native play button */
-    .reel-frame{
-      top:0; left:0; width:100%; height:100%;
-      opacity:1; pointer-events:auto;
-    }
-    /* hide our custom overlay elements on mobile */
-    .reel-play-icon{ display:none; }
-    .reel-close{ display:none; }
-  }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -360,11 +353,12 @@
     justify-content:center;
     pointer-events:none;
     opacity:1;
+    z-index:3;
     transition: opacity .35s var(--ease);
   }
   .reel-tile.playing .reel-play-icon{ opacity:0; }
   .reel-play-icon svg{ width: clamp(40px, 5vw, 56px); height: clamp(40px, 5vw, 56px); }
-  /* close button that appears on the tile once the player is loaded */
+  /* close button (desktop only) */
   .reel-close{
     position:absolute;
     top: 12px; right: 12px;
@@ -376,13 +370,32 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 10;
+    z-index:4;
     opacity: 0;
     pointer-events: none;
     transition: opacity .3s var(--ease);
   }
   .reel-close svg{ width: 10px; height: 10px; }
   .reel-tile.playing .reel-close{ opacity: 1; pointer-events: auto; }
+
+  @media (max-width: 640px){
+    /* On mobile the iframe stays at z-index:1 (below poster) and is
+       always visible + interactive. The poster sits above it
+       (z-index:2) with pointer-events:none, so the user's first tap
+       falls straight through the poster into the iframe and hits
+       YouTube's center play button. The overflow crop (inherited from
+       the base .reel-frame rule) hides the title bar and controls bar,
+       leaving only the center play button accessible.
+       When playing starts we detect the postMessage and fade the poster
+       out -- revealing just the clean video with no YouTube chrome. */
+    .reel-frame{
+      opacity:1;
+      pointer-events:auto;
+    }
+    .reel-poster{ pointer-events:none; }
+    /* hide desktop-only elements */
+    .reel-close{ display:none; }
+  }
 
   .shot-tile{
     position:relative;
@@ -703,6 +716,7 @@
   var reelTiles = document.querySelectorAll('.reel-tile');
   var isMobile = window.matchMedia('(max-width: 640px)').matches;
 
+  /* ---------- Desktop: click-to-play with overflow-crop + no YouTube chrome ---------- */
   function ytDesktopSrc(id){
     return 'https://www.youtube.com/embed/' + id +
       '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
@@ -726,11 +740,17 @@
   }
 
   if (isMobile){
-    /* Mobile: load the YouTube player directly into each tile as it
-       scrolls into view -- no custom overlay in the way, no click
-       handler needed. The user's very first tap goes straight to
-       YouTube's native play button, which iOS always allows for sound.
-       One tap, guaranteed. */
+    /* ---------- Mobile: tap-through approach ----------
+       The iframe is preloaded (hidden behind the poster) when the tile
+       scrolls into view. The poster sits above the iframe in z-index
+       but has pointer-events:none, so the user's tap falls straight
+       through the poster into the iframe and hits YouTube's center play
+       button -- iOS always allows sound for a direct in-iframe tap.
+       enablejsapi=1 lets YouTube send postMessages when state changes;
+       we listen for playerState:1 (playing) to fade the poster out and
+       reveal the video. The same overflow crop as desktop hides the
+       title bar and controls bar -- only the center play button is
+       visible and tappable through the crop. */
     var mobileIO = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if (!entry.isIntersecting) return;
@@ -739,14 +759,29 @@
         var frame = tile.querySelector('.reel-frame');
         if (!frame.getAttribute('src')){
           frame.src = 'https://www.youtube.com/embed/' + id +
-            '?autoplay=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+            '?autoplay=0&controls=1&enablejsapi=1&modestbranding=1&rel=0&playsinline=1';
         }
         mobileIO.unobserve(tile);
       });
     }, { threshold: 0.2 });
     reelTiles.forEach(function(tile){ mobileIO.observe(tile); });
+
+    window.addEventListener('message', function(e){
+      if (e.origin !== 'https://www.youtube.com') return;
+      try {
+        var data = JSON.parse(e.data);
+        var state = data.info && data.info.playerState;
+        reelTiles.forEach(function(tile){
+          var frame = tile.querySelector('.reel-frame');
+          if (!frame || frame.contentWindow !== e.source) return;
+          if (state === 1){ tile.classList.add('playing'); }       /* playing  */
+          if (state === 0 || state === 2){ tile.classList.remove('playing'); } /* ended/paused */
+        });
+      } catch(err){}
+    });
+
   } else {
-    /* Desktop: click the tile to load and play, close button to dismiss */
+    /* Desktop: click to load and play, close button to dismiss */
     reelTiles.forEach(function(tile){
       var closeBtn = tile.querySelector('.reel-close');
       if (closeBtn){
