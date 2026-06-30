@@ -331,16 +331,24 @@
   }
   .reel-frame{
     position:absolute;
-    top: -54px;       /* clip YouTube title bar at top */
+    top: -54px;
     left: -2%;
     width: 104%;
-    height: calc(100% + 124px); /* 54px top + 70px bottom -- extra bottom margin hides the YouTube watermark */
+    height: calc(100% + 124px);
     border:0;
     opacity:0;
     transition: opacity .35s var(--ease);
     pointer-events:none;
   }
   .reel-tile.playing .reel-frame{ opacity:1; }
+  @media (max-width: 640px){
+    /* on mobile the overflow crop is disabled -- the full iframe fills the
+       tile so YouTube's native play button is reachable and functional */
+    .reel-frame{
+      top:0; left:0;
+      width:100%; height:100%;
+    }
+  }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -661,10 +669,19 @@
      time, in line with YouTube's own autoplay policy. */
   var reelTiles = document.querySelectorAll('.reel-tile');
 
+  var isMobile = window.matchMedia('(max-width: 640px)').matches;
+
   function ytEmbedSrc(id){
-    /* controls=1 stays as a guaranteed fallback -- if a given browser
-       still blocks the autoplay attempt despite the click, the user has
-       YouTube's own visible play button to fall back on */
+    if (isMobile){
+      /* on mobile, controls=1 gives YouTube's own play button as the
+         guaranteed in-iframe trigger -- autoplay in a cross-origin
+         iframe is unreliable on touch even after a tap on the host page,
+         so the native play button is the only truly reliable path */
+      return 'https://www.youtube.com/embed/' + id +
+        '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+    }
+    /* desktop: controls=0 works reliably after a real click, and the
+       CSS overflow crop hides all YouTube chrome cleanly */
     return 'https://www.youtube.com/embed/' + id +
       '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
   }
@@ -688,7 +705,6 @@
   }
 
   if (reduceMotion){
-    /* manual tap-to-play only, no autoplay attempt at all */
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
         var id = tile.getAttribute('data-yid');
@@ -698,19 +714,10 @@
       });
     });
   } else {
-    var isMobile = window.matchMedia('(max-width: 640px)').matches;
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
-        if (isMobile){
-          /* mobile browsers block controls=0 iframe autoplay even after a real
-             tap -- open directly in YouTube app/browser instead, which is the
-             standard touch-portfolio pattern and gives full sound immediately */
-          window.open('https://www.youtube.com/watch?v=' + tile.getAttribute('data-yid'), '_blank');
-        } else if (tile.classList.contains('playing')){
-          stopReel(tile);
-        } else {
-          playReel(tile);
-        }
+        if (tile.classList.contains('playing')){ stopReel(tile); }
+        else { playReel(tile); }
       });
     });
   }
