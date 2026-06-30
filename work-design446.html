@@ -342,7 +342,15 @@
   }
   .reel-tile.playing .reel-frame{ opacity:1; }
   @media (max-width: 640px){
-    .reel-frame{ top:0; left:0; width:100%; height:100%; }
+    /* iframe sits directly in the tile, fully visible and tappable --
+       user's first tap goes straight to YouTube's native play button */
+    .reel-frame{
+      top:0; left:0; width:100%; height:100%;
+      opacity:1; pointer-events:auto;
+    }
+    /* hide our custom overlay elements on mobile */
+    .reel-play-icon{ display:none; }
+    .reel-close{ display:none; }
   }
   .reel-play-icon{
     position:absolute;
@@ -693,17 +701,9 @@
   });
 
   var reelTiles = document.querySelectorAll('.reel-tile');
-
   var isMobile = window.matchMedia('(max-width: 640px)').matches;
 
-  function ytEmbedSrc(id){
-    if (isMobile){
-      /* mobile: show controls so YouTube's play button is always
-         visible as a one-tap fallback if iOS blocks the autoplay */
-      return 'https://www.youtube.com/embed/' + id +
-        '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
-    }
-    /* desktop: controls=0 + overflow crop hides all YouTube chrome */
+  function ytDesktopSrc(id){
     return 'https://www.youtube.com/embed/' + id +
       '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
   }
@@ -711,18 +711,12 @@
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
     var id = tile.getAttribute('data-yid');
     var frame = tile.querySelector('.reel-frame');
-    var wantSrc = ytEmbedSrc(id);
+    var wantSrc = ytDesktopSrc(id);
     if (frame.getAttribute('src') !== wantSrc){ frame.src = wantSrc; }
     clearTimeout(tile._reelTimer);
-    if (isMobile){
-      /* no delay on mobile -- show the player instantly so the user
-         knows the tap registered and can hit YouTube's play button */
+    tile._reelTimer = setTimeout(function(){
       tile.classList.add('playing');
-    } else {
-      tile._reelTimer = setTimeout(function(){
-        tile.classList.add('playing');
-      }, 700);
-    }
+    }, 700);
   }
   function stopReel(tile){
     clearTimeout(tile._reelTimer);
@@ -731,20 +725,42 @@
     tile.classList.remove('playing');
   }
 
-  /* close button on each tile */
-  reelTiles.forEach(function(tile){
-    var closeBtn = tile.querySelector('.reel-close');
-    if (closeBtn){
-      closeBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        stopReel(tile);
+  if (isMobile){
+    /* Mobile: load the YouTube player directly into each tile as it
+       scrolls into view -- no custom overlay in the way, no click
+       handler needed. The user's very first tap goes straight to
+       YouTube's native play button, which iOS always allows for sound.
+       One tap, guaranteed. */
+    var mobileIO = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (!entry.isIntersecting) return;
+        var tile = entry.target;
+        var id = tile.getAttribute('data-yid');
+        var frame = tile.querySelector('.reel-frame');
+        if (!frame.getAttribute('src')){
+          frame.src = 'https://www.youtube.com/embed/' + id +
+            '?autoplay=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+        }
+        mobileIO.unobserve(tile);
       });
-    }
-    tile.addEventListener('click', function(){
-      if (tile.classList.contains('playing')){ stopReel(tile); }
-      else { playReel(tile); }
+    }, { threshold: 0.2 });
+    reelTiles.forEach(function(tile){ mobileIO.observe(tile); });
+  } else {
+    /* Desktop: click the tile to load and play, close button to dismiss */
+    reelTiles.forEach(function(tile){
+      var closeBtn = tile.querySelector('.reel-close');
+      if (closeBtn){
+        closeBtn.addEventListener('click', function(e){
+          e.stopPropagation();
+          stopReel(tile);
+        });
+      }
+      tile.addEventListener('click', function(){
+        if (tile.classList.contains('playing')){ stopReel(tile); }
+        else { playReel(tile); }
+      });
     });
-  });
+  }
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
      YouTube's hqdefault.jpg is only 480x360 -- stretched across a large tile
