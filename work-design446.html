@@ -568,6 +568,7 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var isMobileStage = window.matchMedia('(max-width: 640px)').matches;
 
   /* ---------- Mobile menu toggle (same as homepage) ---------- */
   var menuToggle = document.getElementById('menuToggle');
@@ -642,16 +643,19 @@
      at a time, in line with YouTube's own autoplay policy. */
   var reelTiles = document.querySelectorAll('.reel-tile');
 
-  function ytEmbedSrc(id){
+  function ytEmbedSrc(id, muted){
     return 'https://www.youtube.com/embed/' + id +
-      '?autoplay=1&mute=1&loop=1&playlist=' + id +
+      '?autoplay=1&mute=' + (muted ? '1' : '0') + '&loop=1&playlist=' + id +
       '&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
   }
-  function playReel(tile){
+  function playReel(tile, opts){
+    var muted = !opts || opts.muted !== false; /* default true -- silent preview */
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
     var id = tile.getAttribute('data-yid');
     var frame = tile.querySelector('.reel-frame');
-    if (!frame.getAttribute('src')){ frame.src = ytEmbedSrc(id); }
+    var wantSrc = ytEmbedSrc(id, muted);
+    if (frame.getAttribute('src') !== wantSrc){ frame.src = wantSrc; }
+    tile.dataset.muted = muted ? '1' : '0';
     clearTimeout(tile._reelRevealTimer);
     tile._reelRevealTimer = setTimeout(function(){
       tile.classList.add('playing');
@@ -677,11 +681,15 @@
     });
   } else {
     /* a real click/tap always works, on every device, regardless of
-       whether hover or scroll-into-view also fires */
+       whether hover or scroll-into-view also fires -- and unlike the
+       silent hover preview, an explicit click plays with sound on */
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
-        if (tile.classList.contains('playing')){ stopReel(tile); }
-        else { playReel(tile); }
+        if (tile.classList.contains('playing') && tile.dataset.muted === '0'){
+          stopReel(tile);
+        } else {
+          playReel(tile, { muted: false });
+        }
       });
     });
 
@@ -690,7 +698,7 @@
         tile.addEventListener('mouseenter', function(){ playReel(tile); });
         tile.addEventListener('mouseleave', function(){ stopReel(tile); });
       });
-    } else if ('IntersectionObserver' in window){
+    } else if (!isMobileStage && 'IntersectionObserver' in window){
       var reelIO = new IntersectionObserver(function(entries){
         entries.forEach(function(entry){
           if (entry.isIntersecting){ playReel(entry.target); }
@@ -699,6 +707,8 @@
       }, { threshold: 0.5 });
       reelTiles.forEach(function(tile){ reelIO.observe(tile); });
     }
+    /* on mobile stage, neither hover nor scroll-into-view auto-plays --
+       only the explicit click/tap handler above triggers playback */
   }
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
