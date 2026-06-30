@@ -379,14 +379,18 @@
   .reel-tile.playing .reel-close{ opacity: 1; pointer-events: auto; }
 
   @media (max-width: 640px){
-    /* Show YouTube player directly -- no poster, no custom overlay.
-       The overflow crop (inherited from .reel-frame) hides the title
-       bar and controls bar. Only YouTube's center play button remains
-       visible. User taps it directly: one tap, plays with sound,
-       works on every iOS/Android without any browser quirks. */
+    /* The iframe sits at z-index:1 (below the poster), always loaded
+       and interactive. The poster (z-index:2) and play icon (z-index:3)
+       sit above it as a visual cover -- both have pointer-events:none
+       so taps fall straight through to the iframe. Any tap on the
+       YouTube player area starts playback (iOS allows this because the
+       tap lands directly inside the player). No red YouTube button
+       visible -- our poster and play icon cover it entirely. A
+       postMessage listener detects when playing starts and fades the
+       cover out, revealing just the video (overflow crop still hides
+       the title bar and controls bar). */
     .reel-frame{ opacity:1; pointer-events:auto; }
-    .reel-poster{ display:none; }
-    .reel-play-icon{ display:none; }
+    .reel-poster{ pointer-events:none; }
     .reel-close{ display:none; }
   }
 
@@ -733,9 +737,9 @@
   }
 
   if (isMobile){
-    /* Mobile: load YouTube player directly into each tile as it scrolls
-       into view. No overlay, no click handler needed -- the user taps
-       YouTube's center play button directly. One tap, plays with sound. */
+    /* Preload the YouTube player (behind the poster) when tile is in view.
+       enablejsapi=1 lets YouTube send postMessages so we can detect when
+       playback starts and fade the poster out. */
     var mobileIO = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if (!entry.isIntersecting) return;
@@ -744,12 +748,28 @@
         var frame = tile.querySelector('.reel-frame');
         if (!frame.getAttribute('src')){
           frame.src = 'https://www.youtube.com/embed/' + id +
-            '?autoplay=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+            '?autoplay=0&controls=1&enablejsapi=1&modestbranding=1&rel=0&playsinline=1';
         }
         mobileIO.unobserve(tile);
       });
     }, { threshold: 0.2 });
     reelTiles.forEach(function(tile){ mobileIO.observe(tile); });
+
+    /* When YouTube reports playerState:1 (playing), fade the poster out.
+       When paused (2) or ended (0), bring it back so the tile looks clean. */
+    window.addEventListener('message', function(e){
+      if (e.origin !== 'https://www.youtube.com') return;
+      try {
+        var data = JSON.parse(e.data);
+        var state = data.info && data.info.playerState;
+        reelTiles.forEach(function(tile){
+          var frame = tile.querySelector('.reel-frame');
+          if (!frame || frame.contentWindow !== e.source) return;
+          if (state === 1){ tile.classList.add('playing'); }
+          if (state === 0 || state === 2){ tile.classList.remove('playing'); }
+        });
+      } catch(err){}
+    });
 
   } else {
     /* Desktop: click to load and play, close button to dismiss */
