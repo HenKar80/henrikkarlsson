@@ -328,7 +328,7 @@
     height:100%;
     object-fit:cover;
     display:block;
-    z-index:2;
+    z-index:3;
     transition: opacity .4s var(--ease);
   }
   .reel-tile.playing .reel-poster{ opacity:0; }
@@ -353,7 +353,7 @@
     justify-content:center;
     pointer-events:none;
     opacity:1;
-    z-index:3;
+    z-index:4;
     transition: opacity .35s var(--ease);
   }
   .reel-tile.playing .reel-play-icon{ opacity:0; }
@@ -370,7 +370,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index:4;
+    z-index:5;
     opacity: 0;
     pointer-events: none;
     transition: opacity .3s var(--ease);
@@ -379,18 +379,16 @@
   .reel-tile.playing .reel-close{ opacity: 1; pointer-events: auto; }
 
   @media (max-width: 640px){
-    /* The iframe sits at z-index:1 (below the poster), always loaded
-       and interactive. The poster (z-index:2) and play icon (z-index:3)
-       sit above it as a visual cover -- both have pointer-events:none
-       so taps fall straight through to the iframe. Any tap on the
-       YouTube player area starts playback (iOS allows this because the
-       tap lands directly inside the player). No red YouTube button
-       visible -- our poster and play icon cover it entirely. A
-       postMessage listener detects when playing starts and fades the
-       cover out, revealing just the video (overflow crop still hides
-       the title bar and controls bar). */
-    .reel-frame{ opacity:1; pointer-events:auto; }
-    .reel-poster{ pointer-events:none; }
+    /* iframe is preloaded and visible but NOT interactive by default --
+       the poster (pointer-events:auto) sits on top and its tap bubbles
+       to the tile click handler, which reloads the iframe with
+       autoplay=1 from inside the user's click event. iOS allows
+       unmuted autoplay when src is set synchronously in a click handler. */
+    .reel-frame{ opacity:1; pointer-events:none; }
+    /* when playing: iframe becomes interactive (YouTube controls work),
+       poster is disabled so taps reach the iframe directly */
+    .reel-tile.playing .reel-frame{ pointer-events:auto; }
+    .reel-tile.playing .reel-poster{ pointer-events:none; }
     .reel-close{ display:none; }
   }
 
@@ -737,9 +735,7 @@
   }
 
   if (isMobile){
-    /* Preload the YouTube player (behind the poster) when tile is in view.
-       enablejsapi=1 lets YouTube send postMessages so we can detect when
-       playback starts and fade the poster out. */
+    /* Preload idle player (autoplay=0) so the thumbnail shows cleanly */
     var mobileIO = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if (!entry.isIntersecting) return;
@@ -748,27 +744,26 @@
         var frame = tile.querySelector('.reel-frame');
         if (!frame.getAttribute('src')){
           frame.src = 'https://www.youtube.com/embed/' + id +
-            '?autoplay=0&controls=1&enablejsapi=1&modestbranding=1&rel=0&playsinline=1';
+            '?autoplay=0&controls=1&modestbranding=1&rel=0&playsinline=1';
         }
         mobileIO.unobserve(tile);
       });
     }, { threshold: 0.2 });
     reelTiles.forEach(function(tile){ mobileIO.observe(tile); });
 
-    /* When YouTube reports playerState:1 (playing), fade the poster out.
-       When paused (2) or ended (0), bring it back so the tile looks clean. */
-    window.addEventListener('message', function(e){
-      if (e.origin !== 'https://www.youtube.com') return;
-      try {
-        var data = JSON.parse(e.data);
-        var state = data.info && data.info.playerState;
-        reelTiles.forEach(function(tile){
-          var frame = tile.querySelector('.reel-frame');
-          if (!frame || frame.contentWindow !== e.source) return;
-          if (state === 1){ tile.classList.add('playing'); }
-          if (state === 0 || state === 2){ tile.classList.remove('playing'); }
-        });
-      } catch(err){}
+    /* Tile click handler -- the poster (pointer-events:auto) sits above
+       the iframe and its tap bubbles to the tile div. We reload the src
+       with autoplay=1 synchronously inside the click event: iOS Safari
+       allows unmuted autoplay when iframe src is set from a user click. */
+    reelTiles.forEach(function(tile){
+      tile.addEventListener('click', function(){
+        if (tile.classList.contains('playing')) return;
+        var id = tile.getAttribute('data-yid');
+        var frame = tile.querySelector('.reel-frame');
+        frame.src = 'https://www.youtube.com/embed/' + id +
+          '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+        tile.classList.add('playing');
+      });
     });
 
   } else {
