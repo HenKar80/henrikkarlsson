@@ -334,7 +334,7 @@
     top: -54px;       /* clip YouTube title bar at top */
     left: -2%;
     width: 104%;
-    height: calc(100% + 108px); /* clip title bar top + logo area bottom */
+    height: calc(100% + 124px); /* 54px top + 70px bottom -- extra bottom margin hides the YouTube watermark */
     border:0;
     opacity:0;
     transition: opacity .35s var(--ease);
@@ -698,10 +698,19 @@
       });
     });
   } else {
+    var isMobile = window.matchMedia('(max-width: 640px)').matches;
     reelTiles.forEach(function(tile){
       tile.addEventListener('click', function(){
-        if (tile.classList.contains('playing')){ stopReel(tile); }
-        else { playReel(tile); }
+        if (isMobile){
+          /* mobile browsers block controls=0 iframe autoplay even after a real
+             tap -- open directly in YouTube app/browser instead, which is the
+             standard touch-portfolio pattern and gives full sound immediately */
+          window.open('https://www.youtube.com/watch?v=' + tile.getAttribute('data-yid'), '_blank');
+        } else if (tile.classList.contains('playing')){
+          stopReel(tile);
+        } else {
+          playReel(tile);
+        }
       });
     });
   }
