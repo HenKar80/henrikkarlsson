@@ -773,17 +773,27 @@
     var id = tile.getAttribute('data-yid');
     var frame = tile.querySelector('.reel-frame');
     frame.id = 'reel-yt-' + index;
+
+    /* Give the iframe a real embed URL (with enablejsapi=1) BEFORE handing
+       it to YT.Player. Handing YT.Player a completely empty/blank iframe
+       and passing videoId in the config instead is not reliable -- it can
+       silently fail to ever reach a playable state, which is why the play
+       button did nothing last time. An iframe that already has a valid
+       embed src is the officially documented, dependable way to wire up
+       the API against an existing element. */
+    var params = [
+      'enablejsapi=1',
+      'playsinline=1',
+      'modestbranding=1',
+      'rel=0',
+      'iv_load_policy=3',
+      'disablekb=1',
+      'controls=' + (isMobile ? 1 : 0),
+      'fs=' + (isMobile ? 1 : 0)
+    ].join('&');
+    frame.src = 'https://www.youtube.com/embed/' + id + '?' + params;
+
     tile._ytPlayer = new YT.Player(frame.id, {
-      videoId: id,
-      playerVars: {
-        controls: isMobile ? 1 : 0,
-        modestbranding: 1,
-        rel: 0,
-        playsinline: 1,
-        iv_load_policy: 3,
-        disablekb: 1,
-        fs: isMobile ? 1 : 0
-      },
       events: {
         onReady: function(){
           tile._ytReady = true;
@@ -796,6 +806,10 @@
           if (e.data === YT.PlayerState.PLAYING){
             tile.classList.add('playing');
           }
+        },
+        onError: function(e){
+          /* eslint-disable-next-line no-console */
+          console.warn('YouTube player error for', id, e && e.data);
         }
       }
     });
