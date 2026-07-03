@@ -458,6 +458,51 @@
   }
 
   /* ============================= */
+  /* SITE LIGHTBOX (full page shot) */
+  /* ============================= */
+  .site-lightbox{
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 300;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s var(--ease);
+  }
+  .site-lightbox.open{ opacity: 1; pointer-events: auto; }
+
+  .site-lightbox-title{
+    position: fixed;
+    top: clamp(16px, 3vw, 32px);
+    left: clamp(16px, 3vw, 32px);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gray-soft);
+    z-index: 2;
+  }
+
+  .site-lightbox-scroll{
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    padding: clamp(72px, 9vw, 110px) 24px 60px;
+  }
+  .site-lightbox-img{
+    width: min(920px, 100%);
+    height: auto;
+    display: block;
+  }
+
+  @media (max-width: 640px){
+    .site-lightbox-scroll{ padding: 64px 0 40px; }
+    .site-lightbox-img{ width: 100%; }
+  }
+
+  /* ============================= */
   /* WEBSITE SHOWCASE CARDS         */
   /* ============================= */
   .site-grid{
@@ -814,7 +859,7 @@
           </div>
           <div class="site-info">
             <div class="site-info-text">
-              <h3 class="site-title">Project Name One</h3>
+              <h3 class="site-title">The Dylan</h3>
               <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
             <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
@@ -923,6 +968,19 @@
       <path d="M9 3L18 12L9 21" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </button>
+</div>
+
+<!-- Fullscreen website screenshot viewer: opened from a site card's "View Site" link -->
+<div class="site-lightbox" id="siteLightbox" aria-hidden="true">
+  <button class="lightbox-close" aria-label="Close full page view">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 2L22 22M22 2L2 22" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <span class="site-lightbox-title" id="siteLightboxTitle" aria-hidden="true"></span>
+  <div class="site-lightbox-scroll" id="siteLightboxScroll">
+    <img class="site-lightbox-img" id="siteLightboxImg" src="" alt="Full page website screenshot">
+  </div>
 </div>
 
 <script>
@@ -1218,6 +1276,52 @@
       img.style.transition = 'transform .8s cubic-bezier(.16,.84,.44,1)';
       img.style.transform = 'translateY(0%)';
     });
+  });
+
+  /* ---------- Website cards: "View Site" opens the full screenshot ----------
+     Reuses the same fullscreen-lightbox pattern as the video reel (same close
+     icon, same black backdrop, Esc/backdrop-click to dismiss) but the content
+     here is just the full, uncropped screenshot in a vertically scrollable
+     viewer -- so you can browse the whole page at your own pace instead of
+     watching it auto-scroll. */
+  var siteLightbox = document.getElementById('siteLightbox');
+  var siteLightboxImg = document.getElementById('siteLightboxImg');
+  var siteLightboxTitle = document.getElementById('siteLightboxTitle');
+  var siteLightboxScroll = document.getElementById('siteLightboxScroll');
+  var siteLightboxClose = siteLightbox.querySelector('.lightbox-close');
+
+  function openSiteLightbox(card){
+    var img = card.querySelector('.site-browser-shot img');
+    var title = card.querySelector('.site-title');
+    if (!img) return;
+    siteLightboxImg.src = img.src;
+    siteLightboxTitle.textContent = title ? title.textContent : '';
+    siteLightboxScroll.scrollTop = 0;
+    siteLightbox.classList.add('open');
+    siteLightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSiteLightbox(){
+    siteLightbox.classList.remove('open');
+    siteLightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  document.querySelectorAll('.site-card').forEach(function(card){
+    var link = card.querySelector('.site-link');
+    if (!link) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      openSiteLightbox(card);
+    });
+  });
+  siteLightboxClose.addEventListener('click', closeSiteLightbox);
+  siteLightboxScroll.addEventListener('click', function(e){
+    if (e.target === siteLightboxScroll){ closeSiteLightbox(); }
+  });
+  document.addEventListener('keydown', function(e){
+    if (!siteLightbox.classList.contains('open')) return;
+    if (e.key === 'Escape'){ closeSiteLightbox(); }
   });
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
