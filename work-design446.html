@@ -457,17 +457,94 @@
     .lightbox-close{ width: 40px; height: 40px; top: 12px; right: 12px; }
   }
 
-  .shot-tile{
-    position:relative;
-    aspect-ratio: 4 / 3;
+  /* ============================= */
+  /* WEBSITE SHOWCASE CARDS         */
+  /* ============================= */
+  .site-grid{
+    display:flex;
+    flex-direction:column;
+    gap: clamp(64px, 9vw, 128px);
+  }
+  .site-browser{
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 6px;
     overflow:hidden;
     background: #0a0a0a;
   }
-  .shot-tile img{
+  .site-browser-bar{
+    display:flex;
+    align-items:center;
+    gap: 6px;
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+  }
+  .site-browser-bar span{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.16);
+    display:block;
+  }
+  .site-browser-shot{
+    aspect-ratio: 16 / 10;
+    overflow:hidden;
+  }
+  .site-browser-shot img{
     width:100%;
     height:100%;
     object-fit:cover;
     display:block;
+    transition: transform .7s var(--ease);
+  }
+  .site-card:hover .site-browser-shot img{ transform: scale(1.035); }
+
+  .site-info{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap: 24px;
+    margin-top: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+  }
+  .site-info-text{ max-width: 560px; }
+  .site-title{
+    font-size: clamp(19px, 2vw, 24px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+  .site-desc{
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--gray);
+  }
+  .site-link{
+    position:relative;
+    display:inline-flex;
+    align-items:baseline;
+    gap: 10px;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+    text-decoration:none;
+    white-space:nowrap;
+    flex-shrink:0;
+    padding-bottom: 2px;
+  }
+  .site-link .arrow{
+    display:inline-block;
+    transition: transform .4s var(--ease);
+  }
+  .site-link:hover .arrow{ transform: translateX(6px); }
+
+  @media (max-width: 640px){
+    .site-info{
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+    }
   }
 
   /* ============================= */
@@ -723,19 +800,88 @@
     </div>
 
     <div class="view-panel" data-view="web">
-      <div class="tile-grid">
-        <div class="shot-tile reveal">
-          <img src="https://picsum.photos/seed/design446web1/1280/960?grayscale" alt="Design 446 — website, view 1">
-        </div>
-        <div class="shot-tile reveal">
-          <img src="https://picsum.photos/seed/design446web2/1280/960?grayscale" alt="Design 446 — website, view 2">
-        </div>
-        <div class="shot-tile reveal">
-          <img src="https://picsum.photos/seed/design446web3/1280/960?grayscale" alt="Design 446 — website, view 3">
-        </div>
-        <div class="shot-tile reveal">
-          <img src="https://picsum.photos/seed/design446web4/1280/960?grayscale" alt="Design 446 — website, view 4">
-        </div>
+      <div class="site-grid">
+
+        <article class="site-card reveal">
+          <div class="site-browser">
+            <div class="site-browser-bar"><span></span><span></span><span></span></div>
+            <div class="site-browser-shot">
+              <img src="https://picsum.photos/seed/design446-siteA/1400/875?grayscale" alt="Website project one — homepage view">
+            </div>
+          </div>
+          <div class="site-info">
+            <div class="site-info-text">
+              <h3 class="site-title">Project Name One</h3>
+              <p class="site-desc">One line describing what this site is and who it's for.</p>
+            </div>
+            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="site-card reveal">
+          <div class="site-browser">
+            <div class="site-browser-bar"><span></span><span></span><span></span></div>
+            <div class="site-browser-shot">
+              <img src="https://picsum.photos/seed/design446-siteB/1400/875?grayscale" alt="Website project two — homepage view">
+            </div>
+          </div>
+          <div class="site-info">
+            <div class="site-info-text">
+              <h3 class="site-title">Project Name Two</h3>
+              <p class="site-desc">One line describing what this site is and who it's for.</p>
+            </div>
+            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="site-card reveal">
+          <div class="site-browser">
+            <div class="site-browser-bar"><span></span><span></span><span></span></div>
+            <div class="site-browser-shot">
+              <img src="https://picsum.photos/seed/design446-siteC/1400/875?grayscale" alt="Website project three — homepage view">
+            </div>
+          </div>
+          <div class="site-info">
+            <div class="site-info-text">
+              <h3 class="site-title">Project Name Three</h3>
+              <p class="site-desc">One line describing what this site is and who it's for.</p>
+            </div>
+            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="site-card reveal">
+          <div class="site-browser">
+            <div class="site-browser-bar"><span></span><span></span><span></span></div>
+            <div class="site-browser-shot">
+              <img src="https://picsum.photos/seed/design446-siteD/1400/875?grayscale" alt="Website project four — homepage view">
+            </div>
+          </div>
+          <div class="site-info">
+            <div class="site-info-text">
+              <h3 class="site-title">Project Name Four</h3>
+              <p class="site-desc">One line describing what this site is and who it's for.</p>
+            </div>
+            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <article class="site-card reveal">
+          <div class="site-browser">
+            <div class="site-browser-bar"><span></span><span></span><span></span></div>
+            <div class="site-browser-shot">
+              <img src="https://picsum.photos/seed/design446-siteE/1400/875?grayscale" alt="Website project five — homepage view">
+            </div>
+          </div>
+          <div class="site-info">
+            <div class="site-info-text">
+              <h3 class="site-title">Project Name Five</h3>
+              <p class="site-desc">One line describing what this site is and who it's for.</p>
+            </div>
+            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
       </div>
     </div>
 
