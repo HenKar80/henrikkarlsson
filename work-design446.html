@@ -328,23 +328,7 @@
     height:100%;
     object-fit:cover;
     display:block;
-    z-index:3;
-    transition: opacity .4s var(--ease);
   }
-  .reel-tile.playing .reel-poster{ opacity:0; }
-  .reel-frame{
-    position:absolute;
-    top: -54px;
-    left: -2%;
-    width: 104%;
-    height: calc(100% + 124px);
-    border:0;
-    z-index:1;
-    opacity:0;
-    transition: opacity .35s var(--ease);
-    pointer-events:none;
-  }
-  .reel-tile.playing .reel-frame{ opacity:1; }
   .reel-play-icon{
     position:absolute;
     inset:0;
@@ -352,44 +336,89 @@
     align-items:center;
     justify-content:center;
     pointer-events:none;
-    opacity:1;
-    z-index:4;
-    transition: opacity .35s var(--ease);
+    transition: transform .3s var(--ease);
   }
-  .reel-tile.playing .reel-play-icon{ opacity:0; }
   .reel-play-icon svg{ width: clamp(40px, 5vw, 56px); height: clamp(40px, 5vw, 56px); }
-  /* close button (desktop only) */
-  .reel-close{
-    position:absolute;
-    top: 12px; right: 12px;
-    width: 32px; height: 32px;
-    background: rgba(0,0,0,0.55);
-    border: 0;
-    border-radius: 50%;
+  @media (hover: hover){
+    .reel-tile:hover .reel-play-icon{ transform: scale(1.08); }
+  }
+
+  /* ============================= */
+  /* VIDEO LIGHTBOX (fullscreen)    */
+  /* ============================= */
+  .reel-lightbox{
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 300;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    z-index:5;
     opacity: 0;
     pointer-events: none;
     transition: opacity .3s var(--ease);
   }
-  .reel-close svg{ width: 10px; height: 10px; }
-  .reel-tile.playing .reel-close{ opacity: 1; pointer-events: auto; }
+  .reel-lightbox.open{ opacity: 1; pointer-events: auto; }
+
+  .lightbox-frame-wrap{
+    position: relative;
+    width: min(90vw, 1200px);
+    aspect-ratio: 16 / 9;
+  }
+  .lightbox-frame{
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .lightbox-close{
+    position: absolute;
+    top: clamp(16px, 3vw, 32px);
+    right: clamp(16px, 3vw, 32px);
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    opacity: .85;
+    transition: opacity .25s var(--ease);
+  }
+  .lightbox-close:hover{ opacity: 1; }
+  .lightbox-close svg{ width: 22px; height: 22px; }
+
+  .lightbox-nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    background: transparent;
+    border: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    opacity: .7;
+    transition: opacity .25s var(--ease);
+  }
+  .lightbox-nav:hover{ opacity: 1; }
+  .lightbox-nav svg{ width: 26px; height: 26px; }
+  .lightbox-prev{ left: clamp(8px, 3vw, 40px); }
+  .lightbox-next{ right: clamp(8px, 3vw, 40px); }
 
   @media (max-width: 640px){
-    /* iframe is preloaded and visible but NOT interactive by default --
-       the poster (pointer-events:auto) sits on top and its tap bubbles
-       to the tile click handler, which reloads the iframe with
-       autoplay=1 from inside the user's click event. iOS allows
-       unmuted autoplay when src is set synchronously in a click handler. */
-    .reel-frame{ opacity:1; pointer-events:none; }
-    /* when playing: iframe becomes interactive (YouTube controls work),
-       poster is disabled so taps reach the iframe directly */
-    .reel-tile.playing .reel-frame{ pointer-events:auto; }
-    .reel-tile.playing .reel-poster{ pointer-events:none; }
-    .reel-close{ display:none; }
+    .lightbox-frame-wrap{ width: 100vw; }
+    .lightbox-nav{ width: 44px; height: 44px; }
+    .lightbox-nav svg{ width: 20px; height: 20px; }
+    .lightbox-prev{ left: 4px; }
+    .lightbox-next{ right: 4px; }
+    .lightbox-close{ width: 40px; height: 40px; top: 12px; right: 12px; }
   }
 
   .shot-tile{
@@ -524,63 +553,39 @@
         <!-- Each tile: replace data-yid with your real YouTube video ID (the part after watch?v= or youtu.be/) -->
         <div class="reel-tile reveal" data-yid="fIBt23A7YVQ">
           <img class="reel-poster" src="https://img.youtube.com/vi/fIBt23A7YVQ/hqdefault.jpg" alt="" loading="lazy">
-          <iframe class="reel-frame" title="Design 446 — reel 1" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="reel-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
-          <button class="reel-close" aria-label="Close video">
-            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </button>
         </div>
         <div class="reel-tile reveal" data-yid="BJQZNzKGacw">
           <img class="reel-poster" src="https://img.youtube.com/vi/BJQZNzKGacw/hqdefault.jpg" alt="" loading="lazy">
-          <iframe class="reel-frame" title="Design 446 — reel 2" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="reel-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
-          <button class="reel-close" aria-label="Close video">
-            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </button>
         </div>
         <div class="reel-tile reveal" data-yid="K9F87-qXDcg">
           <img class="reel-poster" src="https://img.youtube.com/vi/K9F87-qXDcg/hqdefault.jpg" alt="" loading="lazy">
-          <iframe class="reel-frame" title="Design 446 — reel 3" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="reel-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
-          <button class="reel-close" aria-label="Close video">
-            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </button>
         </div>
         <div class="reel-tile reveal" data-yid="M7lc1UVf-VE">
           <img class="reel-poster" src="https://img.youtube.com/vi/M7lc1UVf-VE/hqdefault.jpg" alt="" loading="lazy">
-          <iframe class="reel-frame" title="Design 446 — reel 4" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
           <span class="reel-play-icon" aria-hidden="true">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
               <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
             </svg>
           </span>
-          <button class="reel-close" aria-label="Close video">
-            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 1L9 9M9 1L1 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </button>
         </div>
       </div>
     </div>
@@ -616,6 +621,28 @@
   <span>© 2026 Henrik Karlsson</span>
   <span>Sarasota, Florida</span>
 </footer>
+
+<!-- Fullscreen video lightbox: opened from any reel tile -->
+<div class="reel-lightbox" id="reelLightbox" aria-hidden="true">
+  <button class="lightbox-close" aria-label="Close video">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 2L22 22M22 2L2 22" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <button class="lightbox-nav lightbox-prev" aria-label="Previous video">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 3L6 12L15 21" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+  <div class="lightbox-frame-wrap">
+    <iframe class="lightbox-frame" id="lightboxFrame" title="Design 446 video player" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+  <button class="lightbox-nav lightbox-next" aria-label="Next video">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 3L18 12L9 21" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</div>
 
 <script>
 (function(){
@@ -696,31 +723,26 @@
       panels.forEach(function(p){
         var isTarget = p.getAttribute('data-view') === target;
         p.classList.toggle('active', isTarget);
-        if (!isTarget){
-          p.querySelectorAll('.reel-tile').forEach(function(tile){ stopReel(tile); });
-        }
       });
+      if (target !== 'video'){ closeLightbox(); }
     });
   });
 
   var reelTiles = document.querySelectorAll('.reel-tile');
-  var isMobile = window.matchMedia('(max-width: 640px)').matches;
+  var videoIds = Array.prototype.map.call(reelTiles, function(t){ return t.getAttribute('data-yid'); });
+  var currentIndex = 0;
 
-  /* ---------- Video playback: YouTube IFrame Player API ----------
-     Why this instead of setting iframe src on tap: reloading an iframe's
-     src is a fresh navigation, and unmuted autoplay on that fresh
-     navigation is unreliable on iOS Safari even inside a click handler --
-     that is why one tap sometimes failed to start sound/playback.
+  var lightbox = document.getElementById('reelLightbox');
+  var lightboxFrame = document.getElementById('lightboxFrame');
+  var lightboxClose = lightbox.querySelector('.lightbox-close');
+  var lightboxPrev = lightbox.querySelector('.lightbox-prev');
+  var lightboxNext = lightbox.querySelector('.lightbox-next');
 
-     The IFrame Player API avoids this: each player is created up front,
-     paused, showing nothing (our poster + custom play icon cover the
-     iframe, so YouTube's own red button is never visible). A tap simply
-     sends a direct playVideo() command to an already-loaded player --
-     that command is reliably honored as part of the same user gesture.
-
-     The iframe is only faded in once the player actually reports the
-     PLAYING state, so there is never a flash of YouTube's paused
-     thumbnail or red button during the transition. */
+  /* ---------- Video playback: fullscreen lightbox, YouTube IFrame Player API ----------
+     One shared player lives inside the lightbox. Opening a tile loads that
+     video into it and plays it; the prev/next arrows just swap videoIds on
+     the same player. This is more reliable than juggling one player per
+     tile, and matches the fullscreen, prev/next-in-a-lightbox experience. */
 
   var ytApiReady = false;
   var ytApiQueue = [];
@@ -741,90 +763,92 @@
     document.head.appendChild(tag);
   })();
 
-  function stopReel(tile){
-    tile.classList.remove('playing');
-    tile._playPending = false;
-    var player = tile._ytPlayer;
-    if (player && typeof player.pauseVideo === 'function'){
-      try { player.pauseVideo(); } catch(e){}
-    }
-  }
+  var lightboxPlayer = null;
+  var lightboxReady = false;
+  var pendingIndex = null;
 
-  function startReel(tile){
-    if (!tile._ytReady){
-      tile._playPending = true;
-      return;
-    }
-    var player = tile._ytPlayer;
-    reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
-    try {
-      player.unMute();
-      player.setVolume(100);
-      player.playVideo();
-    } catch(e){}
-  }
-
-  function initReelPlayer(tile, index){
-    var id = tile.getAttribute('data-yid');
-    var frame = tile.querySelector('.reel-frame');
-    frame.id = 'reel-yt-' + index;
-
-    /* Give the iframe a real embed URL (with enablejsapi=1) BEFORE handing
-       it to YT.Player. Handing YT.Player a completely empty/blank iframe
-       and passing videoId in the config instead is not reliable -- it can
-       silently fail to ever reach a playable state, which is why the play
-       button did nothing last time. An iframe that already has a valid
-       embed src is the officially documented, dependable way to wire up
-       the API against an existing element. */
+  function initLightboxPlayer(){
+    if (!videoIds.length) return;
     var params = [
       'enablejsapi=1',
       'playsinline=1',
       'modestbranding=1',
       'rel=0',
       'iv_load_policy=3',
-      'disablekb=1',
-      'controls=' + (isMobile ? 1 : 0),
-      'fs=' + (isMobile ? 1 : 0)
+      'controls=1'
     ].join('&');
-    frame.src = 'https://www.youtube.com/embed/' + id + '?' + params;
-
-    tile._ytPlayer = new YT.Player(frame.id, {
+    lightboxFrame.id = 'lightbox-yt-player';
+    lightboxFrame.src = 'https://www.youtube.com/embed/' + videoIds[0] + '?' + params;
+    lightboxPlayer = new YT.Player('lightbox-yt-player', {
       events: {
         onReady: function(){
-          tile._ytReady = true;
-          if (tile._playPending){
-            tile._playPending = false;
-            startReel(tile);
+          lightboxReady = true;
+          if (pendingIndex !== null){
+            var idx = pendingIndex;
+            pendingIndex = null;
+            playIndex(idx);
           }
-        },
-        onStateChange: function(e){
-          if (e.data === YT.PlayerState.PLAYING){
-            tile.classList.add('playing');
-          }
-        },
-        onError: function(e){
-          /* eslint-disable-next-line no-console */
-          console.warn('YouTube player error for', id, e && e.data);
         }
       }
     });
   }
+  whenYtReady(initLightboxPlayer);
+
+  function playIndex(index){
+    currentIndex = (index + videoIds.length) % videoIds.length;
+    if (!lightboxReady){
+      pendingIndex = currentIndex;
+      return;
+    }
+    try {
+      lightboxPlayer.loadVideoId(videoIds[currentIndex]);
+      lightboxPlayer.unMute();
+      lightboxPlayer.setVolume(100);
+    } catch(e){}
+  }
+
+  function openLightbox(index){
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    playIndex(index);
+  }
+
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (lightboxPlayer && typeof lightboxPlayer.stopVideo === 'function'){
+      try { lightboxPlayer.stopVideo(); } catch(e){}
+    }
+  }
 
   reelTiles.forEach(function(tile, i){
-    whenYtReady(function(){ initReelPlayer(tile, i); });
-
-    var closeBtn = tile.querySelector('.reel-close');
-    if (closeBtn){
-      closeBtn.addEventListener('click', function(e){
-        e.stopPropagation();
-        stopReel(tile);
-      });
-    }
-
     tile.addEventListener('click', function(){
-      if (tile.classList.contains('playing')) return;
-      startReel(tile);
+      openLightbox(i);
     });
+  });
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', function(e){
+    e.stopPropagation();
+    playIndex(currentIndex - 1);
+  });
+  lightboxNext.addEventListener('click', function(e){
+    e.stopPropagation();
+    playIndex(currentIndex + 1);
+  });
+
+  /* Tapping the black backdrop (outside the player/arrows/close) also closes it */
+  lightbox.addEventListener('click', function(e){
+    if (e.target === lightbox){ closeLightbox(); }
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape'){ closeLightbox(); }
+    else if (e.key === 'ArrowLeft'){ playIndex(currentIndex - 1); }
+    else if (e.key === 'ArrowRight'){ playIndex(currentIndex + 1); }
   });
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
