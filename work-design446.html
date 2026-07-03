@@ -489,17 +489,39 @@
     overflow-x: hidden;
     display: flex;
     justify-content: center;
+    align-items: flex-start;
     padding: clamp(72px, 9vw, 110px) 24px 60px;
+    scroll-behavior: smooth;
   }
   .site-lightbox-img{
     width: min(920px, 100%);
     height: auto;
     display: block;
+    flex-shrink: 0;
+  }
+
+  .site-lightbox-progress{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: clamp(14px, 2vw, 28px);
+    width: 1px;
+    background: rgba(255,255,255,0.12);
+    z-index: 2;
+  }
+  .site-lightbox-progress span{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: rgba(255,255,255,0.7);
   }
 
   @media (max-width: 640px){
     .site-lightbox-scroll{ padding: 64px 0 40px; }
     .site-lightbox-img{ width: 100%; }
+    .site-lightbox-progress{ display:none; }
   }
 
   /* ============================= */
@@ -862,7 +884,7 @@
               <h3 class="site-title">The Dylan</h3>
               <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -878,7 +900,7 @@
               <h3 class="site-title">Project Name Two</h3>
               <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -894,7 +916,7 @@
               <h3 class="site-title">Project Name Three</h3>
               <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -910,7 +932,7 @@
               <h3 class="site-title">Project Name Four</h3>
               <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -926,7 +948,7 @@
               <h3 class="site-title">Project Name Five</h3>
               <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -978,6 +1000,7 @@
     </svg>
   </button>
   <span class="site-lightbox-title" id="siteLightboxTitle" aria-hidden="true"></span>
+  <div class="site-lightbox-progress" aria-hidden="true"><span id="siteLightboxProgress"></span></div>
   <div class="site-lightbox-scroll" id="siteLightboxScroll">
     <img class="site-lightbox-img" id="siteLightboxImg" src="" alt="Full page website screenshot">
   </div>
@@ -1288,6 +1311,7 @@
   var siteLightboxImg = document.getElementById('siteLightboxImg');
   var siteLightboxTitle = document.getElementById('siteLightboxTitle');
   var siteLightboxScroll = document.getElementById('siteLightboxScroll');
+  var siteLightboxProgress = document.getElementById('siteLightboxProgress');
   var siteLightboxClose = siteLightbox.querySelector('.lightbox-close');
 
   function openSiteLightbox(card){
@@ -1297,6 +1321,7 @@
     siteLightboxImg.src = img.src;
     siteLightboxTitle.textContent = title ? title.textContent : '';
     siteLightboxScroll.scrollTop = 0;
+    siteLightboxProgress.style.height = '0%';
     siteLightbox.classList.add('open');
     siteLightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
@@ -1306,6 +1331,12 @@
     siteLightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
+
+  siteLightboxScroll.addEventListener('scroll', function(){
+    var max = siteLightboxScroll.scrollHeight - siteLightboxScroll.clientHeight;
+    var pct = max > 0 ? (siteLightboxScroll.scrollTop / max) * 100 : 0;
+    siteLightboxProgress.style.height = pct + '%';
+  });
 
   document.querySelectorAll('.site-card').forEach(function(card){
     var link = card.querySelector('.site-link');
