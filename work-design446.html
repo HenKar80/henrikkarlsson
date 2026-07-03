@@ -571,23 +571,15 @@
   .site-info{
     display:flex;
     justify-content:space-between;
-    align-items:flex-end;
+    align-items:center;
     gap: 24px;
     margin-top: 22px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid rgba(255,255,255,0.14);
   }
   .site-info-text{ max-width: 560px; }
   .site-title{
     font-size: clamp(19px, 2vw, 24px);
     font-weight: 500;
     letter-spacing: -0.01em;
-    margin-bottom: 8px;
-  }
-  .site-desc{
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--gray);
   }
   .site-link{
     position:relative;
@@ -608,14 +600,6 @@
     transition: transform .4s var(--ease);
   }
   .site-link:hover .arrow{ transform: translateX(6px); }
-
-  @media (max-width: 640px){
-    .site-info{
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 14px;
-    }
-  }
 
   /* ============================= */
   /* CLOSING CTA                   */
@@ -882,7 +866,6 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">The Dylan</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
             <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
@@ -898,7 +881,6 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Two</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
             <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
@@ -914,7 +896,6 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Three</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
             <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
@@ -930,7 +911,6 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Four</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
             <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
@@ -946,7 +926,6 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Five</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
             <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
