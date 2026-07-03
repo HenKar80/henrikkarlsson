@@ -1210,7 +1210,7 @@
 
     card.addEventListener('mouseenter', function(){
       if (scrollPct <= 0) return;
-      var duration = Math.min(16, Math.max(3, (scrollPct / 100) * 9 + 2));
+      var duration = Math.min(22, Math.max(5, (scrollPct / 100) * 13 + 3));
       img.style.transition = 'transform ' + duration.toFixed(2) + 's ease-in-out';
       img.style.transform = 'translateY(-' + scrollPct.toFixed(2) + '%)';
     });
