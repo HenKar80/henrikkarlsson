@@ -489,6 +489,7 @@
     position:relative;
     aspect-ratio: 16 / 10;
     overflow:hidden;
+    transition: height .9s var(--ease);
   }
   .site-browser-shot img{
     position:absolute;
@@ -504,7 +505,7 @@
   .site-info{
     display:flex;
     justify-content:space-between;
-    align-items:flex-end;
+    align-items:center;
     gap: 24px;
     margin-top: 22px;
     padding-bottom: 22px;
@@ -512,15 +513,9 @@
   }
   .site-info-text{ max-width: 560px; }
   .site-title{
-    font-size: clamp(19px, 2vw, 24px);
+    font-size: clamp(22px, 2.4vw, 28px);
     font-weight: 500;
     letter-spacing: -0.01em;
-    margin-bottom: 8px;
-  }
-  .site-desc{
-    font-size: 14px;
-    line-height: 1.6;
-    color: var(--gray);
   }
   .site-link{
     position:relative;
@@ -535,6 +530,7 @@
     white-space:nowrap;
     flex-shrink:0;
     padding-bottom: 2px;
+    cursor: pointer;
   }
   .site-link .arrow{
     display:inline-block;
@@ -815,9 +811,8 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name One</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#"><span class="site-link-label">Full Page</span> <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -831,9 +826,8 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Two</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#"><span class="site-link-label">Full Page</span> <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -847,9 +841,8 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Three</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#"><span class="site-link-label">Full Page</span> <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -863,9 +856,8 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Four</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#"><span class="site-link-label">Full Page</span> <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -879,9 +871,8 @@
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Five</h3>
-              <p class="site-desc">One line describing what this site is and who it's for.</p>
             </div>
-            <a class="site-link" href="#">View Site <span class="arrow" aria-hidden="true">→</span></a>
+            <a class="site-link" href="#"><span class="site-link-label">Full Page</span> <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -1186,17 +1177,26 @@
 
   /* ---------- Website cards: hover scrolls the screenshot like a real page ----------
      Each screenshot sits taller than its frame (position:absolute, height:auto),
-     so there's real content below the fold to reveal. On hover it translates up
-     to the bottom of the image and back down on mouse-leave. The scroll distance
-     is derived purely from the image's own aspect ratio vs. the frame's fixed
-     16:10 ratio -- expressed as a percentage of the image's own height -- so it
-     stays correct at any screen size with no resize listener needed. Duration
-     scales with how much there is to scroll, so a "longer page" takes
-     proportionally longer to scroll through, the way real scrolling would. */
+     so there's real content below the fold to reveal. Hovering the PHOTO itself
+     (not the title/link below it) translates it up to the bottom of the image and
+     back down on mouse-leave. The scroll distance is derived purely from the
+     image's own aspect ratio vs. the frame's fixed 16:10 ratio -- expressed as a
+     percentage of the image's own height -- so it stays correct at any screen
+     size with no resize listener needed. Duration scales with how much there is
+     to scroll, so a "longer page" takes proportionally longer to scroll through.
+
+     "Full Page" toggles the frame open to its full natural height in an eased
+     slide, showing the entire screenshot at once (no cropping, no hover-scroll
+     needed while open); clicking again eases it back to the cropped preview. */
   document.querySelectorAll('.site-card').forEach(function(card){
-    var img = card.querySelector('.site-browser-shot img');
-    if (!img) return;
+    var shot = card.querySelector('.site-browser-shot');
+    var img = shot ? shot.querySelector('img') : null;
+    var link = card.querySelector('.site-link');
+    var label = link ? link.querySelector('.site-link-label') : null;
+    if (!shot || !img) return;
+
     var scrollPct = 0;
+    var expanded = false;
 
     function computeScrollPct(){
       if (!img.naturalWidth || !img.naturalHeight) return;
@@ -1205,19 +1205,40 @@
       var extra = 1 - (frameRatio / imgRatio); // fraction of the image's own height beyond the frame
       scrollPct = Math.max(0, extra) * 100;
     }
-    if (img.complete){ computeScrollPct(); }
-    else { img.addEventListener('load', computeScrollPct, { once: true }); }
+    function collapsedHeight(){ return shot.offsetWidth * (10 / 16); }
+    function fullHeight(){ return shot.offsetWidth * (img.naturalHeight / img.naturalWidth); }
+    function setInitialHeight(){ shot.style.height = collapsedHeight() + 'px'; }
 
-    card.addEventListener('mouseenter', function(){
-      if (scrollPct <= 0) return;
+    if (img.complete){ computeScrollPct(); setInitialHeight(); }
+    else {
+      img.addEventListener('load', function(){ computeScrollPct(); setInitialHeight(); }, { once: true });
+    }
+    window.addEventListener('resize', function(){
+      if (!expanded){ shot.style.height = collapsedHeight() + 'px'; }
+    });
+
+    shot.addEventListener('mouseenter', function(){
+      if (expanded || scrollPct <= 0) return;
       var duration = Math.min(22, Math.max(5, (scrollPct / 100) * 13 + 3));
       img.style.transition = 'transform ' + duration.toFixed(2) + 's ease-in-out';
       img.style.transform = 'translateY(-' + scrollPct.toFixed(2) + '%)';
     });
-    card.addEventListener('mouseleave', function(){
-      img.style.transition = 'transform .8s ' + 'cubic-bezier(.16,.84,.44,1)';
+    shot.addEventListener('mouseleave', function(){
+      if (expanded) return;
+      img.style.transition = 'transform .8s cubic-bezier(.16,.84,.44,1)';
       img.style.transform = 'translateY(0%)';
     });
+
+    if (link){
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        expanded = !expanded;
+        img.style.transition = 'transform .8s cubic-bezier(.16,.84,.44,1)';
+        img.style.transform = 'translateY(0%)';
+        shot.style.height = (expanded ? fullHeight() : collapsedHeight()) + 'px';
+        if (label){ label.textContent = expanded ? 'Collapse' : 'Full Page'; }
+      });
+    }
   });
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
