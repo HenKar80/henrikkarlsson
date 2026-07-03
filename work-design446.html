@@ -711,77 +711,112 @@
   var reelTiles = document.querySelectorAll('.reel-tile');
   var isMobile = window.matchMedia('(max-width: 640px)').matches;
 
-  /* ---------- Desktop: click-to-play with overflow-crop + no YouTube chrome ---------- */
-  function ytDesktopSrc(id){
-    return 'https://www.youtube.com/embed/' + id +
-      '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&disablekb=1&fs=0';
+  /* ---------- Video playback: YouTube IFrame Player API ----------
+     Why this instead of setting iframe src on tap: reloading an iframe's
+     src is a fresh navigation, and unmuted autoplay on that fresh
+     navigation is unreliable on iOS Safari even inside a click handler --
+     that is why one tap sometimes failed to start sound/playback.
+
+     The IFrame Player API avoids this: each player is created up front,
+     paused, showing nothing (our poster + custom play icon cover the
+     iframe, so YouTube's own red button is never visible). A tap simply
+     sends a direct playVideo() command to an already-loaded player --
+     that command is reliably honored as part of the same user gesture.
+
+     The iframe is only faded in once the player actually reports the
+     PLAYING state, so there is never a flash of YouTube's paused
+     thumbnail or red button during the transition. */
+
+  var ytApiReady = false;
+  var ytApiQueue = [];
+
+  function whenYtReady(fn){
+    if (ytApiReady){ fn(); } else { ytApiQueue.push(fn); }
   }
-  function playReel(tile){
+  window.onYouTubeIframeAPIReady = function(){
+    ytApiReady = true;
+    ytApiQueue.forEach(function(fn){ fn(); });
+    ytApiQueue = [];
+  };
+  (function loadYtApi(){
+    if (document.getElementById('yt-iframe-api')) return;
+    var tag = document.createElement('script');
+    tag.id = 'yt-iframe-api';
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+  })();
+
+  function stopReel(tile){
+    tile.classList.remove('playing');
+    tile._playPending = false;
+    var player = tile._ytPlayer;
+    if (player && typeof player.pauseVideo === 'function'){
+      try { player.pauseVideo(); } catch(e){}
+    }
+  }
+
+  function startReel(tile){
+    if (!tile._ytReady){
+      tile._playPending = true;
+      return;
+    }
+    var player = tile._ytPlayer;
     reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
+    try {
+      player.unMute();
+      player.setVolume(100);
+      player.playVideo();
+    } catch(e){}
+  }
+
+  function initReelPlayer(tile, index){
     var id = tile.getAttribute('data-yid');
     var frame = tile.querySelector('.reel-frame');
-    var wantSrc = ytDesktopSrc(id);
-    if (frame.getAttribute('src') !== wantSrc){ frame.src = wantSrc; }
-    clearTimeout(tile._reelTimer);
-    tile._reelTimer = setTimeout(function(){
-      tile.classList.add('playing');
-    }, 700);
-  }
-  function stopReel(tile){
-    clearTimeout(tile._reelTimer);
-    var frame = tile.querySelector('.reel-frame');
-    frame.removeAttribute('src');
-    tile.classList.remove('playing');
-  }
-
-  if (isMobile){
-    /* Preload idle player (autoplay=0) so the thumbnail shows cleanly */
-    var mobileIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if (!entry.isIntersecting) return;
-        var tile = entry.target;
-        var id = tile.getAttribute('data-yid');
-        var frame = tile.querySelector('.reel-frame');
-        if (!frame.getAttribute('src')){
-          frame.src = 'https://www.youtube.com/embed/' + id +
-            '?autoplay=0&controls=1&modestbranding=1&rel=0&playsinline=1';
+    frame.id = 'reel-yt-' + index;
+    tile._ytPlayer = new YT.Player(frame.id, {
+      videoId: id,
+      playerVars: {
+        controls: isMobile ? 1 : 0,
+        modestbranding: 1,
+        rel: 0,
+        playsinline: 1,
+        iv_load_policy: 3,
+        disablekb: 1,
+        fs: isMobile ? 1 : 0
+      },
+      events: {
+        onReady: function(){
+          tile._ytReady = true;
+          if (tile._playPending){
+            tile._playPending = false;
+            startReel(tile);
+          }
+        },
+        onStateChange: function(e){
+          if (e.data === YT.PlayerState.PLAYING){
+            tile.classList.add('playing');
+          }
         }
-        mobileIO.unobserve(tile);
-      });
-    }, { threshold: 0.2 });
-    reelTiles.forEach(function(tile){ mobileIO.observe(tile); });
-
-    /* Tile click handler -- the poster (pointer-events:auto) sits above
-       the iframe and its tap bubbles to the tile div. We reload the src
-       with autoplay=1 synchronously inside the click event: iOS Safari
-       allows unmuted autoplay when iframe src is set from a user click. */
-    reelTiles.forEach(function(tile){
-      tile.addEventListener('click', function(){
-        if (tile.classList.contains('playing')) return;
-        var id = tile.getAttribute('data-yid');
-        var frame = tile.querySelector('.reel-frame');
-        frame.src = 'https://www.youtube.com/embed/' + id +
-          '?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&playsinline=1';
-        tile.classList.add('playing');
-      });
-    });
-
-  } else {
-    /* Desktop: click to load and play, close button to dismiss */
-    reelTiles.forEach(function(tile){
-      var closeBtn = tile.querySelector('.reel-close');
-      if (closeBtn){
-        closeBtn.addEventListener('click', function(e){
-          e.stopPropagation();
-          stopReel(tile);
-        });
       }
-      tile.addEventListener('click', function(){
-        if (tile.classList.contains('playing')){ stopReel(tile); }
-        else { playReel(tile); }
-      });
     });
   }
+
+  reelTiles.forEach(function(tile, i){
+    whenYtReady(function(){ initReelPlayer(tile, i); });
+
+    var closeBtn = tile.querySelector('.reel-close');
+    if (closeBtn){
+      closeBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        stopReel(tile);
+      });
+    }
+
+    tile.addEventListener('click', function(){
+      if (tile.classList.contains('playing')) return;
+      startReel(tile);
+    });
+  });
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
      YouTube's hqdefault.jpg is only 480x360 -- stretched across a large tile
