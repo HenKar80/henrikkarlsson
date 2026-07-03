@@ -465,6 +465,30 @@
     flex-direction:column;
     gap: clamp(64px, 9vw, 128px);
   }
+  .site-laptop{
+    position:relative;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 14px;
+    padding: 26px 18px 18px;
+  }
+  .site-laptop-dot{
+    position:absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+  }
+  .site-laptop-base{
+    width: clamp(120px, 30%, 220px);
+    height: 10px;
+    margin: 0 auto;
+    border: 1px solid rgba(255,255,255,0.14);
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+  }
   .site-browser{
     border: 1px solid rgba(255,255,255,0.14);
     border-radius: 6px;
@@ -488,8 +512,6 @@
   .site-browser-shot{
     aspect-ratio: 16 / 10;
     overflow:hidden;
-    padding: clamp(14px, 2.5vw, 28px);
-    box-sizing: border-box;
   }
   .site-browser-shot img{
     width:100%;
@@ -805,12 +827,16 @@
       <div class="site-grid">
 
         <article class="site-card reveal">
-          <div class="site-browser">
+          <div class="site-laptop">
+            <span class="site-laptop-dot" aria-hidden="true"></span>
+            <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
               <img src="https://picsum.photos/seed/design446-siteA/1400/875?grayscale" alt="Website project one — homepage view">
             </div>
+            </div>
           </div>
+          <div class="site-laptop-base" aria-hidden="true"></div>
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name One</h3>
@@ -821,12 +847,16 @@
         </article>
 
         <article class="site-card reveal">
-          <div class="site-browser">
+          <div class="site-laptop">
+            <span class="site-laptop-dot" aria-hidden="true"></span>
+            <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
               <img src="https://picsum.photos/seed/design446-siteB/1400/875?grayscale" alt="Website project two — homepage view">
             </div>
+            </div>
           </div>
+          <div class="site-laptop-base" aria-hidden="true"></div>
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Two</h3>
@@ -837,12 +867,16 @@
         </article>
 
         <article class="site-card reveal">
-          <div class="site-browser">
+          <div class="site-laptop">
+            <span class="site-laptop-dot" aria-hidden="true"></span>
+            <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
               <img src="https://picsum.photos/seed/design446-siteC/1400/875?grayscale" alt="Website project three — homepage view">
             </div>
+            </div>
           </div>
+          <div class="site-laptop-base" aria-hidden="true"></div>
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Three</h3>
@@ -853,12 +887,16 @@
         </article>
 
         <article class="site-card reveal">
-          <div class="site-browser">
+          <div class="site-laptop">
+            <span class="site-laptop-dot" aria-hidden="true"></span>
+            <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
               <img src="https://picsum.photos/seed/design446-siteD/1400/875?grayscale" alt="Website project four — homepage view">
             </div>
+            </div>
           </div>
+          <div class="site-laptop-base" aria-hidden="true"></div>
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Four</h3>
@@ -869,12 +907,16 @@
         </article>
 
         <article class="site-card reveal">
-          <div class="site-browser">
+          <div class="site-laptop">
+            <span class="site-laptop-dot" aria-hidden="true"></span>
+            <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
               <img src="https://picsum.photos/seed/design446-siteE/1400/875?grayscale" alt="Website project five — homepage view">
             </div>
+            </div>
           </div>
+          <div class="site-laptop-base" aria-hidden="true"></div>
           <div class="site-info">
             <div class="site-info-text">
               <h3 class="site-title">Project Name Five</h3>
