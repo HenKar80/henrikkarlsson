@@ -1011,6 +1011,20 @@
     grid.appendChild(frag);
   })();
 
+  /* ---------- Shuffle website order on every visit ---------- */
+  (function shuffleSites(){
+    var grid = document.querySelector('.view-panel[data-view="web"] .site-grid');
+    if (!grid) return;
+    var cards = Array.prototype.slice.call(grid.children);
+    for (var i = cards.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var c = cards[i]; cards[i] = cards[j]; cards[j] = c;
+    }
+    var frag = document.createDocumentFragment();
+    cards.forEach(function(card){ frag.appendChild(card); });
+    grid.appendChild(frag);
+  })();
+
   /* ---------- Mobile menu toggle (same as homepage) ---------- */
   var menuToggle = document.getElementById('menuToggle');
   var mobileMenu = document.getElementById('mobileMenu');
