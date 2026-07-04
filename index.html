@@ -266,6 +266,7 @@
     transition: opacity 1s var(--ease), transform 1s var(--ease);
   }
   .hero-heading .line.lead{ font-weight: 700; }
+  .lead-dash{ font-weight: 400; }
   .hero-heading .line.in{
     opacity:1;
     transform: translateY(0);
@@ -598,12 +599,13 @@
     }
     .work-row-top{ line-height: 0.9; }
     .work-tag{ margin-top: clamp(10px, 2.6vw, 16px); }
-    .role-wrap{
-      font-size: clamp(1.6rem, 8vw, 3.3rem);
+    .hero-heading .line:last-child{
+      font-size: clamp(1.9rem, 9.5vw, 3.8rem);
       letter-spacing: -0.005em;
+      margin-top: 6px;
     }
     :root{
-      --fs-hello: clamp(2.6rem, 11.5vw, 4rem);
+      --fs-hello: clamp(3rem, 13vw, 4.5rem);
       --fs-hero: clamp(4rem, 14vw, 5.5rem);
     }
     .script-hello{ letter-spacing: 0.015em; }
@@ -675,7 +677,7 @@
     <div class="hero-main">
       <p class="script-hello-wrap" id="scriptHelloWrap" aria-hidden="true"></p>
       <h1 class="hero-heading">
-        <span class="line lead">I'm Henrik Karlsson&nbsp;—</span>
+        <span class="line lead">I'm Henrik Karlsson&nbsp;<span class="lead-dash">—</span></span>
         <span class="line"><span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
       </h1>
     </div>
@@ -817,7 +819,21 @@
      out, then types the next one. No masking or transforms involved at
      all -- there's nothing to clip, ever. */
   var scriptWrap = document.getElementById('scriptHelloWrap');
-  var scriptWords = ['Hej', 'Olá', '你好', 'Hola', 'Hello'];
+
+  /* This exact set of "hello" greetings, shuffled into a random order
+     every time the site loads -- so the typewriter always cycles through
+     all of them, just starting on a different one and in a different
+     sequence each visit. */
+  var greetingPool = ['Hello', 'Hej', 'Hola', 'Olá', 'Bonjour', 'Ciao', '你好', 'Aloha'];
+  function shuffle(arr){
+    arr = arr.slice();
+    for (var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+  var scriptWords = shuffle(greetingPool);
   var TYPE_SPEED_MS = 85;
   var DELETE_SPEED_MS = 45;
   var HOLD_MS = 2000;
