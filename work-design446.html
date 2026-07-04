@@ -528,9 +528,16 @@
   /* WEBSITE SHOWCASE CARDS         */
   /* ============================= */
   .site-grid{
-    display:flex;
-    flex-direction:column;
-    gap: clamp(64px, 9vw, 128px);
+    display:grid;
+    grid-template-columns: 1fr;
+    row-gap: clamp(64px, 9vw, 128px);
+    column-gap: clamp(32px, 4vw, 64px);
+  }
+  @media (min-width: 900px){
+    .site-grid{
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: clamp(56px, 6vw, 96px);
+    }
   }
   .site-browser{
     border: 1px solid rgba(255,255,255,0.14);
@@ -860,7 +867,7 @@
           <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
-              <img src="images/work/design446/website/thedylan.jpg" alt="The Dylan">
+              <img src="images/work/design446/website/thedylan.jpg" alt="Website project one — homepage view">
             </div>
           </div>
           <div class="site-info">
@@ -875,12 +882,12 @@
           <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
-              <img src="images/work/design446/website/500parq/home.jpg" alt="500 Parq">
+              <img src="https://picsum.photos/seed/design446-siteB/1400/3100?grayscale" alt="Website project two — homepage view">
             </div>
           </div>
           <div class="site-info">
             <div class="site-info-text">
-              <h3 class="site-title">500 Parq</h3>
+              <h3 class="site-title">Project Name Two</h3>
             </div>
             <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
@@ -890,7 +897,7 @@
           <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
-              <img src="images/work/design446/website/asden-properties/home.jpg" alt="Asden Properties">
+              <img src="https://picsum.photos/seed/design446-siteC/1400/2400?grayscale" alt="Website project three — homepage view">
             </div>
           </div>
           <div class="site-info">
@@ -905,7 +912,7 @@
           <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
             <div class="site-browser-shot">
-              <img src="images/work/design446/website/opc/home.jpg" alt="Ocean Partnership for Children">
+              <img src="https://picsum.photos/seed/design446-siteD/1400/2900?grayscale" alt="Website project four — homepage view">
             </div>
           </div>
           <div class="site-info">
