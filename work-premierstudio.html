@@ -601,6 +601,10 @@
     position:relative;
     aspect-ratio: 16 / 10;
     overflow:hidden;
+    transition: height 1.4s var(--ease);
+  }
+  .site-browser-shot[data-live-url].live-ready{
+    cursor: pointer;
   }
   .site-browser-shot img{
     position:absolute;
@@ -1226,19 +1230,31 @@
      most browsers still fire the iframe's load event against a blank/error
      page rather than throwing a catchable error -- so as a safety net we
      also fall back to the static screenshot if nothing has rendered within
-     a few seconds. This isn't a perfect detector, just a reasonable one. */
+     a few seconds. This isn't a perfect detector, just a reasonable one.
+
+     Pressing the box once it's loaded slowly grows the box taller, revealing
+     more of the page underneath -- the iframe itself is always pre-rendered
+     tall enough to cover the expanded height, so growing the box is just a
+     height transition on the (overflow:hidden) frame, no iframe reload or
+     internal scrolling required. */
   var LIVE_EMBED_NATIVE_WIDTH = 1440;
   var LIVE_EMBED_TIMEOUT_MS = 4000;
+  var LIVE_EMBED_EXPAND_RATIO = 2.4;
 
   document.querySelectorAll('.site-browser-shot[data-live-url]').forEach(function(shot){
     var url = shot.getAttribute('data-live-url');
     var embedWrap = shot.querySelector('.site-live-embed');
     if (!url || !embedWrap) return;
 
+    var isExpanded = false;
+
+    function baseHeight(){
+      return shot.clientWidth * (10 / 16);
+    }
+
     var iframe = document.createElement('iframe');
-    iframe.setAttribute('title', shot.closest('.site-card') ?
-      (shot.closest('.site-card').querySelector('.site-title') || {}).textContent || 'Live site preview' :
-      'Live site preview');
+    var cardTitleEl = shot.closest('.site-card') ? shot.closest('.site-card').querySelector('.site-title') : null;
+    iframe.setAttribute('title', (cardTitleEl && cardTitleEl.textContent) || 'Live site preview');
     iframe.setAttribute('loading', 'lazy');
     iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts');
     embedWrap.appendChild(iframe);
@@ -1254,9 +1270,14 @@
       var w = shot.clientWidth;
       if (!w) return;
       var scale = w / LIVE_EMBED_NATIVE_WIDTH;
-      var h = shot.clientHeight / scale;
+      var base = baseHeight();
+      var boxHeight = isExpanded ? base * LIVE_EMBED_EXPAND_RATIO : base;
+      shot.style.height = boxHeight + 'px';
+      /* Always render the iframe tall enough to cover the EXPANDED height,
+         so expanding never has to wait on new content -- it's already there. */
+      var iframeHeight = (base * LIVE_EMBED_EXPAND_RATIO) / scale;
       iframe.style.width = LIVE_EMBED_NATIVE_WIDTH + 'px';
-      iframe.style.height = h + 'px';
+      iframe.style.height = iframeHeight + 'px';
       iframe.style.transform = 'scale(' + scale + ')';
       iframe.style.transformOrigin = 'top left';
     }
@@ -1267,6 +1288,7 @@
       settled = true;
       resize();
       embedWrap.classList.add('loaded');
+      shot.classList.add('live-ready');
     });
     iframe.addEventListener('error', function(){
       if (settled) return;
@@ -1277,6 +1299,12 @@
 
     resize();
     iframe.src = url;
+
+    shot.addEventListener('click', function(){
+      if (!shot.classList.contains('live-ready')) return;
+      isExpanded = !isExpanded;
+      resize();
+    });
 
     var resizeTimer = null;
     window.addEventListener('resize', function(){
