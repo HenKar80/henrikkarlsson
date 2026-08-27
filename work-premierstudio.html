@@ -612,6 +612,24 @@
     transform: translateY(0%);
     transition: transform .6s var(--ease);
   }
+  .site-live-embed{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    background: #0a0a0a;
+    opacity:0;
+    transition: opacity .5s var(--ease);
+    pointer-events:none;
+  }
+  .site-live-embed.loaded{ opacity:1; }
+  .site-live-embed iframe{
+    position:absolute;
+    top:0;
+    left:0;
+    border:0;
+    display:block;
+    background:#fff;
+  }
 
   .site-info{
     display:flex;
@@ -785,8 +803,9 @@
         <article class="site-card reveal">
           <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
-            <div class="site-browser-shot">
+            <div class="site-browser-shot" data-live-url="https://premierstudiofl.com/">
               <img src="https://picsum.photos/seed/premierstudio-home/1400/2400?grayscale" alt="Premier Studio — homepage view">
+              <div class="site-live-embed" aria-hidden="true"></div>
             </div>
           </div>
           <div class="site-info">
@@ -1197,6 +1216,73 @@
       img.style.transition = 'transform .8s cubic-bezier(.16,.84,.44,1)';
       img.style.transform = 'translateY(0%)';
     });
+  });
+
+  /* ---------- Website cards: live embed of the real site ----------
+     For a card marked with data-live-url, load the actual live site inside
+     the box, scaled down to fit like a thumbnail (the iframe renders at a
+     fixed desktop width, then gets CSS-scaled to the box's real pixel
+     width, recalculated on resize). If the site's host blocks being framed,
+     most browsers still fire the iframe's load event against a blank/error
+     page rather than throwing a catchable error -- so as a safety net we
+     also fall back to the static screenshot if nothing has rendered within
+     a few seconds. This isn't a perfect detector, just a reasonable one. */
+  var LIVE_EMBED_NATIVE_WIDTH = 1440;
+  var LIVE_EMBED_TIMEOUT_MS = 4000;
+
+  document.querySelectorAll('.site-browser-shot[data-live-url]').forEach(function(shot){
+    var url = shot.getAttribute('data-live-url');
+    var embedWrap = shot.querySelector('.site-live-embed');
+    if (!url || !embedWrap) return;
+
+    var iframe = document.createElement('iframe');
+    iframe.setAttribute('title', shot.closest('.site-card') ?
+      (shot.closest('.site-card').querySelector('.site-title') || {}).textContent || 'Live site preview' :
+      'Live site preview');
+    iframe.setAttribute('loading', 'lazy');
+    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts');
+    embedWrap.appendChild(iframe);
+
+    var settled = false;
+    var fallbackTimer = setTimeout(function(){
+      if (settled) return;
+      settled = true;
+      embedWrap.remove();
+    }, LIVE_EMBED_TIMEOUT_MS);
+
+    function resize(){
+      var w = shot.clientWidth;
+      if (!w) return;
+      var scale = w / LIVE_EMBED_NATIVE_WIDTH;
+      var h = shot.clientHeight / scale;
+      iframe.style.width = LIVE_EMBED_NATIVE_WIDTH + 'px';
+      iframe.style.height = h + 'px';
+      iframe.style.transform = 'scale(' + scale + ')';
+      iframe.style.transformOrigin = 'top left';
+    }
+
+    iframe.addEventListener('load', function(){
+      clearTimeout(fallbackTimer);
+      if (settled) return;
+      settled = true;
+      resize();
+      embedWrap.classList.add('loaded');
+    });
+    iframe.addEventListener('error', function(){
+      if (settled) return;
+      settled = true;
+      clearTimeout(fallbackTimer);
+      embedWrap.remove();
+    });
+
+    resize();
+    iframe.src = url;
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function(){
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(resize, 150);
+    }, { passive: true });
   });
 
   /* ---------- Website cards: "View Site" opens the full screenshot ----------
