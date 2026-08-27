@@ -496,182 +496,45 @@
   }
 
   /* ============================= */
-  /* SITE LIGHTBOX (full page shot) */
+  /* PHOTO STRIP (full-bleed row)   */
   /* ============================= */
-  .site-lightbox{
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 300;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .3s var(--ease);
-  }
-  .site-lightbox.open{ opacity: 1; pointer-events: auto; }
-
-  .site-lightbox-title{
-    position: fixed;
-    top: clamp(16px, 3vw, 32px);
-    left: clamp(16px, 3vw, 32px);
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gray-soft);
-    z-index: 2;
-  }
-
-  .site-lightbox-scroll{
-    position: absolute;
-    inset: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: clamp(72px, 9vw, 110px) 24px 60px;
-    scroll-behavior: smooth;
-  }
-  .site-lightbox-img{
-    width: min(920px, 100%);
-    height: auto;
-    display: block;
-    flex-shrink: 0;
-  }
-
-  .site-lightbox-progress{
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: clamp(14px, 2vw, 28px);
-    width: 1px;
-    background: rgba(255,255,255,0.12);
-    z-index: 2;
-  }
-  .site-lightbox-progress span{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 0%;
-    background: rgba(255,255,255,0.7);
-  }
-
-  @media (max-width: 640px){
-    .site-lightbox-scroll{ padding: 64px 0 40px; }
-    .site-lightbox-img{ width: 100%; }
-    .site-lightbox-progress{ display:none; }
-  }
-
-  /* ============================= */
-  /* WEBSITE SHOWCASE CARDS         */
-  /* ============================= */
-  .site-grid{
+  .photo-strip{
     display:grid;
-    grid-template-columns: 1fr;
-    row-gap: clamp(64px, 9vw, 128px);
-    column-gap: clamp(32px, 4vw, 64px);
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: #000;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
   }
-  @media (min-width: 900px){
-    .site-grid{
-      grid-template-columns: repeat(2, 1fr);
-      row-gap: clamp(56px, 6vw, 96px);
-    }
+  @media (min-width: 641px){
+    .photo-strip{ grid-template-columns: repeat(3, 1fr); }
   }
-  .site-browser{
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 6px;
-    overflow:hidden;
-    background: #0a0a0a;
+  @media (min-width: 1000px){
+    .photo-strip{ grid-template-columns: repeat(6, 1fr); }
   }
-  .site-browser-bar{
-    display:flex;
-    align-items:center;
-    gap: 6px;
-    padding: 13px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.14);
-  }
-  .site-browser-bar span{
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.16);
-    display:block;
-  }
-  .site-browser-shot{
+  .photo-item{
     position:relative;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 5;
     overflow:hidden;
   }
-  .site-browser-shot img{
+  .photo-item img{
     position:absolute;
-    top:0;
-    left:0;
+    inset:0;
     width:100%;
-    height:auto;
+    height:100%;
+    object-fit:cover;
     display:block;
-    transform: translateY(0%);
-    transition: transform .6s var(--ease);
   }
 
-  .site-info{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap: 24px;
-    margin-top: 22px;
-  }
-  .site-info-text{ max-width: 560px; }
-  .site-title{
-    font-size: clamp(19px, 2vw, 24px);
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-  .site-link{
-    position:relative;
-    display:inline-flex;
-    align-items:baseline;
-    gap: 10px;
-    font-size: 13px;
+  .video-placeholder{
+    padding: clamp(80px, 12vw, 160px) 0;
+    text-align:center;
+    font-size: 14px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #fff;
-    text-decoration:none;
-    white-space:nowrap;
-    flex-shrink:0;
-    padding-bottom: 2px;
+    color: var(--gray);
   }
-  .site-link .arrow{
-    display:inline-block;
-    transition: transform .4s var(--ease);
-  }
-  .site-link:hover .arrow{ transform: translateX(6px); }
-  .site-actions{
-    display:flex;
-    align-items:baseline;
-    gap: clamp(18px, 2.4vw, 28px);
-    flex-shrink:0;
-  }
-  .site-live-link{
-    position:relative;
-    display:inline-flex;
-    align-items:baseline;
-    gap: 10px;
-    font-size: 13px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #fff;
-    text-decoration:none;
-    white-space:nowrap;
-    padding-bottom: 2px;
-    opacity: .85;
-    transition: opacity .35s var(--ease);
-  }
-  .site-live-link:hover{ opacity: 1; }
-  .site-live-link .arrow{
-    display:inline-block;
-    transition: transform .4s var(--ease);
-  }
-  .site-live-link:hover .arrow{ transform: translate(2px, -2px); }
 
   /* ============================= */
   /* CLOSING CTA                   */
@@ -774,33 +637,30 @@
     <span class="eyebrow reveal">Selected Work</span>
     <h1 class="case-title reveal">Premier Studio</h1>
     <p class="case-desc reveal">A sports photography studio based in Lakewood Ranch, Florida, delivering game-day coverage, athlete promotion, and social content that captures the energy of every huddle, sideline, and pregame moment. Built as a family business proud to put its name on every assignment.</p>
+
+    <div class="view-tabs reveal" role="tablist" aria-label="Project view">
+      <button class="view-tab active" data-view="photo" role="tab" aria-selected="true">Photography</button>
+      <span class="view-tab-sep" aria-hidden="true">/</span>
+      <button class="view-tab" data-view="video" role="tab" aria-selected="false">Videography</button>
+    </div>
   </section>
 
   <!-- WORK GRID -->
   <section class="case-work" aria-label="Project work">
 
-    <div class="view-panel active" data-view="web">
-      <div class="site-grid">
-
-        <article class="site-card reveal">
-          <div class="site-browser">
-            <div class="site-browser-bar"><span></span><span></span><span></span></div>
-            <div class="site-browser-shot">
-              <img src="images/work/premierstudiofl/website/home.jpg" alt="Premier Studio — homepage">
-            </div>
-          </div>
-          <div class="site-info">
-            <div class="site-info-text">
-              <h3 class="site-title">Homepage</h3>
-            </div>
-            <div class="site-actions">
-              <a class="site-live-link" href="https://premierstudiofl.com/" target="_blank" rel="noopener noreferrer">Live Site <span class="arrow" aria-hidden="true">↗</span></a>
-              <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
-            </div>
-          </div>
-        </article>
-
+    <div class="view-panel active" data-view="photo">
+      <div class="photo-strip" id="photoStrip">
+        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
       </div>
+    </div>
+
+    <div class="view-panel" data-view="video">
+      <p class="video-placeholder reveal">Videography coming soon.</p>
     </div>
 
   </section>
@@ -845,24 +705,39 @@
   </button>
 </div>
 
-<!-- Fullscreen website screenshot viewer: opened from a site card's "View Site" link -->
-<div class="site-lightbox" id="siteLightbox" aria-hidden="true">
-  <button class="lightbox-close" aria-label="Close full page view">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M2 2L22 22M22 2L2 22" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
-    </svg>
-  </button>
-  <span class="site-lightbox-title" id="siteLightboxTitle" aria-hidden="true"></span>
-  <div class="site-lightbox-progress" aria-hidden="true"><span id="siteLightboxProgress"></span></div>
-  <div class="site-lightbox-scroll" id="siteLightboxScroll">
-    <img class="site-lightbox-img" id="siteLightboxImg" src="" alt="Full page website screenshot">
-  </div>
-</div>
-
 <script>
 (function(){
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Photography: pull 6 random photos on every visit ----------
+     Same Fisher-Yates shuffle used for the homepage greeting pool and the
+     Design 446 video/website order -- shuffle the full pool, then take the
+     first 6. Update PHOTO_POOL_COUNT once the real photos are uploaded to
+     images/work/premierstudiofl/photography/ (named photo-1.jpg, photo-2.jpg,
+     etc.) so it matches the actual number of files in that folder. */
+  (function fillRandomPhotos(){
+    var strip = document.getElementById('photoStrip');
+    if (!strip) return;
+    var PHOTO_POOL_COUNT = 24; // total photos available in the folder -- update to match
+    var pool = [];
+    for (var i = 1; i <= PHOTO_POOL_COUNT; i++){
+      pool.push('images/work/premierstudiofl/photography/photo-' + i + '.jpg');
+    }
+    function shuffle(arr){
+      arr = arr.slice();
+      for (var j = arr.length - 1; j > 0; j--){
+        var k = Math.floor(Math.random() * (j + 1));
+        var t = arr[j]; arr[j] = arr[k]; arr[k] = t;
+      }
+      return arr;
+    }
+    var picks = shuffle(pool).slice(0, 6);
+    var imgs = strip.querySelectorAll('.photo-item img');
+    imgs.forEach(function(img, i){
+      if (picks[i]){ img.src = picks[i]; }
+    });
+  })();
 
   /* ---------- Back to top ---------- */
   var backToTop = document.getElementById('backToTop');
@@ -889,20 +764,6 @@
     }
     var frag = document.createDocumentFragment();
     tiles.forEach(function(tile){ frag.appendChild(tile); });
-    grid.appendChild(frag);
-  })();
-
-  /* ---------- Shuffle website order on every visit ---------- */
-  (function shuffleSites(){
-    var grid = document.querySelector('.view-panel[data-view="web"] .site-grid');
-    if (!grid) return;
-    var cards = Array.prototype.slice.call(grid.children);
-    for (var i = cards.length - 1; i > 0; i--){
-      var j = Math.floor(Math.random() * (i + 1));
-      var c = cards[i]; cards[i] = cards[j]; cards[j] = c;
-    }
-    var frag = document.createDocumentFragment();
-    cards.forEach(function(card){ frag.appendChild(card); });
     grid.appendChild(frag);
   })();
 
@@ -1145,102 +1006,6 @@
       });
     });
   }
-
-  /* ---------- Website cards: press scrolls the screenshot like a real page ----------
-     Each screenshot sits taller than its frame (position:absolute, height:auto),
-     so there's real content below the fold to reveal. A single press/click on
-     the PHOTO itself (not the title/Full Page link below it) translates it up
-     to the bottom of the image; pressing again resets it back to the top. The
-     scroll distance is derived purely from the image's own aspect ratio vs.
-     the frame's fixed 16:10 ratio -- expressed as a percentage of the image's
-     own height -- so it stays correct at any screen size with no resize
-     listener needed. Duration scales with how much there is to scroll, so a
-     "longer page" takes proportionally longer to scroll through, the way
-     real scrolling would. */
-  document.querySelectorAll('.site-card').forEach(function(card){
-    var shot = card.querySelector('.site-browser-shot');
-    var img = shot ? shot.querySelector('img') : null;
-    if (!shot || !img) return;
-    var scrollPct = 0;
-    var scrolled = false;
-
-    function computeScrollPct(){
-      if (!img.naturalWidth || !img.naturalHeight) return;
-      var frameRatio = 10 / 16; // frame height / frame width (aspect-ratio: 16/10)
-      var imgRatio = img.naturalHeight / img.naturalWidth;
-      var extra = 1 - (frameRatio / imgRatio); // fraction of the image's own height beyond the frame
-      scrollPct = Math.max(0, extra) * 100;
-    }
-    if (img.complete){ computeScrollPct(); }
-    else { img.addEventListener('load', computeScrollPct, { once: true }); }
-
-    shot.addEventListener('click', function(){
-      if (scrollPct <= 0) return;
-      scrolled = !scrolled;
-      if (scrolled){
-        var duration = Math.min(22, Math.max(5, (scrollPct / 100) * 13 + 3));
-        img.style.transition = 'transform ' + duration.toFixed(2) + 's ease-in-out';
-        img.style.transform = 'translateY(-' + scrollPct.toFixed(2) + '%)';
-      } else {
-        img.style.transition = 'transform .8s cubic-bezier(.16,.84,.44,1)';
-        img.style.transform = 'translateY(0%)';
-      }
-    });
-  });
-
-  /* ---------- Website cards: "View Site" opens the full screenshot ----------
-     Reuses the same fullscreen-lightbox pattern as the video reel (same close
-     icon, same black backdrop, Esc/backdrop-click to dismiss) but the content
-     here is just the full, uncropped screenshot in a vertically scrollable
-     viewer -- so you can browse the whole page at your own pace instead of
-     watching it auto-scroll. */
-  var siteLightbox = document.getElementById('siteLightbox');
-  var siteLightboxImg = document.getElementById('siteLightboxImg');
-  var siteLightboxTitle = document.getElementById('siteLightboxTitle');
-  var siteLightboxScroll = document.getElementById('siteLightboxScroll');
-  var siteLightboxProgress = document.getElementById('siteLightboxProgress');
-  var siteLightboxClose = siteLightbox.querySelector('.lightbox-close');
-
-  function openSiteLightbox(card){
-    var img = card.querySelector('.site-browser-shot img');
-    var title = card.querySelector('.site-title');
-    if (!img) return;
-    siteLightboxImg.src = img.src;
-    siteLightboxTitle.textContent = title ? title.textContent : '';
-    siteLightboxScroll.scrollTop = 0;
-    siteLightboxProgress.style.height = '0%';
-    siteLightbox.classList.add('open');
-    siteLightbox.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeSiteLightbox(){
-    siteLightbox.classList.remove('open');
-    siteLightbox.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  siteLightboxScroll.addEventListener('scroll', function(){
-    var max = siteLightboxScroll.scrollHeight - siteLightboxScroll.clientHeight;
-    var pct = max > 0 ? (siteLightboxScroll.scrollTop / max) * 100 : 0;
-    siteLightboxProgress.style.height = pct + '%';
-  });
-
-  document.querySelectorAll('.site-card').forEach(function(card){
-    var link = card.querySelector('.site-link');
-    if (!link) return;
-    link.addEventListener('click', function(e){
-      e.preventDefault();
-      openSiteLightbox(card);
-    });
-  });
-  siteLightboxClose.addEventListener('click', closeSiteLightbox);
-  siteLightboxScroll.addEventListener('click', function(e){
-    if (e.target === siteLightboxScroll){ closeSiteLightbox(); }
-  });
-  document.addEventListener('keydown', function(e){
-    if (!siteLightbox.classList.contains('open')) return;
-    if (e.key === 'Escape'){ closeSiteLightbox(); }
-  });
 
   /* ---------- Upgrade poster thumbnails to high-res when available ----------
      YouTube's hqdefault.jpg is only 480x360 -- stretched across a large tile
