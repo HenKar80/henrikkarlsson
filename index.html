@@ -29,7 +29,6 @@
     --fs-head: clamp(2.5rem, 6.5vw, 6rem);
     --fs-body: clamp(1.125rem, 1vw, 1.375rem);
     --fs-nav: 16px;
-    --fs-hello: clamp(3.25rem, 6.2vw, 7rem);
   }
 
   /* ============================= */
@@ -223,12 +222,6 @@
   }
   .hero-heading{ max-width: 1500px; }
 
-  .script-hello-wrap{
-    margin: 0 0 clamp(4px, 1.4vw, 16px) clamp(2px, 1vw, 6px);
-    overflow: visible;
-    min-height: clamp(2.75rem, 5.5vw, 6rem);
-  }
-
   @keyframes paradisePulse{
     0%    { color: #FF4FA3; }
     12.5% { color: #FF7A3D; }
@@ -240,21 +233,6 @@
     87.5% { color: #38BDF8; }
     100%  { color: #FF4FA3; }
   }
-  .script-hello{
-    display:inline-block;
-    white-space: nowrap;
-    font-family: 'Caveat', cursive;
-    font-size: var(--fs-hello);
-    font-weight: 600;
-    line-height: 1;
-    color: var(--hello-color);
-    animation: paradisePulse 16s linear infinite;
-    animation-delay: var(--hello-pulse-delay, 0s);
-    transform: rotate(-3deg);
-    transform-origin: left bottom;
-  }
-  .script-hello .hello-text{ display:inline-block; }
-
   .hero-heading .line{
     display:block;
     font-size: var(--fs-hero);
@@ -293,6 +271,8 @@
     white-space: nowrap;
     opacity:1;
     transition: opacity .55s var(--ease);
+    animation: paradisePulse 16s linear infinite;
+    animation-delay: var(--hello-pulse-delay, 0s);
   }
   .role-text.fade-out{ opacity:0; }
   .role-char{
@@ -583,8 +563,7 @@
     }
     .about-copy .word.paradise{ animation:none !important; }
     .paradise-text{ animation:none !important; }
-    .script-hello{ animation:none !important; transform: rotate(-3deg) !important; }
-    .role-text{ transition:none !important; opacity:1 !important; }
+    .role-text{ transition:none !important; opacity:1 !important; animation:none !important; }
     .role-char{ transform:none !important; transition:none !important; }
     .dot{ animation:none; }
     .preview{ display:none !important; }
@@ -607,10 +586,8 @@
       margin-top: 6px;
     }
     :root{
-      --fs-hello: clamp(3rem, 13vw, 4.5rem);
       --fs-hero: clamp(4rem, 14vw, 5.5rem);
     }
-    .script-hello{ letter-spacing: 0.015em; }
     #hero{
       min-height: 100vh;
       min-height: 100dvh;
@@ -677,9 +654,8 @@
   <!-- HERO -->
   <section id="hero" aria-label="Introduction">
     <div class="hero-main">
-      <p class="script-hello-wrap" id="scriptHelloWrap" aria-hidden="true"></p>
       <h1 class="hero-heading">
-        <span class="line lead">I'm Henrik Karlsson&nbsp;<span class="lead-dash">—</span></span>
+        <span class="line lead">Hello, I'm Henrik Karlsson&nbsp;<span class="lead-dash">—</span></span>
         <span class="line"><span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
       </h1>
     </div>
@@ -817,73 +793,6 @@
     heroMeta.classList.add('reveal', 'visible');
   }, 120 + heroLines.length * 90 + 120);
 
-  /* ---------- Handwritten "Hello" -- typewriter effect ---------- */
-  /* Types each word out character by character, holds, deletes it back
-     out, then types the next one. No masking or transforms involved at
-     all -- there's nothing to clip, ever. */
-  var scriptWrap = document.getElementById('scriptHelloWrap');
-
-  /* This exact set of "hello" greetings, shuffled into a random order
-     every time the site loads -- so the typewriter always cycles through
-     all of them, just starting on a different one and in a different
-     sequence each visit. */
-  var greetingPool = ['Hello', 'Hej', 'Hola', 'Olá', 'Bonjour', 'Ciao', '你好', 'Aloha'];
-  function shuffle(arr){
-    arr = arr.slice();
-    for (var i = arr.length - 1; i > 0; i--){
-      var j = Math.floor(Math.random() * (i + 1));
-      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
-    }
-    return arr;
-  }
-  var scriptWords = shuffle(greetingPool);
-  var TYPE_SPEED_MS = 85;
-  var DELETE_SPEED_MS = 45;
-  var HOLD_MS = 2000;
-  var GAP_MS = 700;
-
-  function runHelloTypewriter(){
-    scriptWrap.innerHTML =
-      '<span class="script-hello" aria-hidden="true">' +
-        '<span class="hello-text"></span>' +
-      '</span>';
-    var textEl = scriptWrap.querySelector('.hello-text');
-    var wordIndex = 0;
-
-    function typeWord(){
-      var word = scriptWords[wordIndex % scriptWords.length];
-      var i = 0;
-      function typeStep(){
-        textEl.textContent = word.slice(0, i);
-        if (i < word.length){
-          i++;
-          setTimeout(typeStep, TYPE_SPEED_MS);
-        } else {
-          setTimeout(deleteWord, HOLD_MS);
-        }
-      }
-      typeStep();
-    }
-
-    function deleteWord(){
-      var word = scriptWords[wordIndex % scriptWords.length];
-      var j = word.length;
-      function deleteStep(){
-        textEl.textContent = word.slice(0, j);
-        if (j > 0){
-          j--;
-          setTimeout(deleteStep, DELETE_SPEED_MS);
-        } else {
-          wordIndex++;
-          setTimeout(typeWord, GAP_MS);
-        }
-      }
-      deleteStep();
-    }
-
-    typeWord();
-  }
-
   /* ---------- Role: the cycling word on its own hero line (masked-rise technique) ---------- */
   var roleWrap = document.getElementById('roleWrap');
   var roleWords = ['Motion Designer', 'Photographer', 'Web Designer'];
@@ -922,10 +831,8 @@
   }
 
   if (reduceMotion){
-    scriptWrap.innerHTML = '<span class="script-hello" aria-hidden="true">Hello</span>';
     roleWrap.textContent = roleWords[0];
   } else {
-    setTimeout(function(){ runHelloTypewriter(); }, 1100);
     setTimeout(function(){ runRoleCycle(0); }, 1100);
   }
 
