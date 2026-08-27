@@ -713,22 +713,26 @@
   /* ---------- Photography: pull 6 random photos on every visit ----------
      Same Fisher-Yates shuffle used for the homepage greeting pool and the
      Design 446 video/website order -- shuffle the full pool, then take the
-     first 6. Update PHOTO_POOL_COUNT once the real photos are uploaded to
-     images/work/premierstudiofl/photography/ (named photo-1.jpg, photo-2.jpg,
-     etc.) so it matches the actual number of files in that folder. */
+     first 6. Update the counts below if photos are added to or removed from
+     images/work/premierstudiofl/photography/. */
   (function fillRandomPhotos(){
     var strip = document.getElementById('photoStrip');
     if (!strip) return;
-    var PHOTO_POOL_COUNT = 24; // total photos available in the folder -- update to match
+    var PHOTO_DIR = 'images/work/premierstudiofl/photography/';
+    var FOOTBALL_COUNT = 12;
+    var SOCCER_COUNT = 16;
     var pool = [];
-    for (var i = 1; i <= PHOTO_POOL_COUNT; i++){
-      pool.push('images/work/premierstudiofl/photography/photo-' + i + '.jpg');
+    for (var i = 1; i <= FOOTBALL_COUNT; i++){
+      pool.push(PHOTO_DIR + 'football-' + i + '.jpg');
+    }
+    for (var j = 1; j <= SOCCER_COUNT; j++){
+      pool.push(PHOTO_DIR + 'soccer-' + j + '.jpg');
     }
     function shuffle(arr){
       arr = arr.slice();
-      for (var j = arr.length - 1; j > 0; j--){
-        var k = Math.floor(Math.random() * (j + 1));
-        var t = arr[j]; arr[j] = arr[k]; arr[k] = t;
+      for (var k = arr.length - 1; k > 0; k--){
+        var m = Math.floor(Math.random() * (k + 1));
+        var t = arr[k]; arr[k] = arr[m]; arr[m] = t;
       }
       return arr;
     }
