@@ -602,9 +602,6 @@
     aspect-ratio: 16 / 10;
     overflow:hidden;
   }
-  .site-browser-shot[data-live-url]{
-    cursor: pointer;
-  }
   .site-browser-shot img{
     position:absolute;
     top:0;
@@ -614,24 +611,6 @@
     display:block;
     transform: translateY(0%);
     transition: transform .6s var(--ease);
-  }
-  .site-live-embed{
-    position:absolute;
-    inset:0;
-    overflow:hidden;
-    background: #0a0a0a;
-    opacity:0;
-    transition: opacity .5s var(--ease);
-    pointer-events:none;
-  }
-  .site-live-embed.loaded{ opacity:1; }
-  .site-live-embed iframe{
-    position:absolute;
-    top:0;
-    left:0;
-    border:0;
-    display:block;
-    background:#fff;
   }
 
   .site-info{
@@ -806,9 +785,8 @@
         <article class="site-card reveal">
           <div class="site-browser">
             <div class="site-browser-bar"><span></span><span></span><span></span></div>
-            <div class="site-browser-shot" data-live-url="https://premierstudiofl.com/">
-              <img src="https://picsum.photos/seed/premierstudio-home/1400/2400?grayscale" alt="Premier Studio — homepage view">
-              <div class="site-live-embed" aria-hidden="true"></div>
+            <div class="site-browser-shot">
+              <img src="images/work/premierstudiofl/website/home.jpg" alt="Premier Studio — homepage">
             </div>
           </div>
           <div class="site-info">
@@ -819,21 +797,6 @@
               <a class="site-live-link" href="https://premierstudiofl.com/" target="_blank" rel="noopener noreferrer">Live Site <span class="arrow" aria-hidden="true">↗</span></a>
               <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
             </div>
-          </div>
-        </article>
-
-        <article class="site-card reveal">
-          <div class="site-browser">
-            <div class="site-browser-bar"><span></span><span></span><span></span></div>
-            <div class="site-browser-shot">
-              <img src="https://picsum.photos/seed/premierstudio-interior/1400/2400?grayscale" alt="Premier Studio — interior page view">
-            </div>
-          </div>
-          <div class="site-info">
-            <div class="site-info-text">
-              <h3 class="site-title">Interior Page</h3>
-            </div>
-            <a class="site-link" href="#">Full Page <span class="arrow" aria-hidden="true">→</span></a>
           </div>
         </article>
 
@@ -1197,7 +1160,7 @@
   document.querySelectorAll('.site-card').forEach(function(card){
     var shot = card.querySelector('.site-browser-shot');
     var img = shot ? shot.querySelector('img') : null;
-    if (!shot || !img || shot.hasAttribute('data-live-url')) return;
+    if (!shot || !img) return;
     var scrollPct = 0;
     var scrolled = false;
 
@@ -1223,91 +1186,6 @@
         img.style.transform = 'translateY(0%)';
       }
     });
-  });
-
-  /* ---------- Website cards: live embed of the real site ----------
-     For a card marked with data-live-url, load the actual live site inside
-     the box, scaled down to fit like a thumbnail (the iframe renders at a
-     fixed desktop width, then gets CSS-scaled to the box's real pixel
-     width, recalculated on resize). If the site's host blocks being framed,
-     most browsers still fire the iframe's load event against a blank/error
-     page rather than throwing a catchable error -- so as a safety net we
-     also fall back to the static screenshot if nothing has rendered within
-     a few seconds. This isn't a perfect detector, just a reasonable one.
-
-     Once loaded, a single press scrolls it like a real page, the same
-     technique as the screenshot cards above: the iframe is pre-rendered
-     taller than the box, and pressing translates it upward within the
-     fixed-size, overflow:hidden frame. Pressing again resets it. */
-  var LIVE_EMBED_NATIVE_WIDTH = 2400;
-  var LIVE_EMBED_TIMEOUT_MS = 4000;
-  var LIVE_EMBED_TALL_RATIO = 2.4; // how much taller than the frame the rendered page is
-
-  document.querySelectorAll('.site-browser-shot[data-live-url]').forEach(function(shot){
-    var url = shot.getAttribute('data-live-url');
-    var embedWrap = shot.querySelector('.site-live-embed');
-    if (!url || !embedWrap) return;
-
-    var scrolled = false;
-    var scrollPct = ((LIVE_EMBED_TALL_RATIO - 1) / LIVE_EMBED_TALL_RATIO) * 100;
-
-    var iframe = document.createElement('iframe');
-    var cardTitleEl = shot.closest('.site-card') ? shot.closest('.site-card').querySelector('.site-title') : null;
-    iframe.setAttribute('title', (cardTitleEl && cardTitleEl.textContent) || 'Live site preview');
-    iframe.setAttribute('loading', 'lazy');
-    iframe.setAttribute('sandbox', 'allow-same-origin allow-scripts');
-    embedWrap.appendChild(iframe);
-
-    var settled = false;
-    var fallbackTimer = setTimeout(function(){
-      if (settled) return;
-      settled = true;
-      embedWrap.remove();
-    }, LIVE_EMBED_TIMEOUT_MS);
-
-    function resize(){
-      var w = shot.clientWidth;
-      if (!w) return;
-      var scale = w / LIVE_EMBED_NATIVE_WIDTH;
-      var iframeHeight = (shot.clientHeight * LIVE_EMBED_TALL_RATIO) / scale;
-      iframe.style.width = LIVE_EMBED_NATIVE_WIDTH + 'px';
-      iframe.style.height = iframeHeight + 'px';
-      iframe.style.transformOrigin = 'top left';
-      iframe.style.transform = 'scale(' + scale + ') translateY(' + (scrolled ? '-' + scrollPct.toFixed(2) + '%' : '0%') + ')';
-    }
-
-    iframe.addEventListener('load', function(){
-      clearTimeout(fallbackTimer);
-      if (settled) return;
-      settled = true;
-      resize();
-      embedWrap.classList.add('loaded');
-      shot.classList.add('live-ready');
-    });
-    iframe.addEventListener('error', function(){
-      if (settled) return;
-      settled = true;
-      clearTimeout(fallbackTimer);
-      embedWrap.remove();
-    });
-
-    resize();
-    iframe.src = url;
-
-    shot.addEventListener('click', function(){
-      if (!shot.classList.contains('live-ready')) return;
-      scrolled = !scrolled;
-      var scale = shot.clientWidth / LIVE_EMBED_NATIVE_WIDTH;
-      var duration = scrolled ? 9 : 4;
-      iframe.style.transition = 'transform ' + duration + 's ' + (scrolled ? 'ease-in-out' : 'cubic-bezier(.16,.84,.44,1)');
-      iframe.style.transform = 'scale(' + scale + ') translateY(' + (scrolled ? '-' + scrollPct.toFixed(2) + '%' : '0%') + ')';
-    });
-
-    var resizeTimer = null;
-    window.addEventListener('resize', function(){
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(resize, 150);
-    }, { passive: true });
   });
 
   /* ---------- Website cards: "View Site" opens the full screenshot ----------
