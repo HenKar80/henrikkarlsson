@@ -601,9 +601,8 @@
     position:relative;
     aspect-ratio: 16 / 10;
     overflow:hidden;
-    transition: height 1.4s var(--ease);
   }
-  .site-browser-shot[data-live-url].live-ready{
+  .site-browser-shot[data-live-url]{
     cursor: pointer;
   }
   .site-browser-shot img{
@@ -1184,21 +1183,23 @@
     });
   }
 
-  /* ---------- Website cards: hover scrolls the screenshot like a real page ----------
+  /* ---------- Website cards: press scrolls the screenshot like a real page ----------
      Each screenshot sits taller than its frame (position:absolute, height:auto),
-     so there's real content below the fold to reveal. Hovering the PHOTO itself
-     (not the title/Full Page link below it) translates it up to the bottom of
-     the image and back down on mouse-leave. The scroll distance is derived
-     purely from the image's own aspect ratio vs. the frame's fixed 16:10 ratio
-     -- expressed as a percentage of the image's own height -- so it stays
-     correct at any screen size with no resize listener needed. Duration scales
-     with how much there is to scroll, so a "longer page" takes proportionally
-     longer to scroll through, the way real scrolling would. */
+     so there's real content below the fold to reveal. A single press/click on
+     the PHOTO itself (not the title/Full Page link below it) translates it up
+     to the bottom of the image; pressing again resets it back to the top. The
+     scroll distance is derived purely from the image's own aspect ratio vs.
+     the frame's fixed 16:10 ratio -- expressed as a percentage of the image's
+     own height -- so it stays correct at any screen size with no resize
+     listener needed. Duration scales with how much there is to scroll, so a
+     "longer page" takes proportionally longer to scroll through, the way
+     real scrolling would. */
   document.querySelectorAll('.site-card').forEach(function(card){
     var shot = card.querySelector('.site-browser-shot');
     var img = shot ? shot.querySelector('img') : null;
-    if (!shot || !img) return;
+    if (!shot || !img || shot.hasAttribute('data-live-url')) return;
     var scrollPct = 0;
+    var scrolled = false;
 
     function computeScrollPct(){
       if (!img.naturalWidth || !img.naturalHeight) return;
@@ -1210,15 +1211,17 @@
     if (img.complete){ computeScrollPct(); }
     else { img.addEventListener('load', computeScrollPct, { once: true }); }
 
-    shot.addEventListener('mouseenter', function(){
+    shot.addEventListener('click', function(){
       if (scrollPct <= 0) return;
-      var duration = Math.min(22, Math.max(5, (scrollPct / 100) * 13 + 3));
-      img.style.transition = 'transform ' + duration.toFixed(2) + 's ease-in-out';
-      img.style.transform = 'translateY(-' + scrollPct.toFixed(2) + '%)';
-    });
-    shot.addEventListener('mouseleave', function(){
-      img.style.transition = 'transform .8s cubic-bezier(.16,.84,.44,1)';
-      img.style.transform = 'translateY(0%)';
+      scrolled = !scrolled;
+      if (scrolled){
+        var duration = Math.min(22, Math.max(5, (scrollPct / 100) * 13 + 3));
+        img.style.transition = 'transform ' + duration.toFixed(2) + 's ease-in-out';
+        img.style.transform = 'translateY(-' + scrollPct.toFixed(2) + '%)';
+      } else {
+        img.style.transition = 'transform .8s cubic-bezier(.16,.84,.44,1)';
+        img.style.transform = 'translateY(0%)';
+      }
     });
   });
 
@@ -1232,25 +1235,21 @@
      also fall back to the static screenshot if nothing has rendered within
      a few seconds. This isn't a perfect detector, just a reasonable one.
 
-     Pressing the box once it's loaded slowly grows the box taller, revealing
-     more of the page underneath -- the iframe itself is always pre-rendered
-     tall enough to cover the expanded height, so growing the box is just a
-     height transition on the (overflow:hidden) frame, no iframe reload or
-     internal scrolling required. */
+     Once loaded, a single press scrolls it like a real page, the same
+     technique as the screenshot cards above: the iframe is pre-rendered
+     taller than the box, and pressing translates it upward within the
+     fixed-size, overflow:hidden frame. Pressing again resets it. */
   var LIVE_EMBED_NATIVE_WIDTH = 1440;
   var LIVE_EMBED_TIMEOUT_MS = 4000;
-  var LIVE_EMBED_EXPAND_RATIO = 2.4;
+  var LIVE_EMBED_TALL_RATIO = 2.4; // how much taller than the frame the rendered page is
 
   document.querySelectorAll('.site-browser-shot[data-live-url]').forEach(function(shot){
     var url = shot.getAttribute('data-live-url');
     var embedWrap = shot.querySelector('.site-live-embed');
     if (!url || !embedWrap) return;
 
-    var isExpanded = false;
-
-    function baseHeight(){
-      return shot.clientWidth * (10 / 16);
-    }
+    var scrolled = false;
+    var scrollPct = ((LIVE_EMBED_TALL_RATIO - 1) / LIVE_EMBED_TALL_RATIO) * 100;
 
     var iframe = document.createElement('iframe');
     var cardTitleEl = shot.closest('.site-card') ? shot.closest('.site-card').querySelector('.site-title') : null;
@@ -1270,16 +1269,11 @@
       var w = shot.clientWidth;
       if (!w) return;
       var scale = w / LIVE_EMBED_NATIVE_WIDTH;
-      var base = baseHeight();
-      var boxHeight = isExpanded ? base * LIVE_EMBED_EXPAND_RATIO : base;
-      shot.style.height = boxHeight + 'px';
-      /* Always render the iframe tall enough to cover the EXPANDED height,
-         so expanding never has to wait on new content -- it's already there. */
-      var iframeHeight = (base * LIVE_EMBED_EXPAND_RATIO) / scale;
+      var iframeHeight = (shot.clientHeight * LIVE_EMBED_TALL_RATIO) / scale;
       iframe.style.width = LIVE_EMBED_NATIVE_WIDTH + 'px';
       iframe.style.height = iframeHeight + 'px';
-      iframe.style.transform = 'scale(' + scale + ')';
       iframe.style.transformOrigin = 'top left';
+      iframe.style.transform = 'scale(' + scale + ') translateY(' + (scrolled ? '-' + scrollPct.toFixed(2) + '%' : '0%') + ')';
     }
 
     iframe.addEventListener('load', function(){
@@ -1302,8 +1296,11 @@
 
     shot.addEventListener('click', function(){
       if (!shot.classList.contains('live-ready')) return;
-      isExpanded = !isExpanded;
-      resize();
+      scrolled = !scrolled;
+      var scale = shot.clientWidth / LIVE_EMBED_NATIVE_WIDTH;
+      var duration = scrolled ? 9 : 4;
+      iframe.style.transition = 'transform ' + duration + 's ' + (scrolled ? 'ease-in-out' : 'cubic-bezier(.16,.84,.44,1)');
+      iframe.style.transform = 'scale(' + scale + ') translateY(' + (scrolled ? '-' + scrollPct.toFixed(2) + '%' : '0%') + ')';
     });
 
     var resizeTimer = null;
