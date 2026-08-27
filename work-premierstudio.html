@@ -659,13 +659,14 @@
     font-size: 13px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--gray);
+    color: #fff;
     text-decoration:none;
     white-space:nowrap;
     padding-bottom: 2px;
-    transition: color .35s var(--ease);
+    opacity: .85;
+    transition: opacity .35s var(--ease);
   }
-  .site-live-link:hover{ color: var(--fg); }
+  .site-live-link:hover{ opacity: 1; }
   .site-live-link .arrow{
     display:inline-block;
     transition: transform .4s var(--ease);
