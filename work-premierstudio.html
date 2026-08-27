@@ -556,6 +556,14 @@
     text-transform: uppercase;
     color: var(--gray);
   }
+  .video-full{
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
+  .video-full .reel-tile{
+    aspect-ratio: 16 / 9;
+  }
 
   /* ============================= */
   /* CLOSING CTA                   */
@@ -682,7 +690,18 @@
     </div>
 
     <div class="view-panel" data-view="video">
-      <p class="video-placeholder reveal">Videography coming soon.</p>
+      <div class="video-full">
+        <div class="reel-tile reveal" data-yid="5Z6YIAUW_Is">
+          <img class="reel-poster" src="https://img.youtube.com/vi/5Z6YIAUW_Is/hqdefault.jpg" alt="" loading="lazy">
+          <iframe class="reel-frame" title="Premier Studio" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
+          <span class="reel-play-icon" aria-hidden="true">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
+              <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
+            </svg>
+          </span>
+        </div>
+      </div>
     </div>
 
   </section>
