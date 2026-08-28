@@ -443,10 +443,7 @@
     margin-right: calc(50% - 50vw);
   }
   @media (min-width: 641px){
-    .photo-strip{ grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (min-width: 1000px){
-    .photo-strip{ grid-template-columns: repeat(6, 1fr); }
+    .photo-strip{ grid-template-columns: repeat(4, 1fr); }
   }
   .photo-item{
     position:relative;
@@ -603,8 +600,6 @@
         <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
         <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
         <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
-        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
-        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
       </div>
     </div>
 
@@ -674,7 +669,7 @@
       }
       return arr;
     }
-    var picks = shuffle(pool).slice(0, 6);
+    var picks = shuffle(pool).slice(0, 4);
     var imgs = strip.querySelectorAll('.photo-item img');
     imgs.forEach(function(img, i){
       if (picks[i]){ img.src = picks[i]; }
