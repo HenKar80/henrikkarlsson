@@ -314,120 +314,12 @@
   }
 
   /* ============================= */
-  /* VIEW TABS  (Video / Web)      */
-  /* ============================= */
-  .view-tabs{
-    display:flex;
-    align-items:baseline;
-    gap: clamp(16px, 2.5vw, 24px);
-    margin-top: clamp(48px, 7vw, 80px);
-  }
-  .view-tab{
-    position:relative;
-    background:none;
-    border:0;
-    padding:0 0 8px;
-    font-family: inherit;
-    font-size: 14px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--gray);
-    cursor: pointer;
-    transition: color .35s var(--ease);
-  }
-  .view-tab::after{
-    content:'';
-    position:absolute;
-    left:0; bottom:0;
-    width:0%; height:1px;
-    background: var(--fg);
-    transition: width .4s var(--ease);
-  }
-  .view-tab:hover{ color: var(--fg); }
-  .view-tab.active{ color: var(--fg); }
-  .view-tab.active::after{ width:100%; }
-  .view-tab-sep{
-    color: var(--gray-dim);
-    font-size: 14px;
-    padding-bottom: 8px;
-  }
-
-  /* ============================= */
   /* WORK GRID                     */
   /* ============================= */
   .case-work{
     max-width: var(--maxw);
     margin: 0 auto;
     padding: clamp(32px, 5vw, 56px) var(--pad) clamp(120px, 14vw, 200px);
-  }
-  .view-panel{ display:none; }
-  .view-panel.active{ display:block; }
-
-  .tile-grid{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(18px, 2.6vw, 32px);
-  }
-  @media (max-width: 700px){
-    .tile-grid{ grid-template-columns: 1fr; }
-  }
-
-  .reel-tile{
-    position:relative;
-    aspect-ratio: 16 / 9;
-    overflow:hidden;
-    background: #0a0a0a;
-    cursor: pointer;
-  }
-  .reel-poster{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-    z-index:3;
-    transition: opacity .4s var(--ease);
-  }
-  .reel-tile.playing .reel-poster{ opacity:0; }
-  .reel-frame{
-    position:absolute;
-    top: -54px;
-    left: -2%;
-    width: 104%;
-    height: calc(100% + 124px);
-    border:0;
-    z-index:1;
-    opacity:0;
-    transition: opacity .35s var(--ease);
-    pointer-events:none;
-  }
-  .reel-tile.playing .reel-frame{ opacity:1; }
-  .reel-play-icon{
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    pointer-events:none;
-    opacity:1;
-    z-index:4;
-    transition: opacity .35s var(--ease), transform .3s var(--ease);
-  }
-  .reel-tile.playing .reel-play-icon{ opacity:0; }
-  .reel-play-icon svg{ width: clamp(40px, 5vw, 56px); height: clamp(40px, 5vw, 56px); }
-  @media (hover: hover){
-    .reel-tile:hover .reel-play-icon{ transform: scale(1.08); }
-  }
-
-  @media (max-width: 640px){
-    /* Mobile plays inline in the tile (no lightbox) -- iframe is preloaded
-       via the YouTube IFrame API and only becomes interactive once it is
-       actually playing, so the poster/play icon stay on top until then. */
-    .reel-frame{ opacity:1; pointer-events:none; }
-    .reel-tile.playing .reel-frame{ pointer-events:auto; }
-    .reel-tile.playing .reel-poster{ pointer-events:none; }
   }
 
   /* ============================= */
@@ -457,28 +349,6 @@
     height:100%;
     object-fit:cover;
     display:block;
-  }
-
-  .video-placeholder{
-    padding: clamp(80px, 12vw, 160px) 0;
-    text-align:center;
-    font-size: 14px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gray);
-  }
-  .video-full{
-    width: 100%;
-  }
-  .video-full .reel-tile{
-    aspect-ratio: 16 / 9;
-  }
-  @media (max-width: 640px){
-    .video-full{
-      width: 100vw;
-      margin-left: calc(50% - 50vw);
-      margin-right: calc(50% - 50vw);
-    }
   }
 
   /* ============================= */
@@ -583,41 +453,16 @@
     <h1 class="case-title reveal">Premier Studio</h1>
     <p class="case-desc reveal">Sports photography for athletes, teams, and programs, based in Lakewood Ranch, Florida.</p>
     <a class="case-visit reveal" href="https://premierstudiofl.com/" target="_blank" rel="noopener noreferrer">Visit Website</a>
-
-    <!-- Hidden for now, keeping the page clean
-    <div class="view-tabs reveal" role="tablist" aria-label="Project view">
-      <button class="view-tab active" data-view="photo" role="tab" aria-selected="true">Photography</button>
-      <span class="view-tab-sep" aria-hidden="true">/</span>
-      <button class="view-tab" data-view="video" role="tab" aria-selected="false">Videography</button>
-    </div>
-    -->
   </section>
 
   <!-- WORK GRID -->
   <section class="case-work" aria-label="Project work">
 
-    <div class="view-panel active" data-view="photo">
-      <div class="photo-strip" id="photoStrip">
-        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
-        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
-        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
-        <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
-      </div>
-    </div>
-
-    <div class="view-panel" data-view="video">
-      <div class="video-full">
-        <div class="reel-tile reveal" data-yid="5Z6YIAUW_Is">
-          <img class="reel-poster" src="https://img.youtube.com/vi/5Z6YIAUW_Is/hqdefault.jpg" alt="" loading="lazy">
-          <iframe class="reel-frame" title="Premier Studio" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
-          <span class="reel-play-icon" aria-hidden="true">
-            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="28" cy="28" r="27" stroke="white" stroke-opacity="0.9" stroke-width="1.4"/>
-              <path d="M23 19L37 28L23 37V19Z" fill="white" fill-opacity="0.9"/>
-            </svg>
-          </span>
-        </div>
-      </div>
+    <div class="photo-strip" id="photoStrip">
+      <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+      <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+      <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
+      <div class="photo-item reveal"><img alt="Premier Studio photography"></div>
     </div>
 
   </section>
@@ -692,20 +537,6 @@
     });
   }
 
-  /* ---------- Shuffle video order on every visit ---------- */
-  (function shuffleReels(){
-    var grid = document.querySelector('.view-panel[data-view="video"] .tile-grid');
-    if (!grid) return;
-    var tiles = Array.prototype.slice.call(grid.children);
-    for (var i = tiles.length - 1; i > 0; i--){
-      var j = Math.floor(Math.random() * (i + 1));
-      var t = tiles[i]; tiles[i] = tiles[j]; tiles[j] = t;
-    }
-    var frag = document.createDocumentFragment();
-    tiles.forEach(function(tile){ frag.appendChild(tile); });
-    grid.appendChild(frag);
-  })();
-
   /* ---------- Mobile menu toggle (same as homepage) ---------- */
   var menuToggle = document.getElementById('menuToggle');
   var mobileMenu = document.getElementById('mobileMenu');
@@ -751,171 +582,6 @@
   } else {
     revealEls.forEach(function(el){ el.classList.add('visible'); });
   }
-
-  /* ---------- View tabs: Video / Web Design ---------- */
-  var tabs = document.querySelectorAll('.view-tab');
-  var panels = document.querySelectorAll('.view-panel');
-  tabs.forEach(function(tab){
-    tab.addEventListener('click', function(){
-      var target = tab.getAttribute('data-view');
-      tabs.forEach(function(t){
-        var isActive = t === tab;
-        t.classList.toggle('active', isActive);
-        t.setAttribute('aria-selected', isActive ? 'true' : 'false');
-      });
-      panels.forEach(function(p){
-        var isTarget = p.getAttribute('data-view') === target;
-        p.classList.toggle('active', isTarget);
-      });
-      if (target !== 'video'){
-        reelTiles.forEach(function(tile){ stopReel(tile); });
-      }
-    });
-  });
-
-  var reelTiles = document.querySelectorAll('.reel-tile');
-  var isMobile = window.matchMedia('(max-width: 640px)').matches;
-
-  /* ==================================================================
-     DESKTOP: plays inline, right in the tile -- no fullscreen modal,
-     no prev/next. Same direct iframe-src technique that was always
-     reliable on desktop (autoplay policies there are far less strict
-     than iOS Safari), just applied to the tile's own frame instead of
-     a separate lightbox. The frame is cropped (overflow hidden +
-     oversized/offset iframe) to push YouTube's top title bar out of
-     view, and stays fully transparent until playback has actually
-     begun, so the red play button never flashes on open.
-     ================================================================== */
-
-  function stopReel(tile){
-    tile.classList.remove('playing');
-    tile._playPending = false;
-    var player = tile._ytPlayer;
-    if (player && typeof player.pauseVideo === 'function'){
-      try { player.pauseVideo(); } catch(e){}
-    } else {
-      var frame = tile.querySelector('.reel-frame');
-      if (frame){ frame.removeAttribute('src'); }
-    }
-  }
-
-  function playInline(tile){
-    if (tile.classList.contains('playing')) return;
-    reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
-    var id = tile.getAttribute('data-yid');
-    var frame = tile.querySelector('.reel-frame');
-    tile.classList.remove('playing');
-    frame.src = 'https://www.youtube.com/embed/' + id +
-      '?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&iv_load_policy=3&cc_load_policy=0&playsinline=1&disablekb=1';
-    setTimeout(function(){ tile.classList.add('playing'); }, 550);
-  }
-
-  /* ==================================================================
-     MOBILE: inline per-tile playback. This is the version that already
-     worked reliably -- single tap starts the video right inside the
-     tile via the YouTube IFrame Player API, which avoids the iOS
-     Safari unmuted-autoplay-on-fresh-navigation problem that a plain
-     src reload runs into on mobile.
-     ================================================================== */
-
-  var ytApiReady = false;
-  var ytApiQueue = [];
-
-  function whenYtReady(fn){
-    if (ytApiReady){ fn(); } else { ytApiQueue.push(fn); }
-  }
-  window.onYouTubeIframeAPIReady = function(){
-    ytApiReady = true;
-    ytApiQueue.forEach(function(fn){ fn(); });
-    ytApiQueue = [];
-  };
-  function loadYtApiScript(){
-    if (document.getElementById('yt-iframe-api')) return;
-    var tag = document.createElement('script');
-    tag.id = 'yt-iframe-api';
-    tag.src = 'https://www.youtube.com/iframe_api';
-    document.head.appendChild(tag);
-  }
-
-  function startReel(tile){
-    if (!tile._ytReady){
-      tile._playPending = true;
-      return;
-    }
-    var player = tile._ytPlayer;
-    reelTiles.forEach(function(t){ if (t !== tile) stopReel(t); });
-    try {
-      player.unMute();
-      player.setVolume(100);
-      player.playVideo();
-    } catch(e){}
-  }
-
-  function initReelPlayer(tile, index){
-    var id = tile.getAttribute('data-yid');
-    var frame = tile.querySelector('.reel-frame');
-    frame.id = 'reel-yt-' + index;
-    var params = [
-      'enablejsapi=1',
-      'playsinline=1',
-      'modestbranding=1',
-      'rel=0',
-      'iv_load_policy=3',
-      'cc_load_policy=0',
-      'disablekb=1',
-      'controls=0'
-    ].join('&');
-    frame.src = 'https://www.youtube.com/embed/' + id + '?' + params;
-    tile._ytPlayer = new YT.Player(frame.id, {
-      events: {
-        onReady: function(){
-          tile._ytReady = true;
-          if (tile._playPending){
-            tile._playPending = false;
-            startReel(tile);
-          }
-        },
-        onStateChange: function(e){
-          if (e.data === YT.PlayerState.PLAYING){
-            tile.classList.add('playing');
-          }
-        }
-      }
-    });
-  }
-
-  if (isMobile){
-    loadYtApiScript();
-    reelTiles.forEach(function(tile, i){
-      whenYtReady(function(){ initReelPlayer(tile, i); });
-      tile.addEventListener('click', function(){
-        if (tile.classList.contains('playing')) return;
-        startReel(tile);
-      });
-    });
-  } else {
-    reelTiles.forEach(function(tile){
-      tile.addEventListener('click', function(){
-        playInline(tile);
-      });
-    });
-  }
-
-  /* ---------- Upgrade poster thumbnails to high-res when available ----------
-     YouTube's hqdefault.jpg is only 480x360 -- stretched across a large tile
-     it looks soft. The sharper maxresdefault.jpg (1280x720) doesn't exist for
-     every video though, and YouTube silently serves a tiny 120x90 placeholder
-     instead of an error when it's missing -- so we test real dimensions
-     before trusting it, and just keep the smaller one if it's not there. */
-  reelTiles.forEach(function(tile){
-    var id = tile.getAttribute('data-yid');
-    var poster = tile.querySelector('.reel-poster');
-    var hiRes = new Image();
-    hiRes.onload = function(){
-      if (hiRes.naturalWidth > 120){ poster.src = hiRes.src; }
-    };
-    hiRes.src = 'https://img.youtube.com/vi/' + id + '/maxresdefault.jpg';
-  });
 
 })();
 </script>
