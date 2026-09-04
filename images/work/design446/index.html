@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Henrik Karlsson — Creative Designer</title>
+<meta name="description" content="Henrik Karlsson — Creative Designer in Sarasota, Florida. Brand identity, motion design, photography and digital experiences.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================= */
+  /* TOKENS                        */
+  /* ============================= */
+  :root{
+    --bg:#000000;
+    --fg:#ffffff;
+    --gray:#999999;
+    --gray-soft: rgba(255,255,255,0.45);
+    --gray-dim: rgba(255,255,255,0.22);
+    --hairline: #2a2a2a;
+    --hello-color: #ff4f8b;
+    --ease: cubic-bezier(.16,.84,.44,1);
+    --maxw: 1680px;
+    --pad: clamp(24px, 6vw, 64px);
+
+    --fs-hero: clamp(2.75rem, 9vw, 11rem);
+    --fs-head: clamp(2.5rem, 6.5vw, 6rem);
+    --fs-body: clamp(1.125rem, 1vw, 1.375rem);
+    --fs-nav: 16px;
+  }
+
+  /* ============================= */
+  /* RESET                         */
+  /* ============================= */
+  *,*::before,*::after{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Google Sans', -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+  h1,h2,h3,p,ul{ margin:0; padding:0; }
+  ul{ list-style:none; }
+  a{ color: inherit; text-decoration: none; }
+  img{ display:block; max-width:100%; }
+  ::selection{ background: #ffffff; color:#000000; }
+
+  a:focus-visible,
+  button:focus-visible{
+    outline: 2px solid #ffffff;
+    outline-offset: 6px;
+  }
+
+  .skip-link{
+    position:absolute; left:-9999px; top:0;
+    background:#fff; color:#000; padding:12px 20px; z-index:1000;
+    font-size:14px; letter-spacing:.04em;
+  }
+  .skip-link:focus{ left:16px; top:16px; }
+
+  section{ scroll-margin-top: 110px; }
+
+  .eyebrow{
+    display:block;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-weight: 500;
+    margin-bottom: clamp(40px, 6vw, 88px);
+  }
+
+  /* ============================= */
+  /* REVEAL UTILITY                */
+  /* ============================= */
+  .reveal{
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .reveal.visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ============================= */
+  /* NAV                           */
+  /* ============================= */
+  header.site-nav{
+    position: fixed;
+    top:0; left:0; right:0;
+    z-index: 200;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 28px var(--pad);
+  }
+  .logo{
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .nav-links{
+    display:flex;
+    gap: clamp(24px, 4vw, 48px);
+  }
+  .nav-links a{
+    position:relative;
+    font-size: var(--fs-nav);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--fg);
+    opacity: .82;
+    transition: opacity .35s var(--ease);
+    padding-bottom: 4px;
+  }
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:0%; height:1px;
+    background: var(--fg);
+    transition: width .4s var(--ease);
+  }
+  .nav-links a:hover,
+  .nav-links a:focus-visible{ opacity: 1; }
+  .nav-links a:hover::after,
+  .nav-links a:focus-visible::after{ width:100%; }
+  .nav-links li{ display:none; }
+  @media (min-width: 640px){
+    .nav-links li{ display:block; }
+  }
+
+  .menu-toggle{
+    position: relative;
+    width: 28px;
+    height: 22px;
+    background:none;
+    border:0;
+    padding:0;
+    cursor:pointer;
+  }
+  .menu-toggle-bar{
+    position:absolute;
+    left:0;
+    width:100%;
+    height:1.5px;
+    background: var(--fg);
+    transition: top .35s var(--ease), transform .35s var(--ease), opacity .35s var(--ease);
+  }
+  .menu-toggle-bar:nth-child(1){ top: 2px; }
+  .menu-toggle-bar:nth-child(2){ top: 10.25px; }
+  .menu-toggle-bar:nth-child(3){ top: 18.5px; }
+  .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(1){
+    top: 10.25px;
+    transform: rotate(45deg);
+  }
+  .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(2){
+    opacity:0;
+  }
+  .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(3){
+    top: 10.25px;
+    transform: rotate(-45deg);
+  }
+  @media (min-width: 640px){
+    .menu-toggle{ display:none; }
+  }
+
+  .mobile-menu{
+    position:fixed;
+    inset:0;
+    background: var(--bg);
+    z-index:190;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .4s var(--ease);
+  }
+  .mobile-menu.open{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .mobile-menu-links{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: clamp(24px, 6vw, 40px);
+  }
+  .mobile-menu-links a{
+    font-size: clamp(2rem, 9vw, 3rem);
+    font-weight: 500;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  @media (min-width: 640px){
+    .mobile-menu{ display:none; }
+  }
+
+  /* ============================= */
+  /* HERO                          */
+  /* ============================= */
+  #hero{
+    min-height: 100vh;
+    display:flex;
+    flex-direction: column;
+    justify-content:space-between;
+    padding: 150px var(--pad) 90px;
+  }
+  .hero-main{
+    flex: 1;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero-heading{ max-width: 1500px; }
+
+  @keyframes paradisePulse{
+    0%    { color: #FF4FA3; }
+    12.5% { color: #FF7A3D; }
+    25%   { color: #A8E000; }
+    37.5% { color: #2DD9C5; }
+    50%   { color: #FF6F5E; }
+    62.5% { color: #FFD23F; }
+    75%   { color: #B36BFF; }
+    87.5% { color: #38BDF8; }
+    100%  { color: #FF4FA3; }
+  }
+  .hero-heading .line{
+    display:block;
+    font-size: var(--fs-hero);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    opacity:0;
+    transform: translateY(36px);
+    transition: opacity 1s var(--ease), transform 1s var(--ease);
+  }
+  .hero-heading .line.lead{ font-weight: 700; }
+  .lead-dash{ font-weight: 400; }
+  .hero-heading .line.in{
+    opacity:1;
+    transform: translateY(0);
+  }
+
+  .sr-only{
+    position:absolute;
+    width:1px; height:1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+  }
+
+  .role-wrap{ display:inline-block; }
+  .role-mask{
+    display:inline-block;
+    overflow:hidden;
+    white-space: nowrap;
+    padding: 0.12em 0.05em;
+    margin: -0.12em -0.05em;
+  }
+  .role-text{
+    display:inline-block;
+    white-space: nowrap;
+    opacity:1;
+    transition: opacity .55s var(--ease);
+    animation: paradisePulse 16s linear infinite;
+    animation-delay: var(--hello-pulse-delay, 0s);
+  }
+  .role-text.fade-out{ opacity:0; }
+  .role-char{
+    display:inline-block;
+    transform: translateY(120%);
+    transition: transform .75s var(--ease);
+  }
+  .role-char.in{
+    transform: translateY(0);
+  }
+
+  .hero-meta{
+    margin-top: clamp(48px, 7vw, 96px);
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+    color: var(--gray);
+    font-size: var(--fs-body);
+  }
+  .hero-meta .dot{
+    display:inline-block;
+    width:8px; height:8px;
+    border-radius:50%;
+    background:#ffffff;
+    margin-right: 12px;
+    vertical-align: middle;
+    animation: pulse 2.4s ease-in-out infinite, paradisePulseBg 16s linear infinite;
+    animation-delay: 0s, var(--hello-pulse-delay, 0s);
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:1; transform: scale(1); }
+    50%{ opacity:.4; transform: scale(1.5); }
+  }
+  @keyframes paradisePulseBg{
+    0%    { background-color: #FF4FA3; }
+    12.5% { background-color: #FF7A3D; }
+    25%   { background-color: #A8E000; }
+    37.5% { background-color: #2DD9C5; }
+    50%   { background-color: #FF6F5E; }
+    62.5% { background-color: #FFD23F; }
+    75%   { background-color: #B36BFF; }
+    87.5% { background-color: #38BDF8; }
+    100%  { background-color: #FF4FA3; }
+  }
+
+  /* ============================= */
+  /* WORK                          */
+  /* ============================= */
+  #work{
+    padding: clamp(120px, 14vw, 200px) var(--pad);
+    position: relative;
+  }
+  .work-list{ max-width: var(--maxw); margin: 0 auto; }
+  .work-row{
+    display:block;
+    border:0;
+    background:none;
+    width:100%;
+    text-align:left;
+  }
+  .work-row + .work-row{
+    border-top: 1px solid var(--hairline);
+  }
+  .work-row a{
+    display:flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 70;
+    padding: clamp(32px, 4.5vw, 56px) 0;
+    color: var(--fg);
+    transition: color .5s var(--ease), opacity .9s var(--ease), transform .9s var(--ease);
+  }
+  .work-row a.reveal{
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  .work-row a.reveal.visible{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .work-row-top{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap: 24px;
+    font-size: var(--fs-head);
+    font-weight: 500;
+    transform-origin: left center;
+    will-change: transform;
+  }
+  .work-tag{
+    display:block;
+    margin-top: clamp(6px, 1vw, 10px);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    color: var(--gray);
+    font-weight: 500;
+    transition: color .5s var(--ease);
+  }
+  .work-row a.active .work-tag{ color: var(--fg); }
+  .work-list.has-active .work-row a:not(.active){
+    color: var(--gray-dim);
+  }
+  .work-row a.active{ color: var(--fg); }
+
+  @keyframes arrowBounce{
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(5px); }
+    50%      { transform: translateX(0); }
+    75%      { transform: translateX(-5px); }
+  }
+  .work-row .arrow{
+    font-size: clamp(1.25rem, 2vw, 2rem);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity .45s var(--ease), transform .45s var(--ease);
+    flex-shrink:0;
+  }
+  .work-row a.active .arrow{
+    opacity: 1;
+    animation: arrowBounce 1.2s ease-in-out infinite;
+  }
+
+  .preview{
+    position: fixed;
+    top:0; left:0;
+    width: clamp(190px, 16vw, 270px);
+    aspect-ratio: 4 / 5;
+    pointer-events:none;
+    opacity:0;
+    z-index: 60;
+    overflow:hidden;
+    border-radius: 6px;
+    transition: opacity .5s var(--ease), width .4s var(--ease);
+    will-change: transform;
+    display:none;
+  }
+  .preview.enabled{ display:block; }
+  .preview.visible{ opacity:1; }
+  .preview.small{
+    width: clamp(110px, 9vw, 160px);
+  }
+  .preview img{
+    width:100%; height:100%;
+    object-fit:cover;
+  }
+
+  /* ============================= */
+  /* ABOUT                         */
+  /* ============================= */
+  #about{
+    padding: clamp(120px, 14vw, 200px) var(--pad);
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+  .about-copy{
+    max-width: 1280px;
+    font-size: clamp(2rem, 4.6vw, 4.5rem);
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .about-copy .word{
+    display: inline-block;
+    color: rgba(255,255,255,0.22);
+    transition: color .7s var(--ease);
+  }
+  .about-copy .word.paradise{
+    color: var(--fg);
+    opacity: 0.22;
+    animation: paradisePulse 16s linear infinite;
+    animation-delay: var(--hello-pulse-delay, 0s);
+    transition: opacity .7s var(--ease);
+  }
+  .about-copy .word.paradise.visible{
+    opacity: 1;
+  }
+  .about-copy .word.hoverphoto{ cursor: pointer; }
+  .about-copy .word.visible{ color: var(--fg); }
+  .about-body{
+    max-width: clamp(720px, 56vw, 980px);
+    margin-top: clamp(28px, 4vw, 40px);
+    font-size: var(--fs-body);
+    line-height: 1.7;
+    color: var(--gray);
+  }
+  .about-body + .about-body{
+    margin-top: clamp(16px, 2vw, 22px);
+  }
+
+  /* ============================= */
+  /* SERVICES                      */
+  /* ============================= */
+  #services{
+    padding: clamp(120px, 14vw, 200px) var(--pad);
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+  .services-list{ max-width: 1100px; }
+  .service-row{
+    padding: clamp(18px, 2.4vw, 28px) 0;
+    font-size: clamp(1.75rem, 4.4vw, 3.25rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    transform-origin: left center;
+    transition: transform .5s var(--ease);
+  }
+  .service-row:hover{
+    transform: scale(1.08);
+    animation: paradisePulse 16s linear infinite;
+  }
+
+  /* ============================= */
+  /* CONTACT                       */
+  /* ============================= */
+  #contact{
+    padding: clamp(120px, 14vw, 220px) var(--pad) clamp(80px, 10vw, 140px);
+    max-width: var(--maxw);
+    margin: 0 auto;
+  }
+  .contact-headline{
+    font-size: var(--fs-head);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    max-width: 1280px;
+  }
+  .paradise-text{
+    display:inline-block;
+    animation: paradisePulse 16s linear infinite;
+    animation-delay: var(--hello-pulse-delay, 0s);
+  }
+  .contact-links,
+  .about-links{
+    margin-top: clamp(56px, 8vw, 100px);
+    display:flex;
+    flex-wrap: wrap;
+    gap: clamp(28px, 5vw, 56px);
+  }
+  .contact-links a,
+  .about-links a{
+    position:relative;
+    font-size: var(--fs-body);
+    letter-spacing: 0.04em;
+    padding-bottom: 6px;
+  }
+  .contact-links a{ text-transform: none; }
+  .about-links a{ text-transform: uppercase; }
+  .contact-links a::after,
+  .about-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:0;
+    width:100%; height:1px;
+    background: var(--gray-dim);
+    transition: background .35s var(--ease);
+  }
+  .contact-links a:hover::after,
+  .contact-links a:focus-visible::after,
+  .about-links a:hover::after,
+  .about-links a:focus-visible::after{
+    background: var(--fg);
+  }
+
+  /* ============================= */
+  /* FOOTER                        */
+  /* ============================= */
+  footer.site-footer{
+    padding: 40px var(--pad) 56px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--gray);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ============================= */
+  /* REDUCED MOTION                */
+  /* ============================= */
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    .reveal, .hero-heading .line, .about-copy .word{
+      opacity:1 !important;
+      transform:none !important;
+      transition:none !important;
+      color: var(--fg) !important;
+    }
+    .about-copy .word.paradise{ animation:none !important; }
+    .paradise-text{ animation:none !important; }
+    .role-text{ transition:none !important; opacity:1 !important; animation:none !important; }
+    .role-char{ transform:none !important; transition:none !important; }
+    .dot{ animation:none; }
+    .preview{ display:none !important; }
+  }
+
+  /* ============================= */
+  /* RESPONSIVE                    */
+  /* ============================= */
+  @media (max-width: 640px){
+    .work-row a{
+      font-size: clamp(2.1rem, 9.3vw, 3.1rem);
+      max-width: calc(100% - (clamp(96px, 30vw, 150px) / 2) - 16px);
+      padding: clamp(38px, 7vw, 58px) 0;
+    }
+    .work-row-top{ line-height: 0.9; }
+    .work-tag{ margin-top: clamp(10px, 2.6vw, 16px); }
+    .hero-heading .line:last-child{
+      font-size: clamp(1.9rem, 9.5vw, 3.8rem);
+      letter-spacing: -0.005em;
+      margin-top: 6px;
+    }
+    :root{
+      --fs-hero: clamp(4rem, 14vw, 5.5rem);
+    }
+    #hero{
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 110px var(--pad) 40px;
+    }
+
+    /* Scroll-driven photo, pinned to the right edge of the screen.
+       JS swaps it as each project crosses the vertical center while
+       scrolling -- see "Mobile: scroll-driven active project" below.
+       Titles are width-constrained to roughly this photo's midpoint
+       (above), so a long name wraps to two lines once it reaches there
+       instead of overlapping it further; the tint keeps things readable
+       on the half it does cross. */
+    .preview{
+      top: 50%;
+      left: auto;
+      right: var(--pad);
+      width: clamp(96px, 30vw, 150px);
+      transform: translateY(-50%);
+      transition: opacity .3s var(--ease);
+    }
+    .preview::after{
+      content:'';
+      position:absolute;
+      inset:0;
+      background: rgba(0,0,0,0.38);
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-nav">
+  <a class="logo" href="#hero" aria-label="Henrik Karlsson — home">HK</a>
+  <nav aria-label="Primary">
+    <ul class="nav-links">
+      <li><a href="#work">Work</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+    <span class="menu-toggle-bar"></span>
+    <span class="menu-toggle-bar"></span>
+    <span class="menu-toggle-bar"></span>
+  </button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <ul class="mobile-menu-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</div>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero" aria-label="Introduction">
+    <div class="hero-main">
+      <h1 class="hero-heading">
+        <span class="line lead">Hi, I'm Henrik Karlsson&nbsp;<span class="lead-dash">—</span></span>
+        <span class="line"><span class="role-wrap" id="roleWrap" aria-hidden="true"></span><span class="sr-only">Motion Designer, Photographer, and Web Designer</span></span>
+      </h1>
+    </div>
+    <div class="hero-meta">
+      <p>Based in Sarasota, Florida.</p>
+      <p><span class="dot" aria-hidden="true"></span>Available Worldwide.</p>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work" aria-label="Selected work">
+    <span class="eyebrow reveal">Selected Work</span>
+    <ul class="work-list" id="workList">
+      <li class="work-row">
+        <a class="reveal" href="work-premierstudio.html" data-img="images/work/premierstudiofl/premierstudiofl-1.jpg" data-name="Premier Studio">
+          <span class="work-row-top">Premier Studio <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Web Design and Development</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a class="reveal" href="https://rhdesignergraphics.com/" target="_blank" rel="noopener noreferrer" data-img="images/work/rhdesignergraphics/rhdesignergraphics-1.jpg" data-name="Apple">
+          <span class="work-row-top">RH Designer Graphics <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Web Design and Development</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a class="reveal" href="work-design446.html" data-img="images/work/design446/design446-cover.jpg" data-name="Mercedes">
+          <span class="work-row-top">Design 446 <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Motion Design, Web Design</span>
+        </a>
+      </li>
+      <!-- Hidden for now, will use a new section in the future
+      <li class="work-row">
+        <a class="reveal" href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkairbnb/700/900?grayscale" data-name="Airbnb">
+          <span class="work-row-top">Airbnb <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Web Design</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a class="reveal" href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkhej/700/900?grayscale" data-name="Hej Studio">
+          <span class="work-row-top">Hej Studio <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Brand Identity</span>
+        </a>
+      </li>
+      <li class="work-row">
+        <a class="reveal" href="#" target="_blank" rel="noopener noreferrer" data-img="https://picsum.photos/seed/hkporsche/700/900?grayscale" data-name="Porsche">
+          <span class="work-row-top">Porsche <span class="arrow" aria-hidden="true">→</span></span>
+          <span class="work-tag">Photography</span>
+        </a>
+      </li>
+      -->
+    </ul>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" aria-label="About">
+    <span class="eyebrow reveal">About</span>
+    <p class="about-copy" id="aboutCopy">Hi, I'm Henrik Karlsson — a creative designer based in Sarasota, Florida. Specializing in Motion Design, Photography, Branding, and Web Design.</p>
+    <p class="about-body reveal">My passion for design began at a young age and has grown into a professional career spanning over 20 years. Throughout this journey, I've honed a wide range of creative and technical skills. Clean, functional, and minimal design is at the core of who I am and is reflected in everything I produce. I genuinely appreciate and enjoy the art of visual communication.</p>
+    <p class="about-body reveal">In my spare time, I enjoy an active, outdoor lifestyle. Soccer has been a major part of my life since childhood, and today I support my two boys in their own soccer journeys. I also have a strong passion for photography, often capturing the moments that inspire me.</p>
+    <div class="about-links reveal">
+      <a href="resume.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services" aria-label="Services">
+    <span class="eyebrow reveal">Services</span>
+    <ul class="services-list">
+      <li class="service-row reveal">Motion Design</li>
+      <li class="service-row reveal">Photography</li>
+      <li class="service-row reveal">Branding</li>
+      <li class="service-row reveal">Web Design</li>
+    </ul>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" aria-label="Contact">
+    <span class="eyebrow reveal">Contact</span>
+    <h2 class="contact-headline reveal">Let's build something <span class="paradise-text">exceptional.</span></h2>
+    <div class="contact-links reveal">
+      <a href="mailto:hello@henrikkarlsson.com">Email</a>
+      <a href="https://linkedin.com/in/henrik-karlsson/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://instagram.com/henrikkarlsson_" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 Henrik Karlsson. All Rights Reserved.</span>
+  <span>Sarasota, Florida</span>
+</footer>
+
+<!-- Floating cursor-follow preview (Work section) -->
+<div class="preview" id="preview" aria-hidden="true">
+  <img id="previewImg" src="" alt="">
+</div>
+
+<script>
+(function(){
+
+  /* A fresh, random color each visit for the handwritten "Hello" -- pure
+     decorative variety, doesn't touch the rest of the black/white palette. */
+  var PARADISE_COLORS = [
+    '#FF4FA3', /* hot pink */
+    '#FF7A3D', /* orange */
+    '#A8E000', /* lime green */
+    '#2DD9C5', /* turquoise */
+    '#FF6F5E', /* coral */
+    '#FFD23F', /* sunshine yellow */
+    '#B36BFF', /* violet */
+    '#38BDF8'  /* ocean blue */
+  ];
+  var PULSE_DURATION_S = 16; /* must match the paradisePulse animation duration in CSS */
+  document.documentElement.style.setProperty(
+    '--hello-color',
+    PARADISE_COLORS[Math.floor(Math.random() * PARADISE_COLORS.length)]
+  );
+  document.documentElement.style.setProperty(
+    '--hello-pulse-delay',
+    '-' + (Math.random() * PULSE_DURATION_S).toFixed(2) + 's'
+  );
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var hasHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var isMobileStage = window.matchMedia('(max-width: 640px)').matches;
+  var enablePreview = hasHover && !reduceMotion && !isMobileStage;
+
+  /* ---------- Hero load reveal (heading stays put, no text-swapping) ---------- */
+  var heroLines = document.querySelectorAll('.hero-heading .line');
+  var heroMeta = document.querySelector('.hero-meta');
+  heroLines.forEach(function(line, i){
+    setTimeout(function(){ line.classList.add('in'); }, 120 + i * 90);
+  });
+  setTimeout(function(){
+    heroMeta.classList.add('reveal', 'visible');
+  }, 120 + heroLines.length * 90 + 120);
+
+  /* ---------- Role: the cycling word on its own hero line (masked-rise technique) ---------- */
+  var roleWrap = document.getElementById('roleWrap');
+  var roleWords = ['Motion Designer', 'Photographer', 'Web Designer'];
+  var CHAR_STEP = 90;
+  var CHAR_TRANSITION_MS = 750;
+
+  function drawRole(text){
+    roleWrap.innerHTML = '<span class="role-mask"><span class="role-text"></span></span>';
+    var el = roleWrap.querySelector('.role-text');
+    text.split('').forEach(function(ch){
+      var span = document.createElement('span');
+      span.className = 'role-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      el.appendChild(span);
+    });
+    var chars = el.querySelectorAll('.role-char');
+
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        chars.forEach(function(c, idx){
+          setTimeout(function(){ c.classList.add('in'); }, idx * CHAR_STEP);
+        });
+      });
+    });
+
+    return { el: el, time: (chars.length - 1) * CHAR_STEP + CHAR_TRANSITION_MS };
+  }
+
+  function runRoleCycle(i){
+    i = i || 0;
+    var result = drawRole(roleWords[i % roleWords.length]);
+    setTimeout(function(){
+      result.el.classList.add('fade-out');
+      setTimeout(function(){ runRoleCycle(i + 1); }, 650);
+    }, result.time + 1350);
+  }
+
+  if (reduceMotion){
+    roleWrap.textContent = roleWords[0];
+  } else {
+    setTimeout(function(){ runRoleCycle(0); }, 1100);
+  }
+
+  /* ---------- Mobile menu toggle ---------- */
+  var menuToggle = document.getElementById('menuToggle');
+  var mobileMenu = document.getElementById('mobileMenu');
+  if (menuToggle && mobileMenu){
+    function closeMobileMenu(){
+      menuToggle.setAttribute('aria-expanded', 'false');
+      menuToggle.setAttribute('aria-label', 'Open menu');
+      mobileMenu.classList.remove('open');
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+    function openMobileMenu(){
+      menuToggle.setAttribute('aria-expanded', 'true');
+      menuToggle.setAttribute('aria-label', 'Close menu');
+      mobileMenu.classList.add('open');
+      mobileMenu.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+    menuToggle.addEventListener('click', function(){
+      var isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+      if (isOpen){ closeMobileMenu(); } else { openMobileMenu(); }
+    });
+    mobileMenu.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', closeMobileMenu);
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closeMobileMenu();
+    });
+  }
+
+  /* ---------- Generic scroll reveal ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('visible'); });
+  }
+
+  /* stagger service rows */
+  document.querySelectorAll('.service-row').forEach(function(row, i){
+    row.style.transitionDelay = (i * 0.06) + 's';
+  });
+
+  /* stagger work rows -- Premier Studio slides up first, then RH Designer
+     Graphics shortly after, and so on down the list */
+  document.querySelectorAll('.work-row a').forEach(function(row, i){
+    row.style.transitionDelay = (i * 0.12) + 's';
+  });
+
+  /* ---------- About: word-by-word reveal ---------- */
+  var aboutCopy = document.getElementById('aboutCopy');
+  if (aboutCopy){
+    var words = aboutCopy.textContent.trim().split(/\s+/);
+
+    function stripPunct(w){ return w.replace(/^[.,;:!?—-]+/, '').replace(/[.,;:!?—-]+$/, ''); }
+
+    var paradise = words.map(function(){ return false; });
+    var hoverPhoto = words.map(function(){ return false; });
+    var PARADISE_PAIRS = ['Motion Design', 'Web Design', 'Henrik Karlsson'];
+    var HOVERPHOTO_PAIRS = ['Henrik Karlsson'];
+    for (var wi = 0; wi < words.length; wi++){
+      if (stripPunct(words[wi]) === 'Photography'){ paradise[wi] = true; }
+      if (stripPunct(words[wi]) === 'Branding'){ paradise[wi] = true; }
+      if (wi + 1 < words.length){
+        var pair = stripPunct(words[wi]) + ' ' + stripPunct(words[wi + 1]);
+        if (PARADISE_PAIRS.indexOf(pair) !== -1){ paradise[wi] = true; paradise[wi + 1] = true; }
+        if (HOVERPHOTO_PAIRS.indexOf(pair) !== -1){ hoverPhoto[wi] = true; hoverPhoto[wi + 1] = true; }
+      }
+    }
+
+    aboutCopy.innerHTML = words.map(function(w, i){
+      var cls = 'word' + (paradise[i] ? ' paradise' : '') + (hoverPhoto[i] ? ' hoverphoto' : '');
+      return '<span class="' + cls + '">' + w + '</span>';
+    }).join(' ');
+
+    var wordEls = aboutCopy.querySelectorAll('.word');
+    if ('IntersectionObserver' in window){
+      var wordIO = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){
+            wordEls.forEach(function(word, i){
+              setTimeout(function(){ word.classList.add('visible'); }, i * 35);
+            });
+            wordIO.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      wordIO.observe(aboutCopy);
+    } else {
+      wordEls.forEach(function(w){ w.classList.add('visible'); });
+    }
+  }
+
+  /* ---------- Work list: dim siblings on hover/focus ---------- */
+  var workList = document.getElementById('workList');
+  var workLinks = workList.querySelectorAll('.work-row a');
+
+  function setActive(link){
+    workList.classList.add('has-active');
+    workLinks.forEach(function(a){ a.classList.toggle('active', a === link); });
+  }
+  function clearActive(){
+    workList.classList.remove('has-active');
+    workLinks.forEach(function(a){ a.classList.remove('active'); });
+  }
+
+  workLinks.forEach(function(link){
+    link.addEventListener('mouseenter', function(){ setActive(link); });
+    link.addEventListener('focus', function(){ setActive(link); });
+    link.addEventListener('mouseleave', function(){ clearActive(); });
+    link.addEventListener('blur', function(){ clearActive(); });
+  });
+
+  /* ---------- Cursor-follow preview image ---------- */
+  if (enablePreview){
+    var preview = document.getElementById('preview');
+    var previewImg = document.getElementById('previewImg');
+    preview.classList.add('enabled');
+
+    /* preload images */
+    workLinks.forEach(function(link){
+      var src = link.getAttribute('data-img');
+      if (src){ var im = new Image(); im.src = src; }
+    });
+
+    var mouseX = 0, mouseY = 0;
+    var curX = 0, curY = 0;
+    var rot = 0, curRot = 0;
+    var rafId = null;
+
+    document.addEventListener('mousemove', function(e){
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    function loop(){
+      curX += (mouseX - curX) * 0.12;
+      curY += (mouseY - curY) * 0.12;
+      curRot += (rot - curRot) * 0.12;
+      preview.style.transform =
+        'translate3d(' + curX + 'px,' + curY + 'px,0) translate(-50%,-50%) rotate(' + curRot + 'deg)';
+      rafId = requestAnimationFrame(loop);
+    }
+    loop();
+
+    workLinks.forEach(function(link){
+      link.addEventListener('mouseenter', function(){
+        var src = link.getAttribute('data-img');
+        if (src) previewImg.src = src;
+        rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2; /* ~ -3.2..3.2deg */
+        preview.classList.remove('small');
+        preview.classList.add('visible');
+      });
+      link.addEventListener('mouseleave', function(){
+        preview.classList.remove('visible');
+      });
+    });
+
+    /* hide preview if cursor leaves the work list entirely */
+    workList.addEventListener('mouseleave', function(){
+      preview.classList.remove('visible');
+    });
+
+    /* same floating preview, triggered by hovering "Henrik Karlsson" in the About copy --
+       shown smaller than the Work section previews */
+    var ABOUT_PHOTO_SRC = 'images/about/henrikkarlsson.jpg';
+    var aboutHoverEls = document.querySelectorAll('.about-copy .word.hoverphoto');
+    if (aboutHoverEls.length){
+      var aboutPreloadImg = new Image();
+      aboutPreloadImg.src = ABOUT_PHOTO_SRC;
+      aboutHoverEls.forEach(function(el){
+        el.addEventListener('mouseenter', function(){
+          previewImg.src = ABOUT_PHOTO_SRC;
+          rot = (Math.random() * 4 - 2) + (Math.random() < 0.5 ? -1 : 1) * 1.2;
+          preview.classList.add('small');
+          preview.classList.add('visible');
+        });
+        el.addEventListener('mouseleave', function(){
+          preview.classList.remove('visible');
+        });
+      });
+    }
+  }
+
+  /* ---------- Mobile: scroll-driven active project + photo swap ---------- */
+  /* There's no cursor on a touch screen, so instead of mouseenter/mouseleave
+     deciding which project is "active", whatever project is crossing the
+     dead center of the screen wins -- reusing the same setActive/clearActive
+     helpers above, so the dimmed-siblings treatment matches the desktop
+     hover state exactly. The photo is pinned to the right edge (see CSS)
+     and crossfades to the new project's image as the active row changes. */
+  if (isMobileStage && !reduceMotion){
+    var mPreview = document.getElementById('preview');
+    var mPreviewImg = document.getElementById('previewImg');
+    mPreview.classList.add('enabled');
+
+    workLinks.forEach(function(link){
+      var src = link.getAttribute('data-img');
+      if (src){ var im = new Image(); im.src = src; }
+    });
+
+    var currentMobileSrc = '';
+    var mobileSwapTimer = null;
+    var tiltSign = 1;
+
+    function showMobilePreview(link){
+      var src = link.getAttribute('data-img');
+      if (!src) return;
+      setActive(link);
+      if (src === currentMobileSrc){
+        mPreview.classList.add('visible');
+        return;
+      }
+      currentMobileSrc = src;
+      mPreview.classList.remove('visible'); /* fade out the old photo */
+      clearTimeout(mobileSwapTimer);
+      mobileSwapTimer = setTimeout(function(){
+        mPreviewImg.src = src; /* swap once fully invisible, then fade in */
+        tiltSign *= -1; /* alternate left/right each swap */
+        var tilt = tiltSign * (Math.random() * 3 + 1); /* ~1..4deg, alternating side */
+        var shiftX = (Math.random() * 16 - 8); /* ~ -8..8px */
+        var shiftY = (Math.random() * 20 - 10); /* ~ -10..10px */
+        mPreview.style.transform =
+          'translate(' + shiftX.toFixed(1) + 'px, calc(-50% + ' + shiftY.toFixed(1) + 'px)) rotate(' + tilt.toFixed(2) + 'deg)';
+        mPreview.classList.add('visible');
+      }, 300);
+    }
+
+    function hideMobilePreview(){
+      clearTimeout(mobileSwapTimer);
+      mPreview.classList.remove('visible');
+      clearActive();
+      currentMobileSrc = '';
+    }
+
+    /* ---------- One continuous scroll-synced pass: nearest-to-center row
+       wins (drives the photo + active state), and every headline scales
+       toward the center as it passes through. Recomputed fresh on every
+       scroll frame -- nothing here can get "stuck", since there's no
+       separate async observer state that can fall out of sync. ---------- */
+    var workHeads = document.querySelectorAll('.work-row-top');
+    var workTicking = false;
+
+    function updateWorkScroll(){
+      var vh = window.innerHeight;
+      var nearestLink = null;
+      var nearestDist = Infinity;
+
+      workLinks.forEach(function(link, i){
+        var rect = link.getBoundingClientRect();
+        var dist = Math.abs((rect.top + rect.height / 2) - vh / 2);
+        if (dist < nearestDist){ nearestDist = dist; nearestLink = link; }
+
+        var progress = Math.max(0, 1 - dist / (vh * 0.5)); /* 0 at edges, 1 dead center */
+        workHeads[i].style.transform = 'scale(' + (1 + progress * 0.06).toFixed(3) + ')';
+      });
+
+      /* tighter than the scale falloff above -- only show the photo and
+         turn the headline white once a row is genuinely near center,
+         not as soon as it's merely somewhere in the lower/upper half */
+      if (nearestLink && nearestDist < vh * 0.16){
+        showMobilePreview(nearestLink);
+      } else {
+        hideMobilePreview();
+      }
+      workTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if (!workTicking){
+        workTicking = true;
+        requestAnimationFrame(updateWorkScroll);
+      }
+    }, { passive: true });
+    updateWorkScroll();
+  }
+
+  /* ---------- Subtle scroll parallax ---------- */
+  /* Major sections drift a few pixels as they pass through the viewport --
+     separate from the one-time fade-up reveals (which live on child
+     elements), so there's no transform conflict between the two. */
+  if (!reduceMotion){
+    var parallaxSections = document.querySelectorAll('#about, #services, #contact');
+    if (parallaxSections.length){
+      var parallaxTicking = false;
+      function driftFor(rect, vh, amount){
+        var center = rect.top + rect.height / 2;
+        var progress = (center - vh / 2) / vh; /* ~ -1..1 as it passes through */
+        var clamped = Math.max(-1, Math.min(1, progress));
+        return (clamped * -amount).toFixed(2);
+      }
+      function updateParallax(){
+        var vh = window.innerHeight;
+        parallaxSections.forEach(function(sec){
+          sec.style.transform = 'translateY(' + driftFor(sec.getBoundingClientRect(), vh, 16) + 'px)';
+        });
+        parallaxTicking = false;
+      }
+      window.addEventListener('scroll', function(){
+        if (!parallaxTicking){
+          parallaxTicking = true;
+          requestAnimationFrame(updateParallax);
+        }
+      }, { passive: true });
+      updateParallax();
+    }
+  }
+
+})();
+</script>
+
+</body>
+</html>
