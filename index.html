@@ -478,7 +478,7 @@
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(3, auto);
     grid-auto-flow: column;
-    column-gap: clamp(40px, 8vw, 120px);
+    column-gap: clamp(24px, 4vw, 60px);
   }
   .service-row{
     padding: clamp(18px, 2.4vw, 28px) 0;
@@ -630,6 +630,14 @@
       grid-template-columns: 1fr;
       grid-template-rows: none;
       grid-auto-flow: row;
+    }
+    #work, #about, #services{
+      padding-top: clamp(56px, 12vw, 84px);
+      padding-bottom: clamp(56px, 12vw, 84px);
+    }
+    #contact{
+      padding-top: clamp(56px, 12vw, 84px);
+      padding-bottom: clamp(48px, 9vw, 64px);
     }
   }
 
