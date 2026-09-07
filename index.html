@@ -639,10 +639,14 @@
       padding-top: clamp(56px, 12vw, 84px);
       padding-bottom: clamp(48px, 9vw, 64px);
     }
-    .resume-panel{ padding: clamp(28px, 7vw, 40px) !important; }
-    .resume-grid{ grid-template-columns: 1fr !important; gap: 40px !important; }
+    .resume-panel{ padding: clamp(28px, 7vw, 40px) !important; border: none !important; }
+    .resume-grid{ grid-template-columns: 1fr !important; gap: 56px !important; }
     .resume-header{ gap: 16px !important; }
     .resume-photo{ width: 56px !important; height: 56px !important; }
+    .resume-contact{ margin-top: 24px !important; padding-bottom: 32px !important; }
+    .resume-job{ margin-bottom: 32px !important; padding-bottom: 32px !important; }
+    .resume-side-block{ margin-bottom: 44px !important; }
+    .resume-actions{ margin-top: 48px !important; }
   }
 
   /* ============================= */
@@ -701,11 +705,16 @@
     font-size: 20px;
     line-height: 1;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     transition: border-color .3s var(--ease), transform .3s var(--ease);
   }
   .resume-close:hover{
     border-color: var(--fg);
     transform: rotate(90deg);
+  }
+  .resume-close:focus-visible{
+    outline: 1px solid rgba(255,255,255,0.5);
+    outline-offset: 3px;
   }
 
   .resume-header{
@@ -1005,7 +1014,7 @@
     </button>
 
     <header class="resume-header">
-      <img class="resume-photo" src="images/about/henrikkarlsson-circle.png" alt="" aria-hidden="true">
+      <img class="resume-photo" src="images/about/HenrikKarlssonCircle.png" alt="" aria-hidden="true">
       <div>
         <h2 class="resume-name" id="resumeName">Henrik Karlsson</h2>
         <p class="resume-role">Motion Graphic Designer</p>
