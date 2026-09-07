@@ -639,6 +639,229 @@
       padding-top: clamp(56px, 12vw, 84px);
       padding-bottom: clamp(48px, 9vw, 64px);
     }
+    .resume-panel{ padding: clamp(28px, 7vw, 40px) !important; }
+    .resume-grid{ grid-template-columns: 1fr !important; gap: 40px !important; }
+    .resume-header{ gap: 16px !important; }
+    .resume-photo{ width: 56px !important; height: 56px !important; }
+  }
+
+  /* ============================= */
+  /* RESUME MODAL                  */
+  /* ============================= */
+  .resume-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(16px, 4vw, 40px);
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .4s var(--ease);
+  }
+  .resume-overlay.open{
+    opacity: 1;
+    pointer-events: auto;
+  }
+  body.resume-open{ overflow: hidden; }
+
+  .resume-panel{
+    position: relative;
+    width: min(920px, 100%);
+    max-height: 88vh;
+    overflow-y: auto;
+    background: var(--bg);
+    border: 1px solid var(--hairline);
+    padding: clamp(32px, 5vw, 64px);
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+    transition: opacity .45s var(--ease), transform .45s var(--ease);
+  }
+  .resume-overlay.open .resume-panel{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .resume-close{
+    position: absolute;
+    top: clamp(16px, 3vw, 28px);
+    right: clamp(16px, 3vw, 28px);
+    width: 40px; height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 50%;
+    color: var(--fg);
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color .3s var(--ease), transform .3s var(--ease);
+  }
+  .resume-close:hover{
+    border-color: var(--fg);
+    transform: rotate(90deg);
+  }
+
+  .resume-header{
+    display: flex;
+    align-items: center;
+    gap: clamp(20px, 3vw, 28px);
+    padding-right: 56px;
+  }
+  .resume-photo{
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.05);
+    border: 1px solid var(--hairline);
+    flex-shrink: 0;
+  }
+  .resume-name{
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .resume-role{
+    margin-top: 6px;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+
+  .resume-contact{
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(16px, 3vw, 32px);
+    margin-top: clamp(28px, 4vw, 36px);
+    padding-bottom: clamp(28px, 4vw, 36px);
+    border-bottom: 1px solid var(--hairline);
+    font-size: 14px;
+    color: var(--gray);
+  }
+  .resume-contact a{
+    position: relative;
+    padding-bottom: 4px;
+  }
+  .resume-contact a::after{
+    content:'';
+    position: absolute;
+    left:0; bottom:0;
+    width:0%; height:1px;
+    background: var(--fg);
+    transition: width .35s var(--ease);
+  }
+  .resume-contact a:hover{ color: var(--fg); }
+  .resume-contact a:hover::after{ width:100%; }
+
+  .resume-label{
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gray);
+    font-weight: 500;
+    margin-bottom: clamp(20px, 3vw, 28px);
+  }
+
+  .resume-grid{
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: clamp(40px, 5vw, 72px);
+    margin-top: clamp(36px, 5vw, 48px);
+  }
+
+  .resume-job{
+    padding-bottom: clamp(22px, 3vw, 28px);
+    margin-bottom: clamp(22px, 3vw, 28px);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .resume-job:last-child{
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  .resume-job-top{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+  }
+  .resume-job-top h3{
+    font-size: clamp(1.05rem, 1.6vw, 1.3rem);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+  .resume-date{
+    font-size: 13px;
+    color: var(--gray);
+    white-space: nowrap;
+  }
+  .resume-company{
+    margin-top: 6px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--gray-soft);
+  }
+  .resume-desc{
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--gray);
+    max-width: 640px;
+  }
+
+  .resume-side-block{
+    margin-bottom: clamp(32px, 4vw, 40px);
+  }
+  .resume-side-block:last-child{ margin-bottom: 0; }
+  .resume-side-title{
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .resume-side-title:not(:first-child){
+    margin-top: clamp(16px, 2.5vw, 20px);
+  }
+  .resume-side-sub{
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--gray);
+  }
+  .resume-side-sub + .resume-side-sub{ margin-top: 8px; }
+  .resume-side-sub a{ position: relative; color: var(--gray); }
+  .resume-side-sub a:hover{ color: var(--fg); }
+
+  .resume-actions{
+    margin-top: clamp(40px, 5vw, 56px);
+    display: flex;
+    justify-content: flex-end;
+  }
+  .resume-download{
+    display: inline-block;
+    padding: 14px 32px;
+    border: 1px solid var(--fg);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: background .35s var(--ease), color .35s var(--ease);
+  }
+  .resume-download:hover{
+    background: var(--fg);
+    color: #000000;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .resume-overlay, .resume-panel{ transition: none !important; }
   }
 
 </style>
@@ -741,7 +964,7 @@
     <p class="about-body reveal">My passion for design began at a young age and has grown into a professional career spanning over 20 years. Throughout this journey, I've honed a wide range of creative and technical skills. Clean, functional, and minimal design is at the core of who I am and is reflected in everything I produce. I genuinely appreciate and enjoy the art of visual communication.</p>
     <p class="about-body reveal">In my spare time, I enjoy an active, outdoor lifestyle. Soccer has been a major part of my life since childhood, and today I support my two boys in their own soccer journeys. I also have a strong passion for photography, often capturing the moments that inspire me.</p>
     <div class="about-links reveal">
-      <a href="images/about/HenrikKarlsson-Resume2026.pdf" download="HenrikKarlsson-Resume2026.pdf">Resume</a>
+      <a href="images/about/HenrikKarlsson-Resume2026.pdf" id="resumeTrigger">Resume</a>
     </div>
   </section>
 
@@ -773,6 +996,126 @@
 <footer class="site-footer">
   <span>© 2026 Henrik Karlsson. All Rights Reserved.</span>
 </footer>
+
+<!-- RESUME MODAL -->
+<div class="resume-overlay" id="resumeOverlay" aria-hidden="true">
+  <div class="resume-panel" role="dialog" aria-modal="true" aria-labelledby="resumeName" id="resumePanel">
+    <button class="resume-close" id="resumeClose" aria-label="Close resume">
+      <span aria-hidden="true">&times;</span>
+    </button>
+
+    <header class="resume-header">
+      <img class="resume-photo" src="images/about/henrikkarlsson-circle.png" alt="" aria-hidden="true">
+      <div>
+        <h2 class="resume-name" id="resumeName">Henrik Karlsson</h2>
+        <p class="resume-role">Motion Graphic Designer</p>
+      </div>
+    </header>
+
+    <ul class="resume-contact">
+      <li><a href="tel:+13478380479">347.838.0479</a></li>
+      <li><a href="mailto:hello@henrikkarlsson.com">hello@henrikkarlsson.com</a></li>
+    </ul>
+
+    <div class="resume-grid">
+      <div class="resume-main">
+        <span class="resume-label">Work Experience</span>
+
+        <div class="resume-job">
+          <div class="resume-job-top">
+            <h3>Motion and Web Designer</h3>
+            <span class="resume-date">Mar 2013 – Apr 2026</span>
+          </div>
+          <p class="resume-company">Design 446, Manasquan, NJ</p>
+          <p class="resume-desc">Designed websites, landing pages, email campaigns, print materials, and logo animations, and produced video for national home builders and lifestyle brands — overseeing projects from inception to completion in a fast-paced, high-energy environment.</p>
+        </div>
+
+        <div class="resume-job">
+          <div class="resume-job-top">
+            <h3>Web Designer</h3>
+            <span class="resume-date">Oct 2012 – Mar 2013</span>
+          </div>
+          <p class="resume-company">Lawyer Central, Warren, NJ</p>
+          <p class="resume-desc">Designed and managed websites and landing pages for attorneys.</p>
+        </div>
+
+        <div class="resume-job">
+          <div class="resume-job-top">
+            <h3>Web Designer</h3>
+            <span class="resume-date">Aug 2009 – Oct 2012</span>
+          </div>
+          <p class="resume-company">MedNet Technologies, Melville, NY</p>
+          <p class="resume-desc">Designed websites and edited video for companies across the healthcare industry, nationwide.</p>
+        </div>
+
+        <div class="resume-job">
+          <div class="resume-job-top">
+            <h3>Motion Designer</h3>
+            <span class="resume-date">Mar 2008 – Aug 2008</span>
+          </div>
+          <p class="resume-company">Your Majesty Co, New York, NY</p>
+          <p class="resume-desc">Contributed visual motion concepts for TV and video commercials for major companies.</p>
+        </div>
+
+        <div class="resume-job">
+          <div class="resume-job-top">
+            <h3>Motion Designer</h3>
+            <span class="resume-date">2007 – 2008</span>
+          </div>
+          <p class="resume-company">Animero, Helsingborg, Sweden</p>
+          <p class="resume-desc">Created web campaigns and motion pieces for major clients including TV4, Aftonbladet, and Disney.</p>
+        </div>
+
+        <div class="resume-job">
+          <div class="resume-job-top">
+            <h3>Motion Graphic Designer</h3>
+            <span class="resume-date">2006 – 2007</span>
+          </div>
+          <p class="resume-company">Mecs, Halmstad, Sweden</p>
+          <p class="resume-desc">Produced commercials for the largest cinema chain in Sweden.</p>
+        </div>
+      </div>
+
+      <aside class="resume-side">
+        <div class="resume-side-block">
+          <span class="resume-label">Education</span>
+          <p class="resume-side-title">Campus i12</p>
+          <p class="resume-side-sub">Bachelor, Digital Animation<br>Eksjö, Sweden — 2004–2006</p>
+        </div>
+
+        <div class="resume-side-block">
+          <span class="resume-label">Skills</span>
+          <p class="resume-side-title">Skillful In:</p>
+          <p class="resume-side-sub">Video Editing<br>Graphic Design<br>Animation<br>Web Design<br>Photography</p>
+          <p class="resume-side-title">Proficient In:</p>
+          <p class="resume-side-sub">Photoshop<br>Illustrator<br>After Effects<br>Lightroom<br>Premiere Pro</p>
+        </div>
+
+        <div class="resume-side-block">
+          <span class="resume-label">Language</span>
+          <p class="resume-side-sub">English — Fluent<br>Swedish — Mother Tongue</p>
+        </div>
+
+        <div class="resume-side-block">
+          <span class="resume-label">Interests</span>
+          <p class="resume-side-sub">Soccer, Design, Video, Golf, Travel, Photography</p>
+        </div>
+
+        <div class="resume-side-block">
+          <span class="resume-label">Social</span>
+          <p class="resume-side-sub">
+            <a href="https://instagram.com/henrikkarlsson_" target="_blank" rel="noopener">Instagram</a><br>
+            <a href="https://linkedin.com/in/henrik-karlsson/" target="_blank" rel="noopener">LinkedIn</a>
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <div class="resume-actions">
+      <a class="resume-download" href="images/about/HenrikKarlsson-Resume2026.pdf" download="HenrikKarlsson-Resume2026.pdf">Download PDF</a>
+    </div>
+  </div>
+</div>
 
 <!-- Floating cursor-follow preview (Work section) -->
 <div class="preview" id="preview" aria-hidden="true">
@@ -1178,6 +1521,63 @@
     }
   }
 
+})();
+</script>
+
+<script>
+(function(){
+  var trigger = document.getElementById('resumeTrigger');
+  var overlay = document.getElementById('resumeOverlay');
+  var panel   = document.getElementById('resumePanel');
+  var closeBtn = document.getElementById('resumeClose');
+  if (!trigger || !overlay || !panel || !closeBtn) return;
+
+  var lastFocused = null;
+
+  function openResume(e){
+    if (e) e.preventDefault();
+    lastFocused = document.activeElement;
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('resume-open');
+    closeBtn.focus();
+    document.addEventListener('keydown', onKeydown);
+  }
+
+  function closeResume(){
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('resume-open');
+    document.removeEventListener('keydown', onKeydown);
+    if (lastFocused && typeof lastFocused.focus === 'function'){ lastFocused.focus(); }
+  }
+
+  function onKeydown(e){
+    if (e.key === 'Escape' || e.key === 'Esc'){
+      closeResume();
+      return;
+    }
+    /* simple focus trap */
+    if (e.key === 'Tab'){
+      var focusable = panel.querySelectorAll('a[href], button:not([disabled])');
+      if (!focusable.length) return;
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first){
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last){
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  }
+
+  trigger.addEventListener('click', openResume);
+  closeBtn.addEventListener('click', closeResume);
+  overlay.addEventListener('click', function(e){
+    if (e.target === overlay){ closeResume(); }
+  });
 })();
 </script>
 
